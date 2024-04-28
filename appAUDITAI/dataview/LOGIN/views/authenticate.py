@@ -8,6 +8,7 @@ from django.contrib import messages
 from appAUDITAI.dataview.LOGIN.forms.authenticate_form import LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from appAUDITAI.models import USERROLES
+from django.template import TemplateDoesNotExist
 
 class UserRoleView(LoginRequiredMixin, View):
 
@@ -39,19 +40,31 @@ class AuthenticateUsers(View):
         form = LoginForm()
         if request.user.is_authenticated:
             user = request.user
-            group_names = user.groups.values_list('name', flat=True)
-                
-            if 'Administrator' in group_names:
-                template_name = 'pages/DASHBOARD/admin-dashboard.html'
-            elif 'Auditor' in group_names:
-                template_name = 'pages/DASHBOARD/auditor-dashboard.html'
-            elif 'Process Owner' in group_names:
-                template_name = 'pages/DASHBOARD/processowner-dashboard.html'
-            elif 'Compliance' in group_names:
-                template_name = 'pages/DASHBOARD/compliance-dashboard.html'
+            if user: 
+                group_names = user.groups.values_list('name', flat=True)
+                if group_names:
+                    try:   
+                        if 'Administrator' in group_names:
+                            template_name = 'pages/DASHBOARD/admin-dashboard.html'
+                        elif 'Auditor' in group_names:
+                            template_name = 'pages/DASHBOARD/auditor-dashboard.html'
+                        elif 'Process Owner' in group_names:
+                            template_name = 'pages/DASHBOARD/processowner-dashboard.html'
+                        elif 'Compliance' in group_names:
+                            template_name = 'pages/DASHBOARD/compliance-dashboard.html'
+                        else:
+                            context = {'user': user, 'group_names': group_names,}
+                            return render(request, template_name, context)
+                    except TemplateDoesNotExist as e:
+                        return render(request, self.template_name, {'form':form})
+                    except Exception as e:
+                        print('Something went wrong. I cant login to application right now.')
+                        pass
+                else:
+                    group_names = None         
             else:
-                # Handle the case when the user has none of the expected roles
-                template_name = 'pages/DASHBOARD/default-dashboard.html'
+                user = None
+                return render(request, self.template_name, {'form':form})
 
             context = {'user': user, 'group_names': group_names,}
             return render(request, template_name, context)
@@ -59,23 +72,25 @@ class AuthenticateUsers(View):
             return render(request, self.template_name, {'form':form})
 
     def post(self, request):
-        form = LoginForm(request.POST)
-        if form.is_valid():
-            username = form.cleaned_data['username']
-            password = form.cleaned_data['password']
-            user = authenticate(request, username=username, password=password)
+        username = request.POST.get('username')
+        password = request.POST.get('password')
 
-            if user is not None and user.is_active:
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            if user.is_active:
                 login(request, user)
                 return redirect('appAUDITAI:mydashboard')
             else:
-                messages.error(request, 'Username or password is incorrect. Please try again.')
-                form.fields['username'].initial = ''
+                # User is not active
+                messages.error(request, 'Your account is locked. We cannot access your account right now. Please reach out to your system administrator.')
         else:
-            messages.error(request, 'Form is not valid. Please check your input.')
-            form.fields['username'].initial = ''
-        # Re-render the form with errors and the submitted data
+            # Authentication failed
+            messages.error(request, 'Username or password is incorrect. Please try again.')
+
+        # Redirect back to the login page
         return redirect('appAUDITAI:authenticate-user')
+       
+       
 
 class LogoutUser(View):
     def get(self, request):

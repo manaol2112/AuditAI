@@ -1,4 +1,4 @@
-from appAUDITAI.loginpage import login
+
 from appAUDITAI.dataview.LOGIN.views import authenticate
 from appAUDITAI.dataview.HR.views import hrmanagement
 from appAUDITAI.dataview.ADMIN.views import companymanagement, usermanagement, systemsettings

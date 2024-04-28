@@ -1,0 +1,124 @@
+#employeelist_paginate {
+font-size: 10px; 
+line-height: 1; 
+}
+
+#employeelist_paginate .paginate_button {
+font-size: 10px; /* Adjust the font size as needed */
+margin-top: 10px;  /* Adjust the margin as needed */
+}
+
+.dataTables_info {
+font-size: 13px;
+}
+
+
+/* APP USER LIST TABLE */
+#app_user_list_paginate .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top:30px;
+}
+
+#app_user_list_paginate .pagination .page-item.active .page-link {
+    font-size:11px;
+}
+
+#app_user_list_paginate .pagination .page-item .page-link {
+    font-size:11px;
+}
+
+
+/* APP NEW USER LIST TABLE */
+#app_new_user_table_paginate .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top:30px;
+}
+
+#app_new_user_table_paginate .pagination .page-item.active .page-link {
+    font-size:11px;
+}
+
+#app_new_user_table_paginate .pagination .page-item .page-link {
+    font-size:11px;
+}
+
+
+
+/* APP TERMED USER LIST TABLE */
+#app_user_terminated_table_paginate .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top:30px;
+}
+
+#app_user_terminated_table_paginate .pagination .page-item.active .page-link {
+    font-size:11px;
+}
+
+#app_user_terminated_table_paginate .pagination .page-item .page-link {
+    font-size:11px;
+}
+
+
+/* APP ADMIN USER LIST TABLE */
+#app_user_admin_table_paginate .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top:30px;
+}
+
+#app_user_admin_table_paginate .pagination .page-item.active .page-link {
+    font-size:11px;
+}
+
+#app_user_admin_table_paginate .pagination .page-item .page-link {
+    font-size:11px;
+}
+
+/* APP GENERIC USER LIST TABLE */
+#app_user_generic_table_paginate .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top:30px;
+}
+
+#app_user_generic_table_paginate .pagination .page-item.active .page-link {
+    font-size:11px;
+}
+
+#app_user_generic_table_paginate .pagination .page-item .page-link {
+    font-size:11px;
+}
+
+/* APP MAPPED HR USER LIST TABLE */
+#app_user_mapped_table_paginate .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top:30px;
+}
+
+#app_user_mapped_table_paginate .pagination .page-item.active .page-link {
+    font-size:11px;
+}
+
+#app_user_mapped_table_paginate .pagination .page-item .page-link {
+    font-size:11px;
+}
+
+
+/* APP UNMAPPED HR USER LIST TABLE */
+#app_user_unmapped_table_paginate .pagination {
+    display: flex;
+    justify-content: center;
+    margin-top:30px;
+}
+
+#app_user_unmapped_table_paginate .pagination .page-item.active .page-link {
+    font-size:11px;
+}
+
+#app_user_unmapped_table_paginate .pagination .page-item .page-link {
+    font-size:11px;
+}

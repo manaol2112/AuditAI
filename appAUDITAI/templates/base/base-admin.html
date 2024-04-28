@@ -1,0 +1,15 @@
+{% extends 'base/base.html' %}
+
+{% load static %}
+
+<!-- Side Nav -->
+{% block side_nav_items %}
+<a href="{% url 'appAUDITAI:mydashboard' %}" data-toggle="tooltip" title="Home"><span class="fas fa-house-user"></span></a>
+<a href="{% url 'appAUDITAI:systemsettings' %}" data-toggle="tooltip" title="System Settings"><span class="fas fa-tools"></span></a>
+<a href="{% url 'appAUDITAI:logout-user' %}" data-toggle="tooltip" title="Sign-out"><span class="fas fa-sign-out-alt fa-fw mr-3"></span></a>
+{% endblock side_nav_items %}
+
+<!-- Content -->
+{% block content %}
+    
+{% endblock content %}

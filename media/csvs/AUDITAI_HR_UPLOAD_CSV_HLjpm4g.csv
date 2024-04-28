@@ -1,0 +1,3 @@
+﻿COMPANY_ID,USER_ID,EMAIL_ADDRESS,FIRST_NAME,LAST_NAME,JOB_TITLE,DEPARTMENT,MANAGER,HIRE_DATE,EMP_TYPE,REHIRE_DATE,TERMINATION_DATE,STATUS,TEST
+123,manaol2112,manaol2112@gmail.com,Robert John,Manaol,IT Audit Manager,Risk Advisory,Imran Hossain,2/1/95,Regular,,2/1/95,ACTIVE,
+135,joannmanaol,joannaorsemanaol@gmail.com,Joanna Rose,Manaol,IT Audit Manager,Risk Advisory,Robert John Manaol,12/12/89,Regular,12/12/89,2/1/95,ACTIVE,

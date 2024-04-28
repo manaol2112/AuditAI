@@ -1,0 +1,253 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/datepicker.css' %}" />
+
+
+<div class="card">
+    <div class="card-body">
+
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+              <li class="breadcrumb-item"><a href="" style="text-decoration:none;color:#474b4d" >...</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:appdetails-process-owner' comp_id app_id %}" style="text-decoration:none;color:#474b4d" >{{selected_app.APP_NAME}}</a></li>
+              <li class="breadcrumb-item active" style="text-decoration: underline;" aria-current="page">New Users/Roles</li>
+            </ol>
+        </nav>
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-top:30px;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <h6 style="color:#474b4d"><a href="" class="navbar-brand" style="color:white"> <span
+                                    class="fas fa-solid fa-regular fa-user"
+                                    style="color:#3B71CA;font-size:20px;margin-top:5px;"></span>
+                            </a>New Roles Assignments</h6>
+                    </div>
+                </div>
+                <div class="d-flex" role="search">
+                    <input id="app_user_new_user_search" name="app_user_new_user_search" class="form-control me-2"
+                        type="search" placeholder="Search" aria-label="Search" style="height:35px;font-size:13px;">
+                    <div class="btn-group" role="group" style="position: relative; margin-right: 10px;">
+                        <button type="button" class="btn btn-outline-secondary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false" style="height: 35px;margin-left:5px;">
+                            <i class="fas fa-sort-amount-down"></i>
+                        </button>
+                        <ul class="dropdown-menu" style="position: absolute; left: -100px; top: 100%; font-size: 12px;">
+                            <li>
+                                <a href="" data-bs-toggle="offcanvas" data-bs-target="#new_user_approval_offcanvas"
+                                    class="dropdown-item">
+                                    <i class="fa-solid fa-user-plus" style="margin-right: 10px;"></i>Upload Approval
+                                    Support
+                                </a>
+                            </li>
+                            <li>
+                                <a href="" data-bs-toggle="offcanvas" data-bs-target="#app_new_user_filter"
+                                    class="dropdown-item">
+                                    <i class="fa-solid fa-filter" style="margin-right: 10px;"></i>Filter Table
+                                </a>
+                            </li>
+                            <div class="dropdown-divider"></div>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-file-csv"
+                                        style="margin-right: 10px;"></i>Download</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </nav>
+
+        <table id="app_new_user_table" name="app_new_user_table" class="table table-hover table-sm nowrap"
+            style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+            <thead style="padding-top:12px;text-align:center">
+                <tr
+                    style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                    <th style="text-align:left;">User ID</th>
+                    <th style="text-align:left;">Email Address</th>
+                    <th style="text-align:left;">Role</th>
+                    <th style="text-align:left;">Status</th>
+                    <th style="text-align:left;">Date Granted</th>
+                    <th style="text-align:left;">Compliance Status</th>
+                    <th style="text-align:left;">Approval Reference</th>
+                    <th style="text-align:left;"></th>
+                </tr>
+            </thead>
+
+            <tbody style="font-size:13px">
+                {% for user in new_users %}
+                <tr style="vertical-align: middle;">
+                    <td style="width:15%"><i class="far fa-user" style="margin-right:5px;color:lightblue"></i>
+                        {{ user.USER_ID }}</td>
+                    <td style="width:20%"><i class="far fa-envelope" style="margin-right:5px;color:lightblue"></i>
+                        {{user.EMAIL_ADDRESS }}</td>
+                    <td style="width:10%"></i>
+                        {{user.ROLE_NAME }}</td>
+                    {% if user.STATUS|lower == 'active' %}
+                    <td style="width:10%"> <span
+                            >
+                            {{user.STATUS }}</span></td>
+                    <td style="width:15%">{{ user.DATE_GRANTED|date:"F d, Y" }}</td>
+                    {% else %}
+                    <td style="width:10%"><span>
+                            {{user.STATUS }}</span></td>
+                    <td style="width:15%">{{ user.DATE_GRANTED|date:"F d, Y" }}</td>
+                    {% endif %}
+                    {% if user.DATE_APPROVED <= user.DATE_GRANTED and user.ACCESS_APPROVER_NAME1 %}
+                    <td style="width:15%"><span class="badge text-bg-success">Compliant</span></td>
+                    {% elif user.DATE_APPROVED > user.DATE_GRANTED and user.ACCESS_APPROVER_NAME1  %}
+                    <td style="width:15%"><span class="badge text-bg-warning">Non-compliant</span></td>
+                    {% else %}
+                    <td style="width:15%"><span class="badge text-bg-light">No Approval Found</span></td>
+                    {% endif %}
+                    {% if user.APPROVAL_REFERENCE %}
+                    <td style="width:15%">{{user.APPROVAL_REFERENCE}}</td>
+                    {% else %}
+                    <td style="width:15%">-</td>
+                    {% endif %}
+                    <td class="text-end">
+                        <a href="{% url 'appAUDITAI:appdetails-new-user-approval' comp_id app_id user.id %}"
+                            class="btn btn-outline-secondary btn-sm" data-toggle="tooltip" data-placement="top"
+                            title="View Approval">
+                            <i class="fa-solid fa-arrows-to-dot"></i>
+                        </a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<!-- THIS IS THE FILTER SECTION FOR DATES GRANTED -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="app_user_new_user_filter" name="app_user_new_user_filter"
+    aria-labelledby="UserUploadCanvas" style="margin-top:40px;">
+    <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
+        <p class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-filter"
+                style="margin-right:5px; font-size:14px;"></i>Filter User List</p>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="input-group mb-3">
+            <label style="font-size:13px;">Date Granted:</label>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1"><i class="fa-regular fa-calendar"
+                    style="color:#3B71CA"></i></span>
+            <input type="text" id="datetimerange-input1" name="datetimerange-input1" class="form-control"
+                placeholder="Select date" aria-label="Select date" style="font-size:12px;"
+                aria-describedby="basic-addon1">
+        </div>
+
+        <div class="input-group mb-3">
+            <label style="font-size:13px;">Status:</label>
+        </div>
+        <div class="input-group mb-3">
+            <label class="input-group-text" for="inputGroupSelect01"><i class="fa-solid fa-list"
+                    style="color:#3B71CA"></i></label>
+            <select class="form-select" id="app_user_new_user_status_filter" name="app_user_new_user_status_filter"
+                style="font-size:12px;">
+                <option selected disabled>Select Status</option>
+                {% for status in unique_statuses %}
+                <option> {{ status }}</option>
+                {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- THIS IS THE FILTER SECTION FOR DATES TERMINATED -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="app_user_new_approval" name="app_user_new_approval"
+    aria-labelledby="app_user_new_approval" style="margin-top:40px;">
+    <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
+        <p class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-filter"
+                style="margin-right:5px; font-size:14px;"></i>Filter User List</p>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+    <div class="offcanvas-body">
+        <div class="input-group mb-3">
+            <label style="font-size:13px;">Date Granted:</label>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text" id="basic-addon1"><i class="fa-regular fa-calendar"
+                    style="color:#3B71CA"></i></span>
+            <input type="text" id="datetimerange-input1" name="datetimerange-input1" class="form-control"
+                placeholder="Select date" aria-label="Select date" style="font-size:12px;"
+                aria-describedby="basic-addon1">
+        </div>
+    </div>
+</div>
+
+<!-- THIS IS THE FILTER SECTION FOR DATES TERMINATED -->
+
+<div class="offcanvas offcanvas-end" tabindex="-1" id="app_new_user_filter" name="app_new_user_filter" aria-labelledby="app_new_user_filter" style="margin-top:40px;">
+    <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
+        <p class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-filter" style="margin-right:5px; font-size:14px;"></i>Filter User List</p>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+        <div class="offcanvas-body">
+            <div class="input-group mb-3">
+                <label style="font-size:13px;">Date Granted:</label>
+            </div>
+            <div class="input-group mb-3">
+                <span class="input-group-text" id="basic-addon1"><i class="fa-regular fa-calendar" style="color:#3B71CA"></i></span>
+                <input type="text" id="datetimerange-input1" name="datetimerange-input1" class="form-control" placeholder="Select date" aria-label="Select date" style="font-size:12px;" aria-describedby="basic-addon1">
+            </div>
+        </div>
+</div>
+
+
+<form id="new_user_approval_upload_form" method="POST">
+    {% csrf_token %}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="new_user_approval_offcanvas" style="margin-top:40px;"
+        aria-labelledby="offcanvasRightLabel">
+        <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
+            <h6 class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-upload"
+                    style="margin-right:5px;"></i>Access Approval Upload Tool</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <!-- THIS IS THE DRAG AND DROP SECTION -->
+            <div class="file-drop-area" id="user_app_drag_drop"
+                style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:120px;">
+                <div class="card-body" style=" text-align: center;">
+                    <i class="fa-solid fa-cloud-arrow-up"
+                        style="font-size:40px;display: block;color:lightblue;margin-top:15px;"></i>
+                    <a style="font-size:12px;color:grey">Drag and
+                        drop the Access Approval template
+                        here</a>
+                </div>
+            </div>
+            <div class="row" style="padding-top:20px; ">
+                <a style="font-size:12px;color:#000000">Or browse
+                    and
+                    select the template here</a>
+                <div class="card" style="border:none">
+                    <div class="card-body"
+                        style="font-size:12px;border-style:dashed;border-color:lightblue;margin-top:10px;">
+                        {{ new_user_approval_form.file_name }}
+                        <input type="hidden" id="selected_app" name="selected_app" value="{{selected_app.id}}">
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- THIS IS THE BUTTON TO UPLOAD THE ATTACH USER LIST -->
+            <div class="modal-footer" style="margin-top:20px;">
+                <button type="submit" class="btn btn-secondary btn-sm" style="font-size:13px;width:100px;">
+                    Upload</button>
+            </div>
+        </div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<!-- THIS ARE THE DEPENDENCIES OF THE VANILLA DATE TIMEPICKER -->
+<script src="{% static 'js/moments.min.js' %}"></script>
+<script src="{% static 'js/datepicker.js' %}"></script>
+<script src="{% static 'js/offcanvas.js' %}"></script>
+
+{% endblock content %}

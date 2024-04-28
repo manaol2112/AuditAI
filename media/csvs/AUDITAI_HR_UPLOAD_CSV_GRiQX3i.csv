@@ -1,0 +1,4 @@
+﻿COMPANY_ID,USER_ID,EMAIL_ADDRESS,FIRST_NAME,LAST_NAME,JOB_TITLE,DEPARTMENT,HIRE_DATE,EMP_TYPE,REHIRE_DATE,TERMINATION_DATE,STATUS,MANAGER
+123,manaol2113,manaol2112@gmail.com,Robert John,Manaol,IT Audit Manager,ACCOUNTING,2/1/95,Regular,,2/1/95,ACTIVE,ROSA GARCIA
+456,joannmanaol,joannaorsemanaol@gmail.com,Joanna Rose,Manaol,IT Audit Manager,AUDIT,12/12/89,Regular,12/12/89,2/1/95,INACTIVE,RAUL GARCIA
+789,sophiamerce,sophiamerce@gmail.com,Sophia Merce,Manaol,IT Audit Associate,IT,1/2/23,Contractor,,11/6/23,INACTIVE,DITAS MANAOL

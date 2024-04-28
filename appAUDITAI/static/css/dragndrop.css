@@ -1,0 +1,91 @@
+.accordion-button:hover {
+    background-color: #d5ecf7 !important;
+}
+
+.file-drop-area {
+position: relative;
+display: flex;
+align-items: center;
+height:150px;
+width: 450px;
+max-width: 100%;
+padding: 25px;
+border-radius: 3px;
+transition: 0.2s;
+}
+
+.choose-file-button {
+flex-shrink: 0;
+background-color:whitesmoke;
+border: 1px solid rgba(255, 255, 255, 0.1);
+border-radius: 3px;
+padding: 8px 15px;
+margin-right: 10px;
+font-size: 12px;
+text-transform: uppercase;
+}
+
+.file-message {
+font-size: small;
+font-weight: 300;
+line-height: 1.4;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
+}
+
+.file-input {
+position: absolute;
+left: 0;
+top: 0;
+height: 100%;
+width: 100%;
+cursor: pointer;
+opacity: 0;
+
+}
+
+.data-table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size:12px;
+}
+
+.data-table th, .data-table td {
+    padding: 8px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.data-table th {
+    background-color: #f2f2f2;
+}
+
+.preview-placeholder {
+    color: #888; /* Placeholder text color */
+    font-size:11px;
+}
+
+.scrollable-content {
+    height: 200px; /* Set the desired height for the scrollable area */
+    overflow-y: auto; /* Enable vertical scrolling */
+    border: 1px solid #ccc; /* Optional: Add a border for visibility */
+    padding: 10px; /* Optional: Add padding for better aesthetics */
+}
+
+#nav-tab-dashboard .nav-link {
+    background-color: #6b6d6e;
+    color: #fff;
+    margin-right: 2px;
+    font-size: 13px;
+}
+
+#nav-tab-dashboard .nav-link.active {
+    background-color: #d5ecf7;
+    color: black;
+    margin-right: 3px;
+}
+
+.bg-body-tertiary-custom {
+    background-color: #d5ecf7;
+}

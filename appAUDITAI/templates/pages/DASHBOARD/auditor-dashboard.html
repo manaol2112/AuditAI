@@ -1,0 +1,95 @@
+{% extends 'base/base-auditor.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card" style="height:90vh">
+    <div class="card-body">
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:18px;">
+                        {% if user.first_name %}
+                        Welcome {{ user.first_name }}!
+                        {% else %}
+                        Welcome {{ user.username }}!
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <div class="container-fluid">
+            <div class="row" style="margin-top:10px;">
+                <div class="text-align">
+                    <button type="button" class="btn btn-secondary carousel" data-bs-target="#controlcarousel"
+                        data-bs-slide-to="0"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                        <i class="fa-solid fa-briefcase" style="margin-right:5px;"></i>My Clients
+                    </button>
+                    <button type="button" class="btn btn-secondary carousel" data-bs-target="#controlcarousel"
+                        data-bs-slide-to="1"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                        <i class="fa-solid fa-envelopes-bulk" style="margin-right:5px;"></i>My Audits
+                    </button>
+                    <button type="button" class="btn btn-secondary carousel" data-bs-target="#controlcarousel"
+                        data-bs-slide-to="2"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                        <i class="fa-solid fa-list-check" style="margin-right:5px;"></i>My Tasks
+                    </button>
+                </div>
+            </div>
+            <div id="controlcarousel" class="carousel slide carousel-fade" data-bs-interval="false">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="card">
+                            <div class="card-body">
+                                <div class="text-center">
+                                    <div class="d-flex justify-content-center" role="search"
+                                        style="margin-bottom:30px;margin-top:10px;">
+                                        <input id="searchClients" class="form-control me-2" type="search"
+                                            onkeyup="filterCompany()" placeholder="Search Clients..." autocomplete="off"
+                                            aria-label="Search" style="height:35px;font-size:13px;">
+                                        <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                                            style="height:35px;margin-right:3px;">
+                                            <i class="fas fa-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;">
+                                    {% for company in companies %}
+                                    <a href="{% url 'appAUDITAI:client-actions' company.id %}"
+                                        style="text-decoration: none; color:#474b4d">
+                                        <div class="card app-card" data-appname="{{ company }}"
+                                            style=" border-radius: 25px; cursor: pointer; height: 120px; width: 130px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                                            onmouseout="this.style.backgroundColor='#fff';">
+                                            <p style="font-size:13px;"><span class="fas fa-building" style="margin-right:10px;color:grey;font-size:18px;"></span>{{ company.COMPANY_NAME }}</p>
+                                        </div>
+                                    </a>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card">
+                            <div class="card-body">
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card">
+                            <div class="card-body">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+        <script src="{% static 'js/filters.js' %}"></script>
+
+        {% endblock content %}

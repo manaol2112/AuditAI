@@ -1,0 +1,72 @@
+{% extends 'base/base-auditor.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+
+<div class="card">
+    <div class="card-header" style="text-align:left">
+        <div class="row">
+            <a style="font-size: 16px"><span class="fa-solid fa-chart-simple"
+                    style="margin-right: 10px; color: #474b4d"></span>{{ selected_company.COMPANY_NAME }}</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div style="font-size:12px;margin-bottom:30px;">
+            <a href="{% url 'appAUDITAI:audit-termination' selected_company.id %}" style="color:#474b4d"><i
+                    class="fa-regular fa-circle-left" style="margin-right:5px;"></i>Back to Terminations</a>
+        </div>
+
+        <div class="container-fluid">
+
+
+            {% if selected_app.APP_TYPE == 'Application' %}
+            <span class="fab fa-app-store-ios" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:20px; display: inline-block;">{{ selected_app.APP_NAME }}</p>
+            {% elif selected_app.APP_TYPE == 'Network' %}
+            <span class="fab fa-hive" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:20px; display: inline-block;">{{ selected_app.APP_NAME }}</p>
+            {% elif selected_app.APP_TYPE == 'Database' %}
+            <span class="fas fa-database" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:20px; display: inline-block;">{{ selected_app.APP_NAME }}</p>
+            {% elif selected_app.APP_TYPE == 'Operating System' %}
+            <span class="fab fa-centos" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:20px; display: inline-block;">{{ selected_app.APP_NAME }}</p>
+            {% elif selected_app.APP_TYPE == 'Server' %}
+            <span class="fas fa-server" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:20px; display: inline-block;">{{ selected_app.APP_NAME }}</p>
+            {% endif %}
+
+            <!-- THIS IS THE TABLE FOR DEFICIENT USERS -->
+            <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+                style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                <thead style="padding-top:12px;text-align:center">
+                    <tr
+                        style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                        <th style="text-align:left;">ID</th>
+                        <th style="text-align:left;">User ID</th>
+                        <th style="text-align:left;">Email Address</th>
+                        <th style="text-align:left;">HR Termination Date</th>
+                        <th style="text-align:left;">System Termination Date</th>
+                        <th style="text-align:left;">Days</th>
+                    </tr>
+                </thead>
+                <tbody style="font-size:13px">
+                    {% for app in deficient_users %}
+                    <tr style="vertical-align: middle;">
+                        <td style="width:20%">{{ app.id }}</td>
+                        <td style="width:20%">{{ app.user_id }}</td>
+                        <td style="width:20%">{{ app.email_address }}</td>
+                        <td style="width:20%">{{ app.termination_date }}</td>
+                        <td style="width:20%">{{ app.revocation_date.date }}</td>
+                        <td style="width:20%">{{ app.difference_days }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card" style="background-color:white" style="margin-top:10px;">
+    
+    <div class="card-body" style="margin-top:20px;">
+      <nav id="dashboardnav">
+        <div class="nav nav-tabs" id="nav-tab-dashboard" role="tablist">
+          <a class="nav-link active" id="nav-projects-tab" data-bs-toggle="tab" href="#nav-projects" role="tab"
+            aria-controls="nav-projects" aria-selected="true"><span class="fa fa-shield-alt"></span> Audit Dashboard</a>
+          <a class="nav-link" id="nav-audits-tab" data-bs-toggle="tab" href="#nav-audits" role="tab"
+            aria-controls="nav-audits" aria-selected="false"><span class="fa fa-braille fa-fw me-1"></span> Applications</a>
+          <a class="nav-link" id="nav-workpapers-tab" data-bs-toggle="tab" href="#nav-workpapers" role="tab"
+            aria-controls="nav-workpapers" aria-selected="false"><span
+              class="fa fa-file-text fa-fw me-1"></span>Workpapers</a>
+          <a class="nav-link" id="nav-issues-tab" data-bs-toggle="tab" href="#nav-issues" role="tab"
+            aria-controls="nav-issues" aria-selected="false"><span class="fa fa-chain-broken fa-fw me-1"></span>Issues</a>
+          <a class="nav-link" id="nav-requests-tab" data-bs-toggle="tab" href="#nav-requests" role="tab"
+            aria-controls="nav-requests" aria-selected="false"><span class="fa fa-tasks fa-fw me-1"></span>Requests</a>
+        </div>
+      </nav>
+      <div class="tab-content" id="nav-tabContent">
+        <div class="tab-pane fade show active" id="nav-projects" role="tabpanel" aria-labelledby="nav-projects-tab">
+          <div class="container-fluid" style="margin-top:20px;border: 1px solid;border-color: whitesmoke;">
+
+                <div class="row" style="padding-top:20px">
+                    <div class="col-4">
+                        <div class="card" style="height:220px;background-color: #fff;box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);">
+                         <div class="card-header">
+                            <a style="font-size:13px">Access Provisioning</a>
+                         </div>
+                        </div>
+                     </div>
+
+                     <div class="col-4">
+                        <div class="card" style="height:220px;background-color: #fff;box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);">
+                         <div class="card-header">
+                            <a style="font-size:13px">Access Termination</a>
+                         </div>
+                        </div>
+                     </div>
+
+                     <div class="col-4">
+                        <div class="card" style="height:220px;background-color: #fff;box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);">
+                         <div class="card-header">
+                            <a style="font-size:13px">User Access Review</a>
+                         </div>
+                        </div>
+                     </div>
+                </div>
+
+                <div class="row" style="padding-top:20px">
+                    <div class="col-12">
+                        <div class="card" style="height:150px;background-color: #fff;box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);">
+                        
+                        </div>
+                    </div>
+                </div>
+               
+            </div>
+          </div>
+        </div>
+        <div class="tab-pane fade" id="nav-audits" role="tabpanel" aria-labelledby="nav-audits-tab">My Audits</div>
+        <div class="tab-pane fade" id="nav-workpapers" role="tabpanel" aria-labelledby="nav-workpapers-tab">My Workpapers
+        </div>
+        <div class="tab-pane fade" id="nav-issues" role="tabpanel" aria-labelledby="nav-issues-tab">My Issues</div>
+        <div class="tab-pane fade" id="nav-requests" role="tabpanel" aria-labelledby="nav-requests-tab">My Requests</div>
+      </div>
+  
+    </div>
+  </div>
+
+
+{% endblock content %}
+

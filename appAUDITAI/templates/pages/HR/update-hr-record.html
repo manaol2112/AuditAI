@@ -1,0 +1,204 @@
+{% extends 'pages/HR/hr-data-management.html' %}
+{% load static %}
+{% block additional_content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+
+<div class="card" style="max-height:90vh">
+    <div class="card-header">
+        <a style="font-size:14px;"><span class="fas fa-list-ul" style="margin-right: 10px;"></span>
+            HR Employee Record</a>
+    </div>
+    <div class="card-body">
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <h6><a href="" class="navbar-brand" style="color:white"> <span class="fas fa-user-friends"
+                                    style="color:#3B71CA;font-size:25px;margin-left:8px;margin-top:5px;"></span> <i
+                                    class=""></i></a> Employees</h6>
+                    </div>
+                </div>
+
+                <form class="d-flex" role="search">
+                    <div class="btn-group" role="group" style="position: relative;margin-right:10px;">
+                        <button type="button" class="btn btn-outline-primary dropdown-toggle"
+                            data-bs-toggle="dropdown" aria-expanded="false" style="height:35px;">
+                            <i class="fas fa-sort-amount-down"></i>
+                        </button>
+                        <ul class="dropdown-menu" style="position: absolute; left: 0; top: 100%;font-size:12px">
+                            <li><a class="dropdown-item" id="sortByName" href="#"><i class="fas fa-user-tag"
+                                        style="margin-right:10px"></i>Name</a></li>
+                            <li><a class="dropdown-item" id="sortByStatus" href="#"><i class="fas fa-toggle-on"
+                                        style="margin-right:10px"></i>Status</a></li>
+                            <div class="dropdown-divider"></div>
+                            <li><a class="dropdown-item" href="#"><i class="fas fa-file-csv"
+                                        style="margin-right:10px"></i>Download</a></li>
+                        </ul>
+                    </div>
+                    <input id="searchemployee" class="form-control me-2" type="search" placeholder="Search..."
+                        aria-label="Search" style="height:35px;font-size:13px;">
+                </form>
+            </div>
+        </nav>
+
+        <table id="employeelist" name="employeelist" class="table table-hover table-sm nowrap"
+            style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:10px;">
+            <thead style="padding-top:12px;text-align:center">
+                <tr
+                    style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                    <th style="text-align:left;">Name</th>
+                    <th style="text-align:left;">Email Address</th>
+                    <th style="text-align:left;">Job Title</th>
+                    <th style="text-align:left;">Status</th>
+                    <th style="text-align:left;"></th>
+                </tr>
+            </thead>
+            <tbody style="font-size:13px">
+                {% for employees in employees %}
+                <tr style="vertical-align: middle;">
+                    <td>{{ employees.FIRST_NAME }} {{ employees.LAST_NAME }}</td>
+                    <td><i class="far fa-envelope" style="margin-right:5px;color:lightblue"></i>
+                        {{employees.EMAIL_ADDRESS }}</td>
+                    <td>{{ employees.JOB_TITLE }}</td>
+                    {% if employees.STATUS == 'ACTIVE' %}
+                    <td><span class="badge bg-success rounded-pill text-bg-success" style="font-size:10px;">
+                        {{employees.STATUS }}</span></td>
+                    {% else %}
+                    <td><span class="badge bg-danger rounded-pill text-bg-danger" style="font-size:10px;">
+                        {{employees.STATUS }}</span></td>
+                    {% endif %}
+                    <td>
+                        <a href="" data-process-id="{{employees.USER_ID}}" class="btn btn-outline-secondary btn-sm"
+                            data-toggle="tooltip" data-placement="top" title="View Record">
+                            <i class="fas fa-user-edit"></i>
+                        </a>
+                    </td>
+                    {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+</div>
+
+<form action="" id="employee_form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade modal-lg" id="employeeEdit" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel"> <a style="font-size:16px;"><span
+                                style="margin-right: 10px;"></span><i class="fas fa-info-circle" style="margin-right:5px;font-size:16px;"></i>
+                            Employee Information</a></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <nav class="navbar bg-body-tertiary" style="background-color:#d5ecf7;">
+                                <div class="container-fluid">
+                                  <span class="navbar-brand mb-0"><i class="fas fa-user" style="margin-right:10px;color:lightblue"></i>
+                                    <label id="first_name"></label>
+                                    <label id="last_name" style="margin-right:5px;"></label>
+                                    <label id="user_id" style="font-size:12px"></label>
+                                </span>
+                                  <span id="badgecolor" style="font-size:10px;">
+                                    <label id="status"></label></span>
+                                </div>
+                            </nav>
+                            <div class="card" style="margin-top:10px;">
+                                <div class="card-body">                                
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-auto">
+                                          <label style="font-size:12px; width: 100px;" class="col-form-label">Email Address:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                          <input class="form-control sm" id="email_address" type="text" style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                      </div>
+                                      
+                                      <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                          <label style="font-size:12px; width: 100px;" class="col-form-label">Job Title:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                          <input class="form-control sm" id="job_title" type="text" style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                      </div>
+                                      
+                                      <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                          <label style="font-size:12px; width: 100px;" class="col-form-label">Department:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                          <input class="form-control sm" id="department" type="text" style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                      </div>
+                                      
+                                      <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                          <label style="font-size:12px; width: 100px;" class="col-form-label">Manager:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                          <input class="form-control sm" id="manager" type="text" style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                      </div>
+
+                                      <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                          <label style="font-size:12px; width: 100px;" class="col-form-label">Employee Type:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                          <input class="form-control sm" id="employee_type" type="text" style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                      </div>
+                                      
+                                </div>
+                            </div>
+
+                            <div class="card" style="margin-top:5px;">
+                               <div class="row">
+                                <div class="col-6">
+                                    <div class="card-body">
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                              <label style="font-size:12px;" class="col-form-label">DATE HIRED:</label>
+                                            </div>
+                                            <div class="col-auto">
+                                              <input class="form-control sm" id="date_hired" type="text" style="font-size:12px;width:200px;" readonly>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                                <div class="col-6">
+                                     <div class="card-body">
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                              <label style="font-size:12px;" class="col-form-label">TERMINATION DATE:</label>
+                                            </div>
+                                            <div class="col-auto">
+                                              <input class="form-control sm" id="date_termed" type="text" style="font-size:12px;width:200px;" readonly>
+                                            </div>
+                                          </div>
+                                    </div>
+                                </div>
+                               </div>
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+
+{% endblock additional_content %}

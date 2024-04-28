@@ -1,0 +1,67 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="card" style="background-color:white">
+
+    <div class="card-header">
+        <div class="row">
+            <a><span class="fas fa-shield-virus fa-fw mr-3"></span> Data Management</a>
+        </div>
+    </div>
+
+    <div class="card-body">
+        <div class="card-container" style="display: flex; gap: 15px;">
+            <a href="{% url 'appAUDITAI:new-hr-record' %}" style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="height: 150px; width: 160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fa-solid fa-people-group fa-5x" style="font-size: 30px;"></span>
+                    <p style="font-size: 16px; margin-top: 10px;">HR Data</p>
+                </div>
+            </a>
+            <a href="{% url 'appAUDITAI:application-list' %}" style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="height: 150px; width: 160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fa-solid fa-network-wired" style="font-size: 30px;"></span>
+                    <p style="font-size: 16px; margin-top: 10px;">Applications</p>
+                </div>
+            </a>
+            <a href="{% url 'appAUDITAI:control-authentication' %}" style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="height: 150px; width: 160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fa-solid fa-book" style="font-size: 30px;"></span>
+                    <p style="font-size: 16px; margin-top: 10px;">Policies</p>
+                </div>
+            </a>
+            <a href="{% url 'appAUDITAI:all-users' %}" style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="height: 150px; width: 160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fa-solid fa-user-gear" style="font-size: 30px;"></span>
+                    <p style="font-size: 16px; margin-top: 10px;">Users</p>
+                </div>
+            </a>
+            <div class="card"
+                style="height: 150px; width: 160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                <span class="fa-solid fa-chart-pie" style="font-size: 30px;"></span>
+                <p style="font-size: 16px; margin-top: 10px;">Reports</p>
+            </div>
+            <a href="{% url 'appAUDITAI:system-setting' %}" style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="height: 150px; width: 160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fa-solid fa-wrench" style="font-size: 30px;"></span>
+                    <p style="font-size: 16px; margin-top: 10px;">System Settings</p>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</div>
+
+
+{% endblock content %}

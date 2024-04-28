@@ -1,0 +1,135 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+
+<div class="card">
+    <div class="card-body">
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:20px;"><span class="fa-solid fa-network-wired"
+                            style="margin-right: 10px;"></span>Policies</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchPolicy" class="form-control me-2" type="search" onkeyup="filterPolicies()"
+                        placeholder="Search Policies..." autocomplete="off" aria-label="Search" style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-primary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#newPolicy" aria-expanded="false" style="height:35px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </form>
+            </div>
+        </nav>
+        <div class="card">
+            <div class="card-body"> 
+                <div class="card-container" style="display: flex; gap: 15px;flex-wrap: wrap;">
+                    {% for policy in policies %}
+                    <a href="{% url 'appAUDITAI:application-policies'%}" style="text-decoration: none; color:#474b4d">
+                        <div class="card app-card"
+                            data-appname="{{ policy.POLICY_NAME }}"
+                            style=" cursor:pointer;height: 150px; width:160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='#fff';">
+                            <span class="fab fa-app-store-ios" style="font-size: 40px;color:#8bd5f7"></span>
+                            <p style="font-size: 16px; margin-top: 10px;color:#474b4d">{{ policy.POLICY_NAME }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- Modal -->
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade" id="newPolicy" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel"> <a style="font-size:16px;"><span
+                                style="margin-right: 10px;"></span>
+                                <i class="fas fa-sliders-h" style="margin-right:10px;"></i>New Policy Setup</a></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="card">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 110px;" class="col-form-label">Policy
+                                                Name:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="policy_name" name="policy_name" type="text"
+                                                style="font-size:12px;width:300px;" autocomplete="off" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 110px;" class="col-form-label">Policy
+                                                Description:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <textarea class="form-control sm" id="policy_description" name="policy_description"
+                                            style="font-size: 12px; width: 300px;resize:none;height:6em" autocomplete="off"  required></textarea>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 110px;" class="col-form-label">Relevent
+                                                Controls:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input type="hidden" name="control_selected_values" id="control_selected_values">
+                                            <select name="control_list" id="control_list" style="font-size:12px;" class="selectpicker" multiple data-live-search="true">
+                                                <option value="1">Authentication</option>
+                                                <option value="2">Access Provisioning</option>
+                                                <option value="3">Access Termination</option>
+                                                <option value="4">User Access Review</option>
+                                              </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="modal-footer" style="margin-top:20px;">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                style="font-size:13px">Cancel</button>
+                            <button type="submit" class="btn btn-primary" style="font-size:13px">Create</button>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+</form>
+
+<script src="{% static 'js/select.js' %}"></script>
+<script>
+    new MultiSelectTag('control_list', {
+     rounded: true,    // default true
+     shadow: true,      // default false
+     placeholder: 'Search Controls',  // default Search...  
+     onChange: function(values) {
+         console.log(values)
+     }
+ })
+ </script>
+
+
+{% endblock content %}

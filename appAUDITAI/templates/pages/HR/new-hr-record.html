@@ -1,0 +1,128 @@
+{% extends 'pages/HR/hr-data-management.html' %}
+{% load static %}
+
+{% block additional_content %}
+
+
+<link rel="stylesheet" href="{% static 'css/dragndrop.css' %}" />
+
+<div class="card">
+    <div class="card-body">
+        <div class="accordion" id="activeEmployee">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button" style="height:30px;background-color:whitesmoke;font-size:16px;"
+                        type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true"
+                        aria-controls="collapseOne">
+                        <a style="font-size:14px;"><span class="fa-solid fa-list" style="margin-right: 10px;"></span>
+                            Active Employee List</a>
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse show" data-bs-parent="#activeEmployee">
+                    <div class="accordion-body">
+                        <a style="font-size:13px;">The Active Employee List is a comprehensive, up-to-date record of all
+                            employees and their associated user accounts within an organization's IT systems. It
+                            includes information such as employee names, job titles, employee ID numbers, usernames,
+                            access permissions, and relevant access credentials.</a>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newhireModal" style="font-size:13px;">Continue Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                        style="height:20px;background-color:whitesmoke;font-size:14px;" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false"
+                        aria-controls="collapseTwo">
+                        <a style="font-size:14px;"><span class="fa-solid fa-user-plus"
+                                style="margin-right: 10px;"></span>
+                            New Hire List</a>
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" data-bs-parent="#activeEmployee">
+                    <div class="accordion-body">
+                        <a style="font-size:13px;">A New Hire List is a specific subset of employee-related data that is
+                            particularly relevant during the onboarding process of new employees. It is closely related
+                            to the Active Employee List but is primarily used to manage and track new employees'
+                            integration into the organization. </a>
+                        <div class="text-end">
+                            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#newHireModal" style="font-size:13px;">Continue Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed"
+                        style="height:20px;background-color:whitesmoke;font-size:14px;" type="button"
+                        data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false"
+                        aria-controls="collapseThree">
+                        <a style="font-size:14px;"><span class="fa-solid fa-user-lock"
+                                style="margin-right: 10px;"></span>
+                            Termination List</a>
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" data-bs-parent="#activeEmployee">
+                    <div class="accordion-body">
+                        <a style="font-size:13px;">A Termination List, sometimes referred to as an Employee Offboarding
+                            List, is a record of employees who are leaving an organization, whether due to resignation,
+                            retirement, or termination. It is a crucial component of an organization's HR and IT
+                            processes, and its purpose is to facilitate a smooth and secure transition for departing
+                            employees. </a>
+                        <div class="text-end">
+                            <button class="btn btn-primary" style="font-size:13px;">Continue Upload</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  
+  <!-- Modal -->
+<form action="" method = "post" enctype="multipart/form-data">
+{% csrf_token %}
+<div class="modal fade" id="newhireModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h1 class="modal-title fs-5" id="staticBackdropLabel"> <a style="font-size:16px;"><span
+            style="margin-right: 10px;"></span>
+            Active Employee Upload Wizard</a></h1>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card-body">
+                        <div class="file-drop-area" style="border-style:dashed;border-color:lightblue;border-width:medium;">
+                            <div class="card-body" style=" text-align: center;">
+                                <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
+                                <a style="font-size:16px;color:grey">Drag and drop the HR Upload Template here</a>
+                            </div>
+                        </div>
+                        <div class="row" style="padding-top:20px;">
+                            <a style="font-size:15px;color:black">Or browse and select the template here</a> 
+                            <div class="card-body" style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
+                                {{ form.file_name }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-size:13px">Cancel</button>
+          <button type="submit" class="btn btn-primary" style="font-size:13px">Upload</button>
+        </div>
+      </div>
+    </div>
+  </div>
+ 
+</form>
+
+<script src="{% static 'js/dragndrop.js' %}"></script>
+
+{% endblock additional_content %}

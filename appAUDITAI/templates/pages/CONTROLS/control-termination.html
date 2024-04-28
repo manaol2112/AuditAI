@@ -1,0 +1,41 @@
+{% extends 'pages/CONTROLS/control_base.html' %}
+{% load static %}
+
+{% block additional_content %}
+
+<div class="card">
+    <div class="card-body" box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);>
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a href="#" id="passwordHelpLink" style="font-size:16px;text-decoration: none;color:#474b4d">
+                        Access Termination Requirements <span class="fa-regular fa-circle-question"
+                            style="margin-left: 8px;color:lightblue" data-bs-toggle="popover"
+                            data-bs-container="body" 
+                            data-bs-content="Determine the required number of days that access must be terminated after leaving the organization."
+                            data-bs-placement="bottom"></span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:13px;width:180px;" class="col-form-label">Enter number of days:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control sm" id="terminate_days" type="text" style="font-size:13px;" autocomplete="off" required>
+                    </div>
+                </div>
+                <div class="text-end" style="margin-top:20px;">
+                    <button type="submit" class="btn btn-primary" style="font-size:13px;width: 100px;">Save</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock additional_content %}

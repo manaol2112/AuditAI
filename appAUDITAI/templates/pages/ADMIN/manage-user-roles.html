@@ -1,0 +1,243 @@
+{% extends 'base/base-admin.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+
+
+<div class="card" style="height:90vh">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}"
+                        style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                        <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:systemsettings'%}" style="text-decoration:none;color:#474b4d">System Settings</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">User and Roles</a>
+                </li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fa-solid fa-user-gear"
+                            style="margin-right: 10px;color:#474b4d"></span>Manage Users</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Users..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="offcanvas"
+                        data-bs-target="#create_user_template" aria-expanded="false" style="height:35px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+            <p style="font-size:13px">Manages Users, Groups, Roles and Permission</p>
+        </div>
+
+        <div class="row" style="margin-top:20px;">
+            <div class="col-12">
+                <div class="btn-group">
+                    <button type="button"
+                        class="btn btn-outline-secondary"
+                        style="font-size:12px;height:min-content">Select an action:</button>
+                    <button type="button"
+                        class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                        data-bs-toggle="dropdown"
+                        aria-expanded="false"
+                        style="font-size:12px;height:min-content">
+                        <span class="visually-hidden">Toggle
+                            Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu"
+                        id="selected_user_type"
+                        name="selected_user_type"
+                        style="font-size:12px;">
+                        <li><a class="dropdown-item" href="#"
+                                name="system_account"><i class="fa-solid fa-user-xmark" style="width:20px;"></i> Delete User</a></li>
+                        <li><a class="dropdown-item" href="#"
+                                name="integration_account"><i class="fa-solid fa-user-tag" style="width:20px;"></i> Mark as Inactive</a></li>
+                        <li><a class="dropdown-item" href="#"
+                                    name="integration_account"><i class="fa-solid fa-recycle" style="width:20px;"></i> Reset Password</a></li>
+                        <li><a class="dropdown-item" href="#"
+                                        name="integration_account"><i class="fa-solid fa-door-open" style="width:20px;"></i> Resend a Welcome Email</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="card" style="margin-top:20px;">
+            <div class="card-body">
+                <!-- THIS IS THE TABLE FOR DEFICIENT APPLICATIONS -->
+                <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+                    style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                    <thead style="padding-top:12px;text-align:center">
+                        <tr
+                            style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                            <th style="text-align:left;">
+                                <input type="checkbox" id="select-all-checkbox">
+                            <th style="text-align:left;">Username</th>
+                            <th style="text-align:left;">Email Address</th>
+                            <th style="text-align:left;">First Name</th>
+                            <th style="text-align:left;">Last Name</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;">Last Login</th>
+                            <th style="text-align:left;"></th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size:13px">
+                        {% for user in users %}
+                        <tr style="vertical-align: middle;">
+                            <td>
+                                <input type="checkbox" id="user_checkbox"
+                                    name="user_checkbox" value="{{ user.id }}">
+                            </td>
+                            <td style="width:15%">{{ user.username }}</td>
+                            <td style="width:20%">{{ user.email }}</td>
+                            <td style="width:15%">{{ user.first_name }}</td>
+                            <td style="width:15%">{{ user.last_name }}</td>
+                            <td style="width:15%">{% if user.is_active %}Active{% else %}Inactive{% endif %}</td>
+                            <td style="width:15%">{{ user.last_login|default:"Never" }}</td>
+                            <td class="text-end">
+                                <a href="{% url 'appAUDITAI:manage-user-roles-details' user.id %}" data-process-id="{{user.USER_ID}}" class="btn btn-outline-secondary btn-sm"
+                                    data-toggle="tooltip" data-placement="top" title="View Record">
+                                    <i class="fa-solid fa-arrows-to-dot"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- APPLICATION UPLOAD USERS FORM -->
+<form id="manage_user_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="manage_user_form">
+    {% csrf_token %}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="create_user_template" aria-labelledby="create_user_template"
+        style="margin-top:40px;">
+        <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
+            <h6 class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-user-plus"
+                    style="margin-right:5px;"></i>Create User</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="card" style="overflow-y:scroll;max-height:800px;">
+                <div class="card-body">
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width:110px;"
+                                class="col-form-label">Username:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="user_name" name="user_name" type="text"
+                                style="font-size:12px;width:150px;" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width:110px;"
+                                class="col-form-label">Email
+                                Adress:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="email_address" name="email_address" type="text"
+                                style="font-size:12px;width:150px;" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width:110px;"
+                                class="col-form-label">First
+                                Name:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="first_name" name="first_name" type="text"
+                                style="font-size:12px;width:150px;" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:3px;margin-bottom:20px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width:110px;"
+                                class="col-form-label">Last
+                                Name:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="last_name" name="last_name" type="text"
+                                style="font-size:12px;width:150px;" autocomplete="off" required>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 300px;" class="col-form-label">Which company this user can access?*</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="hidden" name="company_selected_values" id="control_selected_values">
+                            <select name="company_list" id="company_list" style="font-size:12px;" class="selectpicker" multiple data-live-search="true" required>
+                                {% for company in companies %}
+                                <option value="{{ company.id }}">{{company.COMPANY_NAME}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center" style="margin-top:3px; margin-bottom:20px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 300px;" class="col-form-label">Role assignment:*</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="hidden" name="group_selected_values" id="control_selected_values">
+                            <select name="role_list" id="role_list" style="font-size:12px;" class="selectpicker" multiple data-live-search="true" required>
+                                {% for group in groups %}
+                                <option value="{{ group.id }}">{{group.name}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+            <!-- THIS IS THE BUTTON TO UPLOAD THE ATTACH USER LIST -->
+            <div class="modal-footer" style="margin-top:20px;">
+                <button type="submit" class="btn btn-secondary btn-sm" style="font-size:13px;width:100px;">
+                    Submit</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+
+<script src="{% static 'js/select.js' %}"></script>
+<script>
+    new MultiSelectTag('role_list', {
+     rounded: true,    
+     shadow: true,     
+     placeholder: 'Select Role',  
+ })
+ </script>
+
+<script>
+    new MultiSelectTag('company_list', {
+     rounded: true,    
+     shadow: true,     
+     placeholder: 'Select Company',  
+ })
+ </script>
+
+
+{% endblock content %}

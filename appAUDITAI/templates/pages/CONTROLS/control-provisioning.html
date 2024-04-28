@@ -1,0 +1,59 @@
+{% extends 'pages/CONTROLS/control_base.html' %}
+{% load static %}
+
+{% block additional_content %}
+
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+<div class="card">
+    <div class="card-body" box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);>
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a href="#" id="passwordHelpLink" style="font-size:16px;text-decoration: none;color:#474b4d">
+                        Access Creation Requirements <span class="fa-regular fa-circle-question"
+                            style="margin-left: 8px;color:lightblue" data-bs-toggle="popover"
+                            data-bs-container="body" 
+                            data-bs-content="Determine the necessary approvers for access to the system/application. Typically, this includes the direct supervisor or manager of the user, as well as the system owner of the application."
+                            data-bs-placement="bottom"></span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 150px;" class="col-form-label">Required
+                            Approvers:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input type="hidden" name="control_selected_values" id="control_selected_values">
+                        <select name="control_list" id="control_list" style="font-size:12px;" class="selectpicker" multiple data-live-search="true" required>
+                            <option value="1">Direct Supervisor/Manager</option>
+                            <option value="2">System Owner</option>
+                          </select>
+                    </div>
+                </div>
+                <div class="text-end" style="margin-top:20px;">
+                    <button type="submit" class="btn btn-primary" style="font-size:13px;width: 100px;">Save</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script src="{% static 'js/select.js' %}"></script>
+<script>
+    new MultiSelectTag('control_list', {
+     rounded: true,    
+     shadow: true,     
+     placeholder: 'Select Approver',  
+     onChange: function(values) {
+         console.log(values)
+     }
+ })
+ </script>
+
+{% endblock additional_content %}

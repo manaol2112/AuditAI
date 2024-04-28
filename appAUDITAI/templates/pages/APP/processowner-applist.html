@@ -1,0 +1,242 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<div class="card" style="height:90vh">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+              <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:applist-company-select' %}" style="text-decoration:none;color:#474b4d" >{{company_name.COMPANY_NAME}}</a></li>
+              <li class="breadcrumb-item active" style="text-decoration: underline;" aria-current="page">Applications</li>
+            </ol>
+        </nav>
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-top:30px;margin-bottom:15px;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fa-solid fa-chart-simple"
+                            style="margin-right: 10px;color:#474b4d"></span>Applications</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Application..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                        data-bs-target="#newAppModal" aria-expanded="false" style="height:35px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+
+                </form>
+            </div>
+        </nav>
+
+        <p style="font-size:13px">Manage users, initiate access review, and generate user reports. </p>
+
+        <div class="card" style="margin-top:30px;">
+            <div class="card-body">
+                <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;">
+                    {% for app_item in app %}
+                    <a href="{% url 'appAUDITAI:appdetails-process-owner' comp_id app_item.id %}"
+                        style="text-decoration: none; color:#474b4d">
+                        <div class="card app-card" data-appname="{{ app_item.APP_NAME }}"
+                            data-apptype="{{ app_item.APP_TYPE }}"
+                            style=" border-radius: 25px;cursor:pointer;height: 150px; width:160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='#fff';">
+
+                            {% if app_item.APP_TYPE == 'Application' %}
+                            <span class="fab fa-app-store-ios" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% elif app_item.APP_TYPE == 'Network' %}
+                            <span class="fab fa-hive" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% elif app_item.APP_TYPE == 'Database' %}
+                            <span class="fas fa-database" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% elif app_item.APP_TYPE == 'Operating System' %}
+                            <span class="fab fa-centos" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% elif app_item.APP_TYPE == 'Server' %}
+                            <span class="fas fa-server" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% endif %}
+
+                            <p style="font-size: 16px; margin-top: 10px;color:#474b4d">{{ app_item.APP_NAME }}</p>
+                            <p style="font-size: 10px;margin-top:-10px" style="color:lightgray">({{ app_item.APP_TYPE}})
+                                </p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="modal fade" id="newAppModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="staticBackdropLabel"> <a style="font-size:16px;"><span
+                                    style="margin-right: 10px;"></span>
+                                <i class="fas fa-sliders-h" style="margin-right:10px;"></i>New Application Setup</a>
+                        </h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div class="card-body">
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 110px;"
+                                                    class="col-form-label">Application
+                                                    Name:</label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <input class="form-control sm" id="app_name" name="app_name" type="text"
+                                                    style="font-size:12px;width:300px;" autocomplete="off" required>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 110px;"
+                                                    class="col-form-label">Application Type
+                                                    :</label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <select class="form-control sm" id="app_type" name="app_type"
+                                                    style="font-size:12px;width:300px;" required>
+                                                    <option value="" disabled selected></option>
+                                                    <option value="Application">Application</option>
+                                                    <option value="Network">Network</option>
+                                                    <option value="Database">Database</option>
+                                                    <option value="Operating System">Operating System</option>
+                                                    <option value="Server">Server</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 110px;"
+                                                    class="col-form-label">Hosting:
+                                                </label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <select class="form-control sm" id="hosting" name="hosting"
+                                                    style="font-size:12px;width:300px;" required>
+                                                    <option value="" disabled selected></option>
+                                                    <option value="On-prem">On-prem</option>
+                                                    <option value="Hosted">Hosted</option>
+                                                    <option value="Others">Others</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 110px;" class="col-form-label">Risk
+                                                    Rating:
+                                                </label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <select class="form-control sm" id="risk_rating" name="risk_rating"
+                                                    style="font-size:12px;width:300px;" required>
+                                                    <option value="" disabled selected></option>
+                                                    <option value="Low">Low</option>
+                                                    <option value="Medium">Medium</option>
+                                                    <option value="High">High</option>
+                                                    <option value="Not Rated">Not Rated</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 110px;"
+                                                    class="col-form-label">Relevant
+                                                    Process:</label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <input class="form-control sm" id="relevant_process"
+                                                    name="relevant_process" type="text"
+                                                    placeholder="e.g., Financial Reporting, Payroll, HR"
+                                                    style="font-size:12px;width:300px;" autocomplete="false">
+                                            </div>
+                                        </div>
+                                        
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 110px;" class="col-form-label">Year
+                                                    Implemented:
+                                                </label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <input class="form-control sm" id="date_implemented"
+                                                    name="date_implemented" type="text"
+                                                    style="font-size:12px;width:300px;">
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 110px;"
+                                                    class="col-form-label">Application Owner:
+                                                </label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <input type="hidden" list="app_owner_list" name ="app_list_app_owner1" id="app_list_app_owner1">
+                                                <input class="form-control sm" list="app_owner_list" id="app_list_app_owners"
+                                                    placeholder="" style="font-size:12px;width:300px;">
+                                                <datalist id="app_owner_list">
+                                                    {% for user in app_owners %}
+                                                    <option value="{{ user.first_name }} {{ user.last_name }} ({{ user.email}})" data-user-id="{{user.id}}"></option>
+                                                    {% endfor %}
+                                                </datalist>
+                                            </div>
+                                        </div>
+
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 110px;" class="col-form-label">Auth Type:
+                                                </label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <select class="form-control sm" id="auth_type" name="auth_type"
+                                                    style="font-size:12px;width:300px;" required>
+                                                    <option value="" disabled selected></option>
+                                                    <option value="Low">Single-Sign-On (SSO)</option>
+                                                    <option value="Medium">Local/Direct Authentication</option>
+                                                    <option value="High">Both</option>
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        
+
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="modal-footer" style="margin-top:20px;">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                                    style="font-size:13px">Cancel</button>
+                                <button type="submit" class="btn btn-primary" style="font-size:13px">Create</button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+    </form>
+
+
+    {% endblock content %}

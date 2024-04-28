@@ -1,0 +1,188 @@
+{% extends 'pages/HR/hr-data-management.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+<div class="card">
+    <div class="card-body">
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:20px;"><span class="fa-solid fa-network-wired"
+                            style="margin-right: 10px;"></span>User Administration</a>
+                </div>
+                <div class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search User..." autocomplete="off" aria-label="Search" style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-primary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal"
+                        data-bs-target="#companysetup" aria-expanded="false" style="height:35px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <div class="card">
+            <div class=card-body>
+                       <table id="employeelist" name="employeelist" class="table table-hover table-sm nowrap"
+            style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:10px;">
+            <thead style="padding-top:12px;text-align:center">
+                <tr
+                    style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                    <th style="text-align:left;">Username</th>
+                    <th style="text-align:left;">Name</th>
+                    <th style="text-align:left;">Email Address</th>
+                    <th style="text-align:left;">Role</th>
+                    <th style="text-align:left;">Status</th>
+                    <th style="text-align:left;"></th>
+                </tr>
+            </thead>
+            <tbody style="font-size:13px">
+                {% for users in userslist %}
+                <tr style="vertical-align: middle;">
+                    <td>{{ users.username }}</td>
+                    <td>{{ users.first_name }} {{ users.last_name }}</td>
+                    <td><i class="far fa-envelope" style="margin-right:5px;color:lightblue"></i>
+                        {{users.email }}</td>
+                    {% if users.is_active %}
+                    <td><span class="badge bg-success rounded-pill text-bg-success" style="font-size:10px;">
+                        Active</span></td>
+                    {% else %}
+                    <td><span class="badge bg-danger rounded-pill text-bg-danger" style="font-size:10px;">
+                        Inactive</span></td>
+                    {% endif %}
+                    <td>
+                        <a href="" data-process-id="{{employees.USER_ID}}" class="btn btn-outline-secondary btn-sm"
+                            data-toggle="tooltip" data-placement="top" title="View Record">
+                            <i class="fas fa-user-edit"></i>
+                        </a>
+                    </td>
+                    {% endfor %}
+            </tbody>
+        </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+ <!-- Modal -->
+ <form action="" method = "post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade" id="companysetup" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title fs-5" id="createuser"><a style="font-size:16px;"><span
+                style="margin-right: 10px;"></span>
+                <i class="fa-solid fa-user-shield" style="margin-right:10px;"></i>New User Setup</a></h1>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-auto">
+                                            <label style="font-size:13px;width:100px;" class="col-form-label">Username:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="username" name="username" type="text" style="font-size:13px; width:250px;" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:13px;width:100px;" class="col-form-label">First Name:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="first_name" name="first_name" type="text" style="font-size:13px;width:250px;" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:13px;width:100px;" class="col-form-label">Last Name:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="last_name" name="last_name" type="text" style="font-size:13px;width:250px;" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:13px;width:100px;" class="col-form-label">Email Address:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="email_address" name="email_address" type="text" style="font-size:13px;width:250px;" autocomplete="off" required>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Roles
+                                                :</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input type="hidden" name="control_selected_values" id="control_selected_values">
+                                            <select name="role_select" id="role_select" style="font-size:12px;" class="selectpicker" multiple data-live-search="true" required>
+                                                {% for group in groups %}
+                                                <option value="{{ group.id }}">{{ group.name }}</option>
+                                                {% endfor %}
+                                              </select>
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Company
+                                                :</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input type="hidden" name="control_selected_values" id="control_selected_values">
+                                            <select name="company_selected" id="company_selected" style="font-size:12px;" class="selectpicker" multiple data-live-search="true" required>
+                                                {% for company in companies %}
+                                                <option value="{{ company.id }}">{{ company.COMPANY_NAME }}</option>
+                                                {% endfor %}
+                                              </select>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" style="font-size:13px">Cancel</button>
+              <button type="submit" class="btn btn-primary" style="font-size:13px">Create</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    <script src="{% static 'js/select.js' %}"></script>
+    <script>
+        new MultiSelectTag('role_select', {
+         rounded: true,    
+         shadow: true,     
+         placeholder: 'Select Roles',  
+         width: '200px', // Set your desired width here
+         onChange: function(values) {
+             console.log(values)
+         }
+     })
+     </script>
+
+    <script>
+        new MultiSelectTag('company_selected', {
+        rounded: true,    
+        shadow: true,     
+        placeholder: 'Select Company',  
+        width: '200px', // Set your desired width here
+        onChange: function(values) {
+            console.log(values)
+        }
+    })
+    </script>
+
+{% endblock content %}

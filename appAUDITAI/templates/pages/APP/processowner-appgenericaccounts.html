@@ -1,0 +1,80 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+
+<div class="card">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+              <li class="breadcrumb-item"><a href="" style="text-decoration:none;color:#474b4d" >...</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:appdetails-process-owner' comp_id app_id %}" style="text-decoration:none;color:#474b4d" >{{selected_app.APP_NAME}}</a></li>
+              <li class="breadcrumb-item active" style="text-decoration: underline;" aria-current="page">Generic Accounts</li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-top:30px;">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-12">
+                        <h6 style="color:#474b4d"><a href="" class="navbar-brand" style="color:white"> <span
+                                    class="fas fa-solid fa-regular fa-user"
+                                    style="color:#3B71CA;font-size:20px;margin-top:5px;"></span>
+                            </a>System/Integration Accounts</h6>
+                    </div>
+                </div>
+                <div class="d-flex" role="search">
+                    <input id="app_user_generic_user_search" name="app_user_generic_user_search" class="form-control me-2" type="search"
+                        placeholder="Search" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="offcanvas"
+                        data-bs-target="#generic_accounts_offcanvas" aria-expanded="false" style="height:35px;">
+                        <i class="fa-solid fa-gear"></i>
+                    </button>
+                </div>
+            </div>
+        </nav>
+
+        <table id="app_user_generic_table" name="app_user_generic_table" class="table table-hover table-sm nowrap"
+        style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+        <thead style="padding-top:12px;text-align:center">
+            <tr
+                style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                <th style="text-align:left;">User ID</th>
+                <th style="text-align:left;">Email Address</th>
+                <th style="text-align:left;">Status</th>
+                <th style="text-align:left;">Role</th>
+                <th style="text-align:left;">TYPE</th>
+            </tr>
+        </thead>
+
+        <tbody style="font-size:13px">
+            {% for user in generic_accounts %}
+            <tr style="vertical-align: middle;">
+                <td style="width:15%;"><i class="far fa-user" style="margin-right:5px;color:lightblue"></i>{{ user.USER_ID }}</td>
+                <td style="width:20%;"><i class="far fa-envelope" style="margin-right:5px;color:lightblue"></i>
+                    {{user.EMAIL_ADDRESS }}</td>
+                {% if user.STATUS|lower == 'active' %}
+                <td style="width:15%"><span class="badge bg-success rounded-pill text-bg-success" style="font-size:10px;">
+                        ACTIVE</span></td>
+                <td style="width:20%;">{{ user.ROLE_NAME }}</td>
+                <td style="width:20%;">{{ user.TYPE }}</td>
+                {% else %}
+                <td style="width:15%;"><span class="badge bg-light rounded-pill text-bg-light" style="font-size:10px;">
+                        {{user.STATUS }}</span></td>
+                <td style="width:20%;">{{ user.ROLE_NAME }}</td>
+                <td style="width:20%;">{{ user.TYPE }}</td>
+                {% endif %}
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    </div>
+</div>
+
+{% endblock content %}

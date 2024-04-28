@@ -1,0 +1,1027 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/dragndrop.css' %}" />
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+
+<script src="{% static 'js/tables.js' %}"></script>
+
+<!-- THIS SECTION IS FOR THE APPLICATION LABEL AND SEARCH BAR -->
+<div class="card">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:applist-company-select' %}" style="text-decoration:none;color:#474b4d" >{{company_name.COMPANY_NAME}}</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:applist-process-owner' comp_id %}" style="text-decoration:none;color:#474b4d" >Applications</a></li>
+              <li class="breadcrumb-item active" style="text-decoration: underline;" aria-current="page">{{selected_app.APP_NAME}}</li>
+            </ol>
+        </nav>
+        <div style="margin-top:20px;">
+        {% if selected_app.APP_TYPE == 'Application' %}
+        <span class="fab fa-app-store-ios" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+        <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+        {% elif selected_app.APP_TYPE == 'Network' %}
+        <span class="fab fa-hive" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+        <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+        {% elif selected_app.APP_TYPE == 'Database' %}
+        <span class="fas fa-database" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+        <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+        {% elif selected_app.APP_TYPE == 'Operating System' %}
+        <span class="fab fa-centos" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+        <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+        {% elif selected_app.APP_TYPE == 'Server' %}
+        <span class="fas fa-server" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+        <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+        {% endif %}
+        </div>
+        <nav id="dashboardnav" style="margin-top:10px;">
+            <div class="nav nav-tabs" id="nav-tab-dashboard" role="tablist">
+                <a class="nav-link active" id="nav-users-tab" data-bs-toggle="tab" href="#nav-users" role="tab"
+                    aria-controls="nav-users" aria-selected="true"><span class="fa fa-user"
+                        style="margin-right:5px;"></span> Users</a>
+                <a class="nav-link" id="nav-audits-tab" data-bs-toggle="tab" href="#nav-audits" role="tab"
+                    aria-controls="nav-audits" aria-selected="false"><span class="fas fa-bookmark"
+                        style="margin-right:5px;"></span> Policies</a>
+                <a class="nav-link" id="nav-workpapers-tab" data-bs-toggle="tab" href="#nav-workpapers" role="tab"
+                    aria-controls="nav-workpapers" aria-selected="false"><span class="fa-solid fa-address-card"
+                        style="margin-right:5px;"></span>Access Review</a>
+                <a class="nav-link" id="nav-issues-tab" data-bs-toggle="tab" href="#nav-issues" role="tab"
+                    aria-controls="nav-issues" aria-selected="false"><span class="fas fa-cog"
+                        style="margin-right:5px;"></span>Manage</a>
+                <a class="nav-link" id="nav-requests-tab" data-bs-toggle="tab" href="#nav-requests" role="tab"
+                    aria-controls="nav-requests" aria-selected="false"><span
+                        class="fa fa-tasks fa-fw me-1"></span>Requests</a>
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent">
+            <!-- APPLICATION USER TAB -->
+            <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
+                <div class="card">
+                    <div class=card-body>
+                        <nav class="navbar bg-body-tertiary" data-bs-theme="light">
+                            <div class="container-fluid">
+                                <div class="row">
+                                    <div class="col-12">
+                                        <h6><a href="" class="navbar-brand" style="color:white"> <span
+                                                    class="fas fa-solid fa-regular fa-user"
+                                                    style="color:#3B71CA;font-size:20px;margin-top:5px;"></span>
+                                            </a>All Users</h6>
+                                    </div>
+                                </div>
+                                <form class="d-flex" role="search">
+                                    <input id="app_user_search_record" name="app_user_search_record" class="form-control me-2" type="search"
+                                        placeholder="Search {{ selected_app.APP_NAME }}" aria-label="Search"
+                                        style="height:35px;font-size:13px;">
+                                        <div class="btn-group" role="group" style="position: relative; margin-right: 10px;">
+                                            <button type="button" class="btn btn-outline-secondary dropdown-toggle"
+                                                    data-bs-toggle="dropdown" aria-expanded="false" style="height: 35px;">
+                                                <i class="fas fa-sort-amount-down"></i>
+                                            </button>
+                                            <ul class="dropdown-menu" style="position: absolute; left: -100px; top: 100%; font-size: 12px;">
+                                                <li>
+                                                    <a href="{% url 'appAUDITAI:appdetails-new-user-list' comp_id selected_app.id %}" class="dropdown-item">
+                                                        <i class="fa-solid fa-user-plus" style="margin-right: 10px;width:15px;"></i>New Role Assignments
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'appAUDITAI:appdetails-termination-list' comp_id  selected_app.id %}" class="dropdown-item" id="sortByName">
+                                                        <i class="fa-solid fa-user-xmark" style="margin-right: 10px;width:15px;"></i>Terminated Users
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'appAUDITAI:appdetails-admin-list' comp_id  selected_app.id %}" class="dropdown-item" id="sortByName">
+                                                        <i class="fa-solid fa-user-tie" style="margin-right: 10px;width:15px;"></i>Administrative Accounts
+                                                    </a>
+                                                </li>
+                                                <li>
+                                                    <a href="{% url 'appAUDITAI:appdetails-generic-list' comp_id  selected_app.id %}" class="dropdown-item" id="sortByName">
+                                                        <i class="fa-brands fa-centos" style="margin-right: 10px;width:15px;"></i>Generic/System Accounts
+                                                    </a>
+                                                </li>
+                                                <li><a class="dropdown-item" href="{% url 'appAUDITAI:appdetails-hr-mapping-list' comp_id  selected_app.id %}"><i class="fa-solid fa-link"
+                                                                                                        style="margin-right: 10px;width:15px;"></i>HR Mapping</a></li>
+                                                <div class="dropdown-divider"></div>
+                                                <li><a class="dropdown-item" href="#"><i class="fas fa-file-csv"
+                                                                                        style="margin-right: 10px;width:15px;"></i>Download</a></li>
+                                            </ul>
+                                        </div>
+                                        
+                                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="offcanvas"
+                                        data-bs-target="#UserUploadCanvas" aria-expanded="false" style="height:35px;">
+                                        <i class="fas fa-plus"></i>
+                                    </button>
+                                </form>
+                               </div>
+                        </nav>
+                                <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+                                    style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                                    <thead style="padding-top:12px;text-align:center">
+                                        <tr
+                                            style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                            <th style="text-align:left;">User ID</th>
+                                            <th style="text-align:left;">Email Address</th>
+                                            <th style="text-align:left;">Status</th>
+                                            <th style="text-align:left;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size:13px">
+                                        {% for user in app_users %}
+                                        <tr style="vertical-align: middle;">
+                                            <td><i class="far fa-user" style="margin-right:5px;color:lightblue"></i>{{ user.USER_ID }}</td>
+                                            <td><i class="far fa-envelope" style="margin-right:5px;color:lightblue"></i>
+                                                {{user.EMAIL_ADDRESS }}</td>
+                                            {% if user.STATUS|lower == 'active' %}
+                                            <td><span class="badge bg-success rounded-pill text-bg-success"
+                                                    style="font-size:10px;">
+                                                    {{user.STATUS }}</span></td>
+                                            {% else %}
+                                            <td><span class="badge bg-secondary rounded-pill text-bg-secondary"
+                                                    style="font-size:10px;">
+                                                    {{user.STATUS }}</span></td>
+                                            {% endif %}
+                                            <td class="text-end">
+                                                <a href="{% url 'appAUDITAI:appdetails-view-user-record' comp_id selected_app.id user.USER_ID %}" data-process-id="{{user.USER_ID}}"
+                                                    class="btn btn-outline-secondary btn-sm" data-toggle="tooltip"
+                                                    data-placement="top" title="View Record">
+                                                    <i class="fa-solid fa-arrows-to-dot"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                    </div>
+                </div>
+            </div>
+            <!-- Policies -->
+            <div class="tab-pane fade" id="nav-audits" role="tabpanel" aria-labelledby="nav-audits-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="container-fluid" style="margin-bottom:20px;">
+                            <div class="row" style="margin-top:10px;">
+                                <div class="text-align">
+                                    <button type="button" class="btn btn-light carousel"
+                                        data-bs-target="#controlcarousel" data-bs-slide-to="0"
+                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                        <i class="fa-solid fa-key" style="margin-right:5px;"></i>Password Settings
+                                    </button>
+                                    <button type="button" class="btn btn-light carousel"
+                                        data-bs-target="#controlcarousel" data-bs-slide-to="1"
+                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                        <i class="fa-solid fa-map" style="margin-right:5px;"></i>Provisioning
+                                    </button>
+                                    <button type="button" class="btn btn-light carousel"
+                                        data-bs-target="#controlcarousel" data-bs-slide-to="2"
+                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                        <i class="fa-solid fa-map" style="margin-right:5px;"></i>Termination
+                                    </button>
+                                    <button type="button" class="btn btn-light carousel"
+                                        data-bs-target="#controlcarousel" data-bs-slide-to="3"
+                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                        <i class="fa-solid fa-map" style="margin-right:5px;"></i>UAR
+                                    </button>
+                                </div>
+                            </div>
+                            <form method="post" action="" enctype="multipart/form-data">
+                                <input type="hidden" name="form_id" value="pw_attachment_upload_form">
+                                {% csrf_token %}
+                                <div id="controlcarousel" class="carousel slide carousel-fade" data-bs-interval="false">
+                                    <div class="carousel-inner">
+                                        <!--Password Settings-->
+                                        <div class="carousel-item active">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    {% if password_exist %}
+
+                                                    {% else %}
+                                                    <div class="alert alert-info" role="alert" style="height:50px;">
+                                                        <p style="font-size:13px">No password settings has been setup to
+                                                            this application yet. You may upload or add the information
+                                                            manually in the section below.</p>
+                                                    </div>
+                                                    {% endif %}
+
+                                                    <div class="card-body">
+                                                        <div class="row">
+                                                            <div class="col-5">
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:3px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:180px;"
+                                                                            class="col-form-label">Password
+                                                                            Length:</label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <input class="form-control sm"
+                                                                            name="pass_length" id="pass_length"
+                                                                            value="{{ password_exist.0.LENGTH}}"
+                                                                            type="text" style="font-size:13px;"
+                                                                            autocomplete="off"
+                                                                            oninput="validateInput(this)" required>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:1px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:180px;"
+                                                                            class="col-form-label">Password
+                                                                            Complexity:</label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <div class="form-check form-switch">
+                                                                            <input class="form-check-input"
+                                                                                type="checkbox" role="switch"
+                                                                                id="pass_complexity"
+                                                                                name="pass_complexity"
+                                                                                style="margin-right: 140px;"
+                                                                                autocomplete="off"
+                                                                                {% if password_exist.0.COMPLEXITY_ENABLED %}checked="checked" {% endif %}>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:1px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:180px;"
+                                                                            class="col-form-label"></label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <div class="text-align">
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input"
+                                                                                       type="checkbox"
+                                                                                       id="upper_case"
+                                                                                       name="upper_case"
+                                                                                       {% if password_exist.0.UPPER %}checked="checked" {% endif %}>
+                                                                                <label class="form-check-label" for="upper_case" style="font-size:12px;">
+                                                                                    Upper Case
+                                                                                </label>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                   type="checkbox"
+                                                                                   id="lower_case"
+                                                                                   name="lower_case"
+                                                                                   {% if password_exist.0.LOWER %}checked="checked" {% endif %}>
+                                                                            <label class="form-check-label" for="lower_case" style="font-size:12px;">
+                                                                                Lower Case
+                                                                            </label>
+                                                                        </div>
+                                                                        
+                                                                     
+                                                                            <div class="form-check">
+                                                                                <input class="form-check-input"
+                                                                                       type="checkbox"
+                                                                                       id="number"
+                                                                                       name="number"
+                                                                                       {% if password_exist.0.NUMBER %}checked="checked" {% endif %}>
+                                                                                <label class="form-check-label" for="number" style="font-size:12px;">
+                                                                                    Number
+                                                                                </label>
+                                                                            </div>
+                                                                 
+                                                                        <div class="form-check">
+                                                                            <input class="form-check-input"
+                                                                                   type="checkbox"
+                                                                                   id="special_character"
+                                                                                   {% if password_exist.0.SPECIAL_CHAR %}checked="checked" {% endif %}
+                                                                                   name="special_character">
+                                                                            <label class="form-check-label" for="special_character" style="font-size:12px;">
+                                                                                Special Character
+                                                                            </label>
+                                                                        </div>
+                                                                        
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:1px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:180px;"
+                                                                            class="col-form-label">Password
+                                                                            History:</label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <input class="form-control sm" id="pass_history"
+                                                                            name="pass_history" type="text"
+                                                                            oninput="validateInput(this)"
+                                                                            style="font-size:13px;" autocomplete="off"
+                                                                            required
+                                                                            value="{{password_exist.0.HISTORY}}">
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:1px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:180px;"
+                                                                            class="col-form-label">Password Age:</label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <input class="form-control sm" id="pass_age"
+                                                                            name="pass_age" type="text"
+                                                                            oninput="validateInput(this)"
+                                                                            style="font-size:13px;" autocomplete="off"
+                                                                            required value="{{password_exist.0.AGE}}">
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:1px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:180px;"
+                                                                            class="col-form-label">Account
+                                                                            Lockout:</label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <input class="form-control sm" id="pass_lockout"
+                                                                            name="pass_lockout" type="text"
+                                                                            oninput="validateInput(this)"
+                                                                            style="font-size:13px;" autocomplete="off"
+                                                                            required
+                                                                            value="{{password_exist.0.LOCKOUT_ATTEMPT}}">
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:1px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:180px;"
+                                                                            class="col-form-label">Lockout
+                                                                            Duration:</label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <input class="form-control sm" id="date_hired"
+                                                                            name="pass_lockout_duration" type="text"
+                                                                            oninput="validateInput(this)"
+                                                                            style="font-size:13px;" autocomplete="off"
+                                                                            value="{{password_exist.0.LOCKOUT_DURATION}}">
+                                                                    </div>
+
+                                                                </div>
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:1px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:180px;"
+                                                                            class="col-form-label">Multi-Factor
+                                                                            Authentication:</label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <div class="form-check form-switch">
+                                                                            <input class="form-check-input"
+                                                                                   type="checkbox"
+                                                                                   role="switch"
+                                                                                   id="multifactor_enabled"
+                                                                                   name="multifactor_enabled"
+                                                                                   style="margin-right:140px;"
+                                                                                   {% if password_exist.0.MFA_ENABLED %}checked="checked" {% endif %}>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row g-3 align-items-center"
+                                                                    style="margin-top:1px;">
+                                                                    <div class="col-auto">
+                                                                        <label style="font-size:13px;width:300px;"
+                                                                            class="col-form-label"><i
+                                                                                class="fas fa-paperclip"
+                                                                                style="margin-right:3px;"></i>Attachment:</label>
+                                                                    </div>
+                                                                    <div class="col-auto">
+                                                                        <div class="file-drop-area"
+                                                                            style="border-style:dashed;border-color:lightblue;border-width:medium;width:500px;;height:120px;">
+                                                                            <div class="card-body"
+                                                                                style=" text-align: center;">
+                                                                                <i class="fa-solid fa-cloud-arrow-up"
+                                                                                    style="font-size:40px;display: block;color:lightblue"></i>
+                                                                                <a style="font-size:14px;color:grey">Drag
+                                                                                    and
+                                                                                    drop the Password Settings here
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                        <div class="row" style="padding-top:20px;">
+                                                                            <a style="font-size:12px;color:black">Or
+                                                                                browse and
+                                                                                select the password configuration
+                                                                                evidence
+                                                                                here</a>
+                                                                            <div class="card" style="border:none;">
+                                                                                <div class="card-body"
+                                                                                    style="font-size:13px;border-style:dashed;border-color:lightblue;margin-top:10px;width:100%;">
+                                                                                    {{ form.file_name }}
+                                                                                    <input type="hidden"
+                                                                                        id="uploadappname"
+                                                                                        name="uploadappname"
+                                                                                        value="{{ selected_app.APP_NAME }}"
+                                                                                        required>
+                                                                                </div>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row g-3 align-items-center"
+                                                                        style="margin-top:1px;">
+                                                                        <div class="col-auto">
+                                                                            <div id="image-preview-container"
+                                                                                style="max-width: 150px; height: 100px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin: 0; background-color: #f0f0f5; overflow: hidden; position: relative;">
+                                                                                <button type="button" class="btn-close"
+                                                                                    aria-label="Close" id="closeButton"
+                                                                                    style="position: absolute; top: 0; right: 5px; font-size: 0.75rem; line-height: 1; background-color: lightblue; border: none;"></button>
+                                                                                <a href="#"
+                                                                                    style="font-size: 12px;cursor:zoom-in"
+                                                                                    id="openModalLink"
+                                                                                    title="Click to preview">
+                                                                                    <img id="image-preview"
+                                                                                        src="{{ file_path }}"
+                                                                                        alt="Image Preview"
+                                                                                        style="height: auto; border-radius: 10px; max-width: 100%; max-height: 100%; margin: 0; padding: 10px;">
+                                                                                </a>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="row g-3 align-items-center"
+                                                                        style="margin-left:10px;">
+                                                                        <div class="d-flex flex-column"
+                                                                            style="margin-top:20px;">
+                                                                            <div class="mt-auto ms-auto">
+                                                                                <button type="submit"
+                                                                                    class="btn btn-secondary btn-sm"
+                                                                                    style="width:100px;">Save</button>
+                                                                            </div>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    test two
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    test three
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="carousel-item">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    test four
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-workpapers" role="tabpanel" aria-labelledby="nav-workpapers-tab">My
+                Workpapers
+            </div>
+            <!-- THIS SECTION IS FOR USER MANAGEMENT -->
+            <div class="tab-pane fade" id="nav-issues" role="tabpanel" aria-labelledby="nav-issues-tab">
+                <div class="card">
+                    <div class="card-body">
+                        <!--CAROUSEL BUTTONS-->
+                        <div class="container-fluid">
+                            <div class="row" style="margin-top:10px;">
+                                <div class="text-align">
+                                    <button type="button" class="btn btn-light carousel"
+                                        data-bs-target="#controlcarousel" data-bs-slide-to="0"
+                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                        <i class="fa-solid fa-cloud-arrow-up" style="margin-right:5px;"></i>Upload Users
+                                    </button>
+                                    <button type="button" class="btn btn-light carousel"
+                                        data-bs-target="#controlcarousel" data-bs-slide-to="1"
+                                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                                        <i class="fa-solid fa-map" style="margin-right:5px;"></i>HR Mapping
+                                    </button>
+                                </div>
+                            </div>
+                            <!--USER UPLOAD TEMPLATE-->
+                            <div id="controlcarousel" class="carousel slide" data-bs-interval="false">
+                                <div class="carousel-inner">
+                                    <!--First Tab Content-->
+                                    <div class="carousel-item active">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <form method="post" method="post" enctype="multipart/form-data"
+                                                    autocomplete="off" style="margin-top:20px;">
+                                                    <input class="hidden" name="form_id" value="pw_attachment_upload_form">
+                                                    {%csrf_token %}
+                                                    <div class="row">
+                                                        <div class="col-12">
+                                                            <div class="card-body">
+                                                                <!-- THIS IS THE DRAG AND DROP SECTION -->
+                                                                <div class="file-drop-area"
+                                                                    style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:120px;">
+                                                                    <div class="card-body" style=" text-align: center;">
+                                                                        <i class="fa-solid fa-cloud-arrow-up"
+                                                                            style="font-size:50px;display: block;color:lightblue"></i>
+                                                                        <a style="font-size:16px;color:grey">Drag and
+                                                                            drop the User Upload Template
+                                                                            here</a>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- THIS IS THE MANUAL UPLOAD SECTION -->
+                                                                <div class="row" style="padding-top:20px; ">
+                                                                    <a style="font-size:15px;color:#000000">Or browse
+                                                                        and
+                                                                        select the template here</a>
+                                                                    <div class="card" style="border:none">
+                                                                        <div class="card-body"
+                                                                            style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
+                                                                            {{ form.file_name }}
+                                                                            <input type="hidden" id="uploadappname"
+                                                                                name="uploadappname"
+                                                                                value="{{ selected_app.APP_NAME }}">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <!-- THIS IS THE BUTTON TO UPLOAD THE ATTACH USER LIST -->
+                                                                <div class="modal-footer" style="margin-top:20px;">
+                                                                    <button type="submit"
+                                                                        class="btn btn-outline-primary"
+                                                                        style="font-size:13px">Continue Upload</button>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="row">
+                                                        <h7 style="color:#474b4d">Data Upload Preview:</h7>
+                                                        <div id="preview" class="preview-placeholder">Please upload a
+                                                            file to preview the data.</div>
+                                                    </div>
+
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!--HR MAPPING-->
+                                    <div class="carousel-item">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <nav id="dashboardnav" style="margin-top:20px;">
+                                                    <div class="nav nav-tabs" id="nav-tab-dashboard" role="tablist">
+                                                        <a class="nav-link active" id="mapped-users-tab"
+                                                            data-bs-toggle="tab" href="#mapped-users" role="tab"
+                                                            aria-controls="mapped-users" aria-selected="true"><span
+                                                                class="fa-solid fa-link"
+                                                                style="margin-right:5px;height:fit-content;font-size:12px;"></span>Mapped
+                                                            Users</a>
+                                                        <a class="nav-link" id="unmapped-users-tab" data-bs-toggle="tab"
+                                                            href="#unmapped-users" role="tab"
+                                                            aria-controls="unmapped-users" aria-selected="false"><span
+                                                                class="fa-solid fa-link-slash"
+                                                                style="height:fit-content;font-size:12px"></span>
+                                                            Unmapped
+                                                            Users</a>
+
+                                                    </div>
+                                                </nav>
+                                                <div class="tab-content" id="nav-tabContent">
+                                                    <div class="tab-pane fade show active" id="mapped-users"
+                                                        role="tabpanel" aria-labelledby="mapped-users-tab">
+                                                        <!--Mapped-->
+                                                        <div class="container-fluid"
+                                                            style="margin-top:20px;border: 1px solid;border-color: whitesmoke;">
+
+                                                            <!--Mapped Users-->
+
+                                                            <table id="mapped_users" name="userlist"
+                                                                class="table table-hover table-sm nowrap"
+                                                                style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                                                                <thead style="padding-top:12px;text-align:center">
+                                                                    <tr
+                                                                        style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                                                        <th style="text-align:left;">User ID</th>
+                                                                        <th style="text-align:left;">Email Address</th>
+                                                                        <th style="text-align:left;">First Name</th>
+                                                                        <th style="text-align:left;">Last Name</th>
+                                                                        <th style="text-align:left;">HR Mapping</th>
+                                                                    </tr>
+                                                                </thead>
+                                                                <tbody style="font-size:13px;">
+                                                                    {% for user in matched_app_users %}
+                                                                    <tr
+                                                                        style="vertical-align: middle;margin-bottom:10px;">
+                                                                        <td>{{ user.USER_ID }}</td>
+                                                                        <td><i class="far fa-envelope"
+                                                                                style="margin-right:5px;color:lightblue"></i>
+                                                                            {{user.EMAIL_ADDRESS }}</td>
+                                                                        <td>{{ user.FIRST_NAME }}</td>
+                                                                        <td>{{ user.LAST_NAME }}</td>
+
+                                                                        <td>
+                                                                            <a href=""
+                                                                                data-process-id="{{ user.EMAIL_ADDRESS }}"
+                                                                                class="btn btn-outline-secondary btn-sm"
+                                                                                data-toggle="tooltip"
+                                                                                data-placement="top"
+                                                                                title="View Mapping">
+                                                                                <i class="fa-solid fa-link"
+                                                                                    style="font-size:10px;"></i>
+                                                                            </a>
+                                                                        </td>
+                                                                    </tr>
+                                                                    {% endfor %}
+                                                                </tbody>
+                                                            </table>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <!--Unmapped-->
+                                                <form id="table_update_usertype" action="#" method="POST">
+                                                    {% csrf_token %}
+                                                    <div class="tab-pane fade" id="unmapped-users" role="tabpanel"
+                                                        aria-labelledby="unmapped-users-tab">
+                                                        <!--Unmapped Users-->
+                                                        <nav class="navbar bg-body-tertiary" data-bs-theme="light"
+                                                            style="margin-bottom: 15px;margin-top:15px;;">
+                                                            <div class="container-fluid">
+                                                                <div></div>
+                                                                <form id="update_user_type_form" action="" method="post"
+                                                                    class="d-flex" role="search">
+                                                                    <div class="btn-group">
+                                                                        <button type="button"
+                                                                            class="btn btn-outline-secondary"
+                                                                            style="font-size:12px;height:min-content">Mark
+                                                                            selected
+                                                                            as</button>
+                                                                        <button type="button"
+                                                                            class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                                                                            data-bs-toggle="dropdown"
+                                                                            aria-expanded="false"
+                                                                            style="font-size:12px;height:min-content">
+                                                                            <span class="visually-hidden">Toggle
+                                                                                Dropdown</span>
+                                                                        </button>
+                                                                        <ul class="dropdown-menu"
+                                                                            id="selected_user_type"
+                                                                            name="selected_user_type"
+                                                                            style="font-size:12px;">
+                                                                            <li><a class="dropdown-item" href="#"
+                                                                                    name="system_account">System
+                                                                                    Account</a></li>
+                                                                            <li><a class="dropdown-item" href="#"
+                                                                                    name="integration_account">Integration
+                                                                                    Account</a></li>
+                                                                            <li><a class="dropdown-item" href="#"
+                                                                                    name="regular_user">Regular User</a>
+                                                                            </li>
+                                                                            <li>
+                                                                                <hr class="dropdown-divider">
+                                                                            </li>
+                                                                            <li><a class="dropdown-item" href="#"
+                                                                                    name="separated_link">Separated
+                                                                                    link</a></li>
+                                                                        </ul>
+                                                                    </div>
+                                                                </form>
+                                                            </div>
+                                                        </nav>
+
+                                                        <table id="unmapped_users" name="userlist"
+                                                            class="table table-hover table-sm nowrap"
+                                                            style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                                                            <thead style="padding-top:12px;text-align:center">
+                                                                <tr
+                                                                    style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                                                    <!-- New column for checkbox -->
+                                                                    <th style="text-align:left;">
+                                                                        <input type="checkbox" id="select-all-checkbox">
+                                                                        <!-- "Select All" checkbox -->
+                                                                    </th>
+                                                                    <th style="text-align:left;">User ID</th>
+                                                                    <th style="text-align:left;">Email Address</th>
+                                                                    <th style="text-align:left;">First Name</th>
+                                                                    <th style="text-align:left;">Last Name</th>
+                                                                    <th style="text-align:left;">Action</th>
+                                                                </tr>
+                                                            </thead>
+                                                            <tbody style="font-size:13px">
+                                                                {% for user in unmatched_app_users %}
+                                                                <tr style="vertical-align: middle;">
+                                                                    <td>
+                                                                        <input type="checkbox" id="user_checkbox"
+                                                                            name="user_checkbox" value="{{ user.id }}">
+                                                                    </td>
+                                                                    <td>{{ user.USER_ID }}</td>
+                                                                    <td><i class="far fa-envelope"
+                                                                            style="margin-right:5px;color:lightblue"></i>
+                                                                        {{user.EMAIL_ADDRESS }}</td>
+                                                                    <td>{{ user.FIRST_NAME }}</td>
+                                                                    <td>{{ user.LAST_NAME }}</td>
+                                                                    <td>
+                                                                        <a href=""
+                                                                            data-process-id="{{employees.USER_ID}}"
+                                                                            class="btn btn-outline-secondary btn-sm"
+                                                                            data-toggle="tooltip" data-placement="top"
+                                                                            title="See actions">
+                                                                            <i class="fa-solid fa-street-view"
+                                                                                style="font-size:12px;"></i>
+                                                                        </a>
+                                                                    </td>
+                                                                </tr>
+                                                                {% endfor %}
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+                                                </form>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade" id="nav-requests" role="tabpanel" aria-labelledby="nav-requests-tab">My
+            Requests
+        </div>
+    </div>
+
+</div>
+</div>
+
+<!--HR Mapping Modal-->
+<form action="" id="mapped_user_form" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade modal-lg" id="mapped_user_modal" data-bs-backdrop="static" data-bs-keyboard="false"
+        tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel"> <a style="font-size:16px;"><span
+                                style="margin-right: 10px;"></span><i class="fas fa-info-circle"
+                                style="margin-right:5px;font-size:16px;"></i>
+                            Employee Information</a></h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-12">
+                            <nav class="navbar bg-body-tertiary" style="background-color:#d5ecf7;">
+                                <div class="container-fluid">
+                                    <span class="navbar-brand mb-0"><i class="fas fa-user"
+                                            style="margin-right:10px;color:lightblue"></i>
+                                        <label id="first_name"></label>
+                                        <label id="last_name" style="margin-right:5px;"></label>
+                                        <label id="user_id" style="font-size:12px"></label>
+                                    </span>
+                                    <span id="badgecolor" style="font-size:10px;">
+                                        <label id="status"></label></span>
+                                </div>
+                            </nav>
+                            <div class="card" style="margin-top:10px;">
+                                <div class="card-body">
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 100px;" class="col-form-label">Email
+                                                Address:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="email_address" type="text"
+                                                style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 100px;" class="col-form-label">Job
+                                                Title:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="job_title" type="text"
+                                                style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 100px;"
+                                                class="col-form-label">Department:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="department" type="text"
+                                                style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 100px;"
+                                                class="col-form-label">Manager:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="manager" type="text"
+                                                style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 100px;" class="col-form-label">Employee
+                                                Type:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="employee_type" type="text"
+                                                style="font-size:12px;width:300px;" readonly>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                            <div class="card" style="margin-top:5px;">
+                                <div class="row">
+                                    <div class="col-6">
+                                        <div class="card-body">
+                                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                                <div class="col-auto">
+                                                    <label style="font-size:12px;" class="col-form-label">DATE
+                                                        HIRED:</label>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <input class="form-control sm" id="date_hired" type="text"
+                                                        style="font-size:12px;width:200px;" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-6">
+                                        <div class="card-body">
+                                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                                <div class="col-auto">
+                                                    <label style="font-size:12px;" class="col-form-label">TERMINATION
+                                                        DATE:</label>
+                                                </div>
+                                                <div class="col-auto">
+                                                    <input class="form-control sm" id="date_termed" type="text"
+                                                        style="font-size:12px;width:200px;" readonly>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form id="update_user_type" action="#" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade" id="update_user_type_modal" data-bs-backdrop="static" tabindex="-1"
+        aria-labelledby="update_user_type_modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="update_user_type_modal">Confirmation</h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div id="confirm_update_type_display" style="font-size:13px"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" name="confirm_usertype" id="confirm_usertype"
+                        class="btn btn-primary btn-sm">Confirm</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- PASSWORD ATTACHMENT FORM -->
+<form  method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade" id="PWConfigModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h1 class="modal-title fs-5" id="staticBackdropLabel">
+                        <a style="font-size:16px;"><span style="margin-right: 10px;"></span>Password Configuration
+                            Preview</a>
+                    </h1>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <input type="hidden" id="selected-app" value="{{selected_app.id}}">
+                    <div class="row justify-content-center">
+                        <div class="col-12 text-center">
+                            <div id="image-preview-container2"
+                                style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); background-color: #474b4d; overflow: hidden;">
+                                <img id="image-preview2" src="{{ file_path }}" alt="Image Preview"
+                                    style="max-width: 100%; height: auto; border-radius: 10px; margin: 10px;">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button id="extractPWdata" type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            style="font-size:13px">Extract Data</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"
+                            style="font-size:13px">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<div class="modal fade" id="PWScreenshotDelete" data-bs-backdrop="static" data-bs-keyboard="false"
+    style="margin-top:20px;" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h6 class="modal-title">Confirm Delete?</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p style="font-size:13px;">This will permanently delete the attached file to this application. Click
+                    Confirm Delete button below to proceed.</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button type="button" id="confirmDeletePWConfig" class="btn btn-primary btn-sm">Confirm Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- APPLICATION UPLOAD USERS FORM -->
+<form id="app_user_upload_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="app_user_upload_form">
+    {% csrf_token %}
+<div class="offcanvas offcanvas-end" tabindex="-1" id="UserUploadCanvas" aria-labelledby="UserUploadCanvas" style="margin-top:40px;">
+    <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
+        <h6 class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-upload" style="margin-right:5px;"></i>User Upload Tool</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+    </div>
+        <div class="offcanvas-body">
+            <!-- THIS IS THE DRAG AND DROP SECTION -->
+            <div class="file-drop-area" id="user_app_drag_drop"
+            style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:120px;">
+            <div class="card-body" style=" text-align: center;">
+                <i class="fa-solid fa-cloud-arrow-up"
+                    style="font-size:40px;display: block;color:lightblue"></i>
+                <a style="font-size:12px;color:grey">Drag and
+                    drop the User Upload Template
+                    here</a>
+            </div>
+        </div>
+        <!-- THIS IS THE MANUAL UPLOAD SECTION -->
+        <div class="row" style="padding-top:20px; ">
+            <a style="font-size:12px;color:#000000">Or browse
+                and
+                select the template here</a>
+            <div class="card" style="border:none">
+                <div class="card-body"
+                    style="font-size:12px;border-style:dashed;border-color:lightblue;margin-top:10px;">
+                    {{ user_upload_form.file_name }}
+                    <input type="hidden" id="selected_app"
+                        name="selected_app" value="{{selected_app.id}}">
+                </div>
+            </div>
+        </div>
+        <!-- THIS IS THE BUTTON TO UPLOAD THE ATTACH USER LIST -->
+        <div class="modal-footer" style="margin-top:20px;">
+            <button type="submit"
+                class="btn btn-secondary btn-sm"
+                style="font-size:13px;width:100px;"> Upload</button>
+        </div>
+        </div>
+</div>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script src="{% static 'js/dragndrop.js' %}"></script>
+<script src="{% static 'js/offcanvas.js' %}"></script>
+
+{% endblock content %}

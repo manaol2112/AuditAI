@@ -1,0 +1,111 @@
+{% extends 'base/base-auditor.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+
+<div class="card">
+    <div class="card-header" style="text-align:left">
+        <div class="row">
+            <a style="font-size: 16px"><span class="fa-solid fa-chart-simple"
+                    style="margin-right: 10px; color: #474b4d"></span>{{ selected_company.COMPANY_NAME }}</a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div style="font-size:12px;margin-bottom:30px;">
+            <a href="{% url 'appAUDITAI:audit-home' selected_company.id %}" style="color:#474b4d"><i
+                    class="fa-regular fa-circle-left" style="margin-right:5px;"></i>Back to Audit</a>
+        </div>
+        <div class="container-fluid">
+            <ul class="nav" style="margin-bottom: 30px">
+                <a style="font-size: 20px"><span class="fa-solid fa-user-plus" style="margin-right: 8px"></span>Access
+                    Provisioning</a>
+            </ul>
+
+            <div class="row" style="margin-top: 10px">
+                <div class="text-align">
+                    <button type="button" class="btn btn-outline-secondary carousel" data-bs-target="#controlcarousel"
+                        data-bs-slide-to="0" style="
+              --bs-btn-padding-y: 0.25rem;
+              --bs-btn-padding-x: 0.5rem;
+              --bs-btn-font-size: 0.75rem;
+            ">
+                        <i class="fa-solid fa-triangle-exclamation" style="margin-right: 5px"></i>Non-Compliant
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary carousel" data-bs-target="#controlcarousel"
+                        data-bs-slide-to="1" style="
+              --bs-btn-padding-y: 0.25rem;
+              --bs-btn-padding-x: 0.5rem;
+              --bs-btn-font-size: 0.75rem;
+            ">
+                        <i class="fa-solid fa-check-double" style="margin-right: 5px"></i>Compliant
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary carousel" data-bs-target="#controlcarousel"
+                        data-bs-slide-to="2" style="
+              --bs-btn-padding-y: 0.25rem;
+              --bs-btn-padding-x: 0.5rem;
+              --bs-btn-font-size: 0.75rem;
+            ">
+                        <i class="fa-regular fa-folder-open" style="margin-right: 5px"></i>Report
+                    </button>
+                </div>
+            </div>
+
+            <div id="controlcarousel" class="carousel slide carousel-fade" data-bs-interval="false">
+                <div class="carousel-inner">
+                    <div class="carousel-item active">
+                        <div class="card">
+                            <div class="card-body">
+                                <!-- THIS IS THE TABLE FOR DEFICIENT APPLICATIONS -->
+                                <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+                                    style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                                    <thead style="padding-top:12px;text-align:center">
+                                        <tr
+                                            style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                            <th style="text-align:left;">Application Name</th>
+                                            <th style="text-align:left;">Deficient Users</th>
+                                            <th style="text-align:left;"></th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size:13px">
+                                        {% for app in unique_deficient_app_names %}
+                                        <tr style="vertical-align: middle;">
+                                            <td style="width:50%">{{ app.app_name }}</td>
+                                            <td style="width:50%">{{ app.count }}</td>
+                                            <td class="text-end">
+                                                <a href="{% url 'appAUDITAI:audit-provisioning-details' comp_id=selected_company.id app_id=app.id %}"
+                                                    data-process-id="{{user.USER_ID}}"
+                                                    class="btn btn-outline-secondary btn-sm" data-toggle="tooltip"
+                                                    data-placement="top" title="View Record">
+                                                    <i class="fa-solid fa-arrows-to-dot"></i>
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card">
+                            <div class="card-body">
+                                2
+                            </div>
+                        </div>
+                    </div>
+                    <div class="carousel-item">
+                        <div class="card">
+                            <div class="card-body">
+                                3
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

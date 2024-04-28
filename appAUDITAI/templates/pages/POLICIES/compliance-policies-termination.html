@@ -1,0 +1,69 @@
+{% extends 'pages/POLICIES/compliance-policies.html' %}
+{% load static %}
+
+{% block additional_content %}
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+
+<div class="card" style="height:90vh">
+    <div class="card-body" box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);>
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a href="#" id="passwordHelpLink" style="font-size:16px;text-decoration: none;color:#474b4d">
+                        <i class="fa-solid fa-list-check" style="margin-right:5px;"></i>Access Termination Requirements <span class="fa-regular fa-circle-question"
+                            style="margin-left: 8px;color:lightblue" data-bs-toggle="popover"
+                            data-bs-container="body" 
+                            data-bs-content="Configure the required number of days that access must be rovoked upon leaving the organization"
+                            data-bs-placement="bottom"></span>
+                    </a>
+                </div>
+            </div>
+        </nav>
+        <form id="SetTerminationPolicy" action="" method="POST" >
+            {% csrf_token %}
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label">Enter number of days:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="terminate_days" name="terminate_days"  type="text" style="font-size:13px;" autocomplete="off" oninput="validateInput(this)" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px; width: 180px;" class="col-form-label">Policy Applies to Company
+                                :</label>
+                        </div>
+                        <div class="col-auto">
+                            <input type="hidden" name="control_selected_values" id="control_selected_values">
+                            <select name="entity_select" id="entity_select" style="font-size:12px;" class="selectpicker" multiple data-live-search="true" required>
+                                {% for company in company_names %}
+                                <option value="{{ company.id }}">{{ company.COMPANY_NAME }}</option>
+                                {% endfor %}
+                              </select>
+                        </div>
+                    </div>
+                    <div class="text-end" style="margin-top:20px;">
+                        <button type="submit" class="btn btn-primary" style="font-size:13px;width: 100px;">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form> 
+    </div>
+</div>
+
+<script src="{% static 'js/select.js' %}"></script>
+<script>
+    new MultiSelectTag('entity_select', {
+     rounded: true,    
+     shadow: true,     
+     placeholder: 'Select Company',  
+     width: '200px', 
+     onChange: function(values) {
+     }
+ })
+ </script>
+
+{% endblock additional_content %}

@@ -1,0 +1,977 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/select.css' %}">
+
+<script src="{% static 'js/main.js' %}"></script>
+
+<div class="card" style="height:90vh">
+    <div class="card-body">
+        <div class="row" style="margin-top:50px;">
+            <div class="col-12">
+                <div class="text-center">
+                    <p style="font-size:35px;color:#474b4d">Welcome to AuditAI Application Setup!</h2>
+                    <div class="card" style="margin-top:20px;">
+                        <div class="card-body">
+                            <div class="text-center" style="margin-top:30px;">
+                                <p style="font-size:18px;color:#474b4d">Let's set up few configurations and data sources
+                                    for <b>{{selected_app.APP_NAME}}. </b></p>
+                                <div class="row" style="margin-top:70px;">
+                                    <div class="col-3">
+                                        <div class="text-center">
+                                            <span class="badge rounded-circle bg-info d-inline-block text-center"
+                                                style="width: 60px; height: 60px;">
+                                                <i class="fa-solid fa-lock"
+                                                    style="font-size:30px; line-height: 60px;margin-top:-4px;"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="text-center">
+                                            <span class="badge rounded-circle bg-info d-inline-block text-center"
+                                                style="width: 60px; height: 60px;">
+                                                <i class="fa-solid fa-cloud-arrow-up"
+                                                    style="font-size:30px; line-height: 60px;margin-top:-4px;"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="text-center">
+                                            <span class="badge rounded-circle bg-info d-inline-block text-center"
+                                                style="width: 60px; height: 60px;">
+                                                <i class="fa-solid fa-book"
+                                                    style="font-size:30px; line-height: 60px;margin-top:-4px;"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="text-center">
+                                            <span class="badge rounded-circle bg-info d-inline-block text-center"
+                                                style="width: 60px; height: 60px;">
+                                                <i class="fa-solid fa-user-tie"
+                                                    style="font-size:30px; line-height: 60px;margin-top:-4px;"></i>
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top:30px;">
+                                    <div class="col-3">
+                                        <div class="text-center">
+                                            <p style="font-size:14px;">Define password requirements based on the access
+                                                security policy.</p> {% if pw_check.SETUP_COMPLETE %} <i style="font-size:25px;color:green; font-weight: bold;" class="fa-solid fa-check"></i> {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="text-center">
+                                            <p style="font-size:14px;">Setup the user access datasource for application
+                                                via SFTP server or upload manually.</p>{% if sftp_check.SETUP_COMPLETE %} <i style="font-size:25px;color:green; font-weight: bold;" class="fa-solid fa-check"></i> {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="text-center">
+                                            <p style="font-size:14px;">Setup access security requirements for
+                                                provisioning and termination based on the policy.</p>{% if prov_policy.SETUP_COMPLETE %} <i style="font-size:25px;color:green; font-weight: bold;" class="fa-solid fa-check"></i> {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="col-3">
+                                        <div class="text-center">
+                                            <p style="font-size:14px;">Identify administrative/privileged roles for
+                                                tracking and monitoring.</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row" style="margin-top:50px;margin-bottom:50px;">
+
+                                    {% if not pw_check.SETUP_COMPLETE and not sftp_check.SETUP_COMPLETE and not prov_policy.SETUP_COMPLETE %}
+                                    
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            href="#new_app_modal">Get Started</button>
+                                    </div>
+
+                                    {% elif pw_check.SETUP_COMPLETE and not sftp_check.SETUP_COMPLETE and not prov_policy.SETUP_COMPLETE  %}
+
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            href="#new_app_modal2">Continue</button>
+                                    </div>
+
+                                    {% elif pw_check.SETUP_COMPLETE and sftp_check.SETUP_COMPLETE and not prov_policy.SETUP_COMPLETE  %}
+
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            href="#new_app_modal3">Continue</button>
+                                    </div>
+
+                                    {% elif pw_check.SETUP_COMPLETE and sftp_check.SETUP_COMPLETE and prov_policy.SETUP_COMPLETE  %}
+
+                                    <div class="text-center">
+                                        <button type="button" class="btn btn-primary" data-bs-toggle="modal"
+                                            href="#new_app_modal4">View Result</button>
+                                    </div>
+
+                                    {% endif %}
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="new_app_modal" data-bs-backdrop="static" style="height:90vh;margin-top:18px;"
+    data-bs-keyboard="false" aria-hidden="true" aria-labelledby="new_app_modal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+           
+            <div class="modal-header">
+                <div class="text-center">
+                    <div class="btn-toolbar justify-content-center" role="toolbar"
+                        aria-label="Toolbar with button groups">
+                        <div class="btn-group me-2" role="group" aria-label="First group">
+                            <button type="button" style="height:27px" class="btn btn-info rounded-circle"
+                                data-toggle="tooltip"  data-bs-target="#new_app_modal" data-bs-toggle="modal"
+                                data-bs-dismiss="modal" data-bs-placement="bottom" title="Password Setup">
+                                <p style="font-size:12px;margin-top:-3px;">1</p>
+                            </button>
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Second group">
+                            <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                data-toggle="tooltip" data-bs-placement="bottom"  data-bs-target="#new_app_modal2" data-bs-toggle="modal"
+                                data-bs-dismiss="modal" title="Data Source">
+                                <p style="font-size:12px;margin-top:-3px;">2</p>
+                            </button>
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Third group">
+                            <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                data-toggle="tooltip" data-bs-placement="bottom" data-bs-target="#new_app_modal3" data-bs-toggle="modal"
+                                data-bs-dismiss="modal" title="Access Policies">
+                                <p style="font-size:12px;margin-top:-3px;">3</p>
+                            </button>
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Fourth group">
+                            <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                data-toggle="tooltip" data-bs-placement="bottom"  data-bs-placement="bottom" data-bs-target="#new_app_modal4" data-bs-toggle="modal"  title="Review">
+                                <p style="font-size:12px;margin-top:-3px;">4</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-body">
+                <form id="password_user_form" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="form_id" value="password_create_form">
+                    {% csrf_token %}
+                    <div class="text-center">
+                        <p style="font-size:20px;">Step 1: Let's start by understanding how users are authenticated in
+                            {{selected_app.APP_NAME}}.</p>
+                        <p style="font-size:16px;">Fill-out the applicable authentication requirements below.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <p style="font-size:14px;font-weight:bold;">Password Configuration:</p>
+                            <p style="font-size:13px;margin-top:20px;">How are users authenticated in
+                                {{selected_app.APP_NAME}}?</p>
+
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" {% if pw_check.AUTH_METHOD == 'sso' %} checked="checked" {% endif %}  type="radio" name="authentication_method" id="sso"
+                                    value="sso" required>
+                                <label class="form-check-label" style="font-size:12px" for="inlineRadio1">Single-Sign-On
+                                    (SSO)</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" {% if pw_check.AUTH_METHOD == 'native' %} checked="checked" {% endif %}  type="radio" name="authentication_method" id="native"
+                                    value="native" required>
+                                <label class="form-check-label" style="font-size:12px" for="inlineRadio2">Direct/Native
+                                    Login</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" {% if pw_check.AUTH_METHOD == 'bothssonative' %} checked="checked" {% endif %}  type="radio" name="authentication_method"
+                                    id="bothssonative" value="bothssonative" required>
+                                <label class="form-check-label" style="font-size:12px" for="inlineRadio2">Both SSO and
+                                    Direct/Native Login</label>
+                            </div>
+
+                            <p style="font-size:13px;margin-top:20px;">If users are authenticating directly or via
+                                native login, we need to gather the following information:</p>
+                            <div class="row g-3 align-items-center">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Minimum Length
+                                        :</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input class="form-control sm" id="length" name="length" type="text"
+                                        style="font-size:12px;width:250px;" autocomplete="off"
+                                        value="{{ pw_check.LENGTH }}">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Password Age (in
+                                        Days)
+                                        :</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input class="form-control sm" id="age" name="age" type="text"
+                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_check.AGE}}">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Max Password
+                                        Remembered/History
+                                        :</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input class="form-control sm" id="history" name="history" type="text"
+                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_check.HISTORY}}">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Max Login
+                                        Attempt/Account Lockout:
+                                        :</label>
+                                </div>
+                                <div class="col-auto">
+                                    <input class="form-control sm" id="lockout" name="lockout" type="text"
+                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_check.LOCKOUT_ATTEMPT}}">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Lockout Duration
+                                        (in
+                                        Minutes):
+                                    </label>
+                                </div>
+                                <div class="col-auto">
+                                    <input class="form-control sm" id="lockout_duration" name="lockout_duration"
+                                        type="text" style="font-size:12px;width:250px;" autocomplete="off"
+                                        value="{{ pw_check.LOCKOUT_DURATION}}">
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Require Special
+                                        Character?
+                                    </label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch"
+                                            name="req_specialchar" id="req_specialchar" {% if pw_check.SPECIAL_CHAR %}
+                                            checked="checked" {% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Require Upper
+                                        Case?
+                                    </label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" id="req_uppercase"
+                                            name="req_uppercase" {% if pw_check.UPPER %} checked="checked" {% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Require Lower
+                                        Case?
+                                    </label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch"
+                                            name="req_lowercase" id="req_lowercase" {% if pw_check.LOWER %}
+                                            checked="checked" {% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Require Numeric?
+                                    </label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" name="req_numeric"
+                                            id="req_numeric" {% if pw_check.NUMBER %} checked="checked" {% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+                                <p style="font-size:13px;margin-top:30px;"></p>
+                            </div>
+
+                            <p style="font-size:14px;font-weight:bold;margin-top:15px;">Multi-factor Authentication
+                                (MFA):</p>
+
+                            <div class="row g-3 align-items-center">
+                                <div class="col-auto">
+                                    <label style="font-size:12px; width:250px;" class="col-form-label">Is MFA Enabled?
+                                    </label>
+                                </div>
+                                <div class="col-auto">
+                                    <div class="form-check form-switch">
+                                        <input class="form-check-input" type="checkbox" role="switch" name="req_mfa"
+                                            id="req_mfa" {% if pw_check.MFA_ENABLED %} checked="checked" {% endif %}>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </div>
+
+            <div class="modal-footer" style="margin-top:30px;">
+                <button type="submit" class="btn btn-primary btn-sm">Save and Continue</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<div class="modal fade" id="new_app_modal2" aria-hidden="true" data-bs-backdrop="static"
+    style="height:90vh;margin-top:18px;" aria-labelledby="new_app_modal2" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="text-center">
+                    <div class="btn-toolbar justify-content-center" role="toolbar"
+                        aria-label="Toolbar with button groups">
+                        <div class="btn-group me-2" role="group" aria-label="First group">
+                            <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                data-toggle="tooltip"  data-bs-target="#new_app_modal" data-bs-toggle="modal"
+                                data-bs-dismiss="modal" data-bs-placement="bottom" title="Password Setup">
+                                <p style="font-size:12px;margin-top:-3px;">1</p>
+                            </button>
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Second group">
+                            <button type="button" style="height:27px" class="btn btn-info rounded-circle"
+                                data-toggle="tooltip" data-bs-placement="bottom"  data-bs-target="#new_app_modal2" data-bs-toggle="modal"
+                                data-bs-dismiss="modal" title="Data Source">
+                                <p style="font-size:12px;margin-top:-3px;">2</p>
+                            </button>
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Third group">
+                            <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                data-toggle="tooltip" data-bs-placement="bottom" data-bs-target="#new_app_modal3" data-bs-toggle="modal"
+                                data-bs-dismiss="modal" title="Access Policies">
+                                <p style="font-size:12px;margin-top:-3px;">3</p>
+                            </button>
+                        </div>
+                        <div class="btn-group me-2" role="group" aria-label="Fourth group">
+                            <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                data-toggle="tooltip" data-bs-placement="bottom"  data-bs-placement="bottom" data-bs-target="#new_app_modal4" data-bs-toggle="modal"  title="Review">
+                                <p style="font-size:12px;margin-top:-3px;">4</p>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-body">
+                <div class="text-center">
+                    <p style="font-size:20px;">Step 2: Next, let's import the user access report for
+                        {{selected_app.APP_NAME}} via SFTP or manual upload.</p>
+                    <p style="font-size:16px;">Let's configure the SFPT server and create a job schedule to regularly
+                        update database. </p>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <form id="sftp_create_form" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="form_id" value="sftp_create_form">
+                                    {% csrf_token %}
+                                <p style="font-size:14px;font-weight:bold;">SFTP Configuration:</p>
+                                <p style="font-size:13px;">Add your SFTP credentials and file directory where the system
+                                    will pick up the file.</p>
+                                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                    <div class="col-auto">
+                                        <label style="font-size:12px;; width:150px;" class="col-form-label">Host
+                                            Name:
+                                        </label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input class="form-control sm" id="host_name" name="host_name" type="text"
+                                            style="font-size:12px;width:250px;" autocomplete="off" value="{{sftp_check.HOST_NAME}}">
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                    <div class="col-auto">
+                                        <label style="font-size:12px;width:150px;;" class="col-form-label"> File
+                                            Directory:
+                                        </label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input class="form-control sm" id="sftp_directory"
+                                            name="sftp_directory" type="text" style="font-size:12px;width:250px;"
+                                            autocomplete="off" value="{{sftp_check.SFTP_DIRECTORY}}">
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                    <div class="col-auto">
+                                        <label style="font-size:12px;width:150px;;" class="col-form-label"> User
+                                            Name:
+                                        </label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input class="form-control sm" id="sftp_username" name="sftp_username"
+                                            type="text" style="font-size:12px;width:250px;" autocomplete="off" value="{{sftp_check.SFTP_USERNAME}}">
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                    <div class="col-auto">
+                                        <label style="font-size:12px;width:150px;;" class="col-form-label">
+                                            Password:
+                                        </label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input class="form-control sm" id="sftp_password" name="sftp_password"
+                                            type="password" style="font-size:12px;width:250px;" autocomplete="off"
+                                            value="">
+                                    </div>
+                                </div>
+                                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                    <div class="col-auto">
+                                        <label style="font-size:12px;width:150px;;" class="col-form-label">
+                                            Retype Password:
+                                        </label>
+                                    </div>
+                                    <div class="col-auto">
+                                        <input class="form-control sm" id="sftp_retypepassword"
+                                            name="sftp_retypepassword" type="password"
+                                            style="font-size:12px;width:250px;" autocomplete="off" value="">
+                                    </div>
+                                </div>
+                               
+                                <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+                                    <p style="font-size:13px;margin-top:40px;"></p>
+                                </div>
+                                <p style="font-size:14px;font-weight:bold;margin-top:15px;">Job Schedule:</p>
+
+                                <p style="font-size:13px;margin-top:20px;">Select which days you want the file to be
+                                    retrieved from SFTP Server.</p>
+
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="checkbox" class="btn-check" id="job_monday" name="job_monday" {% if job_sched_check.MONDAY %} checked="checked" {% endif %}  autocomplete="off"
+                                        style="margin-right: 3px; transform: scale(0.8);">
+                                    <label class="btn btn-outline-primary" for="job_monday">Mon</label>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="checkbox" class="btn-check" id="job_tuesday" name="job_tuesday"  {% if job_sched_check.TUESDAY %} checked="checked" {% endif %} autocomplete="off"
+                                        style="margin-right: 3px; transform: scale(0.8);">
+                                    <label class="btn btn-outline-primary" for="job_tuesday">Tue</label>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="checkbox" class="btn-check" id="job_wednesday" name="job_wednesday" {% if job_sched_check.WEDNESDAY %} checked="checked" {% endif %} autocomplete="off"
+                                        style="margin-right: 3px; transform: scale(0.8);">
+                                    <label class="btn btn-outline-primary" for="job_wednesday">Wed</label>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="checkbox" class="btn-check" id="job_thursday" name="job_thursday" {% if job_sched_check.THURSDAY %} checked="checked" {% endif %} autocomplete="off"
+                                        style="margin-right: 3px; transform: scale(0.8);">
+                                    <label class="btn btn-outline-primary" for="job_thursday">Thu</label>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="checkbox" class="btn-check" id="job_friday" name="job_friday"  {% if job_sched_check.FRIDAY %} checked="checked" {% endif %} autocomplete="off"
+                                        style="margin-right: 3px; transform: scale(0.8);">
+                                    <label class="btn btn-outline-primary" for="job_friday">Fri</label>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="checkbox" class="btn-check" id="job_saturday" name="job_saturday" {% if job_sched_check.SATURDAY %} checked="checked" {% endif %}  autocomplete="off"
+                                        style="margin-right: 3px; transform: scale(0.8);">
+                                    <label class="btn btn-outline-primary" for="job_saturday">Sat</label>
+                                </div>
+                                <div class="btn-group btn-group-sm" role="group">
+                                    <input type="checkbox" class="btn-check" id="job_sunday" name="job_sunday" {% if job_sched_check.SUNDAY %} checked="checked" {% endif %} autocomplete="off"
+                                        style="transform: scale(0.8);">
+                                    <label class="btn btn-outline-primary" for="job_sunday">Sun</label>
+                                </div>
+
+                                <p style="font-size:13px;margin-top:20px;">Pick a time that you want this job to run.
+                                </p>
+
+                                <select id="job_time" name="job_time" class="form-select" aria-label="Default select example"
+                                    style="max-height:120px;overflow-y: auto;width:250px;font-size:12px;">
+                                    {% if job_sched_check.SCHEDULE_TIME %}
+                                    <option selected>{{ job_sched_check.SCHEDULE_TIME }}</option>
+                                    {% else %}
+                                        <option selected>Select time</option>
+                                    {% endif %}
+                                    <option value="00:00">12:00 AM</option>
+                                    <option value="01:00">1:00 AM</option>
+                                    <option value="02:00">2:00 AM</option>
+                                    <option value="03:00">3:00 AM</option>
+                                    <option value="04:00">4:00 AM</option>
+                                    <option value="05:00">5:00 AM</option>
+                                    <option value="06:00">6:00 AM</option>
+                                    <option value="07:00">7:00 AM</option>
+                                    <option value="08:00">8:00 AM</option>
+                                    <option value="09:00">9:00 AM</option>
+                                    <option value="10:00">10:00 AM</option>
+                                    <option value="11:00">11:00 AM</option>
+                                    <option value="12:00">12:00 PM</option>
+                                    <option value="13:00">1:00 PM</option>
+                                    <option value="14:00">2:00 PM</option>
+                                    <option value="15:00">3:00 PM</option>
+                                    <option value="16:00">4:00 PM</option>
+                                    <option value="17:00">5:00 PM</option>
+                                    <option value="18:00">6:00 PM</option>
+                                    <option value="19:00">7:00 PM</option>
+                                    <option value="20:00">8:00 PM</option>
+                                    <option value="21:00">9:00 PM</option>
+                                    <option value="22:00">10:00 PM</option>
+                                    <option value="23:00">11:00 PM</option>
+                                </select>
+
+                                <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+                                    <p style="font-size:13px;margin-top:40px;"></p>
+                                </div>
+                                <p style="font-size:14px;font-weight:bold;margin-top:15px;">Manual Upload:</p>
+
+                                <p style="font-size:13px;margin-top:20px;">You can also manually import the upload
+                                    template if SFTP server is not yet available. You may download the user upload
+                                    template here.</p>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary btn-sm" data-bs-target="#new_app_modal3" data-bs-toggle="modal"
+                    data-bs-dismiss="modal">Save and Continue</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+<form id="policy_create_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="policy_create_form">
+    {% csrf_token %}
+    <div class="modal fade" id="new_app_modal3" aria-hidden="true" data-bs-backdrop="static"
+        style="height:90vh;margin-top:18px;" aria-labelledby="new_app_modal3" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="text-center">
+                        <div class="btn-toolbar justify-content-center" role="toolbar"
+                            aria-label="Toolbar with button groups">
+                            <div class="btn-group me-2" role="group" aria-label="First group">
+                                <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                    data-toggle="tooltip" data-bs-target="#new_app_modal" data-bs-toggle="modal"
+                                    data-bs-dismiss="modal" data-bs-placement="bottom" title="Password Setup">
+                                    <p style="font-size:12px;margin-top:-3px;">1</p>
+                                </button>
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="Second group">
+                                <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                    data-toggle="tooltip" data-bs-placement="bottom" data-bs-target="#new_app_modal2"
+                                    data-bs-toggle="modal" data-bs-dismiss="modal" title="Data Source">
+                                    <p style="font-size:12px;margin-top:-3px;">2</p>
+                                </button>
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="Third group">
+                                <button type="button" style="height:27px" class="btn btn-info rounded-circle"
+                                    data-toggle="tooltip" data-bs-placement="bottom" data-bs-target="#new_app_modal3"
+                                    data-bs-toggle="modal" data-bs-dismiss="modal" title="Access Policies">
+                                    <p style="font-size:12px;margin-top:-3px;">3</p>
+                                </button>
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="Fourth group">
+                                <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                    data-toggle="tooltip" data-bs-placement="bottom" data-bs-placement="bottom"
+                                    data-bs-target="#new_app_modal4" data-bs-toggle="modal" title="Review">
+                                    <p style="font-size:12px;margin-top:-3px;">4</p>
+                                </button>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <p style="font-size:20px;">Step 3: Let's define access related security policies for
+                            {{selected_app.APP_NAME}}.</p>
+                        <p style="font-size:16px;">Complete the required fields below.</p>
+                    </div>
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div hidden="true" class="alert alert-warning alert-dismissible fade show" id="error_alert" role="alert">
+                                        <small id="alert_message_provisioning"></small>
+                                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                    </div>
+                                    <p style="font-size:14px;font-weight:bold;">Access Provisioning:</p>
+                                    <p style="font-size:13px;">Is access documentation and approval required before a
+                                        user
+                                        is granted access to {{selected_app.APP_NAME}}?</p><div class="error-message" style="color: red; font-size: 12px;"></div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" {% if prov_policy.REQ_APPROVAL %}
+                                            checked="checked" {% endif %} name="access_approval_confirm"
+                                            id="access_approval_confirm_yes" value="Yes" required>
+                                        <label class="form-check-label" style="font-size:12px"
+                                            for="access_approval_confirm_yes">Yes</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" {% if not prov_policy.REQ_APPROVAL %} checked="checked" {% endif %}
+                                             name="access_approval_confirm"
+                                            id="access_approval_confirm_no" value="No" required>
+                                        <label class="form-check-label" style="font-size:12px"
+                                            for="access_approval_confirm_no">No</label>
+                                    </div>
+                                    <div class="form-check form-check-inline" style="font-size:12px;">
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px;" class="col-form-label">Add rationale if
+                                                    No
+                                                    (optional):
+                                                </label>
+                                            </div>
+                                            <div class="col-auto">
+                                                <input class="form-control sm" id="approval_rationale"
+                                                    name="approval_rationale" type="text"
+                                                    style="font-size:12px;width:300px;" autocomplete="off"
+                                                    value="{% if prov_policy.REQ_APPROVAL_RATIONALE %}{{ prov_policy.REQ_APPROVAL_RATIONALE }}{% endif %}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p style="font-size:13px;margin-top:20px;">Who are the required approvers?</p>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" 
+                                            {% if prov_policy.MANAGER_APPROVAL %} checked="checked" {% endif %}
+                                            id="manager_approval" name="access_approval" value="manager" required>
+                                        <label class="form-check-label" style="font-size:12px"
+                                            for="manager_approval">Manager or
+                                            equivalent</label>
+                                    </div>
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" {% if prov_policy.IT_APPROVAL %}
+                                        checked="checked" {% endif %}
+                                        name="access_approval"
+                                            id="it_approval" value="it" required>
+                                        <label class="form-check-label" style="font-size:12px"
+                                            for="it_approval">IT System Owner</label>
+                                    </div>
+
+                                    <div class="form-check form-check-inline">
+                                        <input class="form-check-input" type="radio" {% if prov_policy.BOTH_MANAGER_IT %}
+                                        checked="checked" {% endif %}
+                                        name="access_approval"
+                                            id="both_approval" value="both" required>
+                                        <label class="form-check-label" style="font-size:12px"
+                                            for="both_approval">Both Manager and IT System Owner</label>
+                                    </div>
+
+
+                                    <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+                                        <p style="font-size:13px;margin-top:30px;"></p>
+                                    </div>
+
+                                    <p style="font-size:14px;font-weight:bold;margin-top:15px;">Access Termination:</p>
+                                    <p style="font-size:13px;margin-top:20px;">What is the required number of days for
+                                        revoking/disabling access of terminated employees/contractors within
+                                        {{selected_app.APP_NAME}}?</p>
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px;" class="col-form-label">No. of days
+                                                :</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="termed_days" name="termed_days" type="text"
+                                                style="font-size:12px;width:100px;" autocomplete="off" value="{% if termed_policy.DAYS_TO_TERMINATE %} {{termed_policy.DAYS_TO_TERMINATE}} {% endif %}" required>
+                                        </div>
+                                    </div>
+                                    <p style="font-size:13px;margin-top:20px;">Which team responsible in notifying
+                                        system
+                                        admins for terminated employees?</p>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" 
+                                                {% if termed_policy.WHO_NOTIFY_HR %} checked="checked" {% endif %}
+                                                id="hr_notif" name="who_notify" value="hr" required>
+                                            <label class="form-check-label" style="font-size:12px"
+                                                for="hr_notif">HR</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" {% if termed_policy.WHO_NOTIFY_MANAGER %}
+                                            checked="checked" {% endif %}
+                                            name="who_notify"
+                                                id="manager_notif" value="manager" required>
+                                            <label class="form-check-label" style="font-size:12px"
+                                                for="manager_notif">Manager</label>
+                                        </div>
+    
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" {% if termed_policy.WHO_NOTIFY_AUTOMATED %}
+                                            checked="checked" {% endif %}
+                                            name="who_notify"
+                                                id="automated_notif" value="automated" required>
+                                            <label class="form-check-label" style="font-size:12px"
+                                                for="automated_notif">Automated Notification</label>
+                                        </div>
+
+                                    <p style="font-size:13px;margin-top:20px;">How are systems administrators notified
+                                        of
+                                        terminated employees?</p>
+
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" 
+                                                {% if termed_policy.HOW_NOTIFY_EMAIL %} checked="checked" {% endif %}
+                                                id="email_notif" name="how_notify" value="email" required>
+                                            <label class="form-check-label" style="font-size:12px"
+                                                for="email_notif">Email and/or Tickets</label>
+                                        </div>
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" {% if termed_policy.HOW_NOTIFY_VERBAL %}
+                                            checked="checked" {% endif %}
+                                            name="how_notify"
+                                                id="verbal_notif" value="verbal" required>
+                                            <label class="form-check-label" style="font-size:12px"
+                                                for="verbal_notif">Verbal Notification</label>
+                                        </div>
+    
+                                        <div class="form-check form-check-inline">
+                                            <input class="form-check-input" type="radio" {% if termed_policy.HOW_NOTIFY_AUTOMATED %}
+                                            checked="checked" {% endif %}
+                                            name="how_notify"
+                                                id="auto_notif" value="automated" required>
+                                            <label class="form-check-label" style="font-size:12px"
+                                                for="auto_notif">Automated Notification</label>
+                                        </div>
+
+
+                                    <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+                                        <p style="font-size:13px;margin-top:30px;"></p>
+                                    </div>
+                                    <p style="font-size:14px;font-weight:bold;margin-top:15px;">Administrative Roles (required):
+                                    </p>
+                                    <p style="font-size:13px;margin-top:20px;">Which of the roles below provide access
+                                        to
+                                        manage employees and modify system configurations in {{selected_app.APP_NAME}}?
+                                    </p>
+
+                                    <div class="row g-3 align-items-center" style="max-width: 300px;">
+                                        <div class="col-auto">
+                                            <input type="hidden" name="group_selected_values"
+                                                id="control_selected_values">
+                                            <select name="admin_role_list_2" id="admin_role_list_2" style="font-size:12px;"
+                                                class="selectpicker" multiple data-live-search="true" required> <span id="error_message" style="color: red; display: none;"></span>
+                                                {% for admin in selected_admins %}
+                                                    <option value="{{ admin.ROLE_NAME }}" {% if admin in selected_admins %} selected {% endif %}>{{ admin.ROLE_NAME }}</option>
+                                                {% endfor %}
+                                                {% for roles in unique_role_names %}
+                                                <option value="{{ roles }}">{{ roles }}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary btn-sm" id="btn_create_policy">Save and Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<form id="review_setup_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="review_setup_form">
+    {% csrf_token %}
+    <div class="modal fade" id="new_app_modal4" aria-hidden="true" data-bs-backdrop="static"
+        style="height:90vh;margin-top:18px;" aria-labelledby="new_app_modal4" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <div class="text-center">
+                        <div class="btn-toolbar justify-content-center" role="toolbar"
+                            aria-label="Toolbar with button groups">
+                            <div class="btn-group me-2" role="group" aria-label="First group">
+                                <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                    data-toggle="tooltip"  data-bs-target="#new_app_modal" data-bs-toggle="modal"
+                                    data-bs-dismiss="modal" data-bs-placement="bottom" title="Password Setup">
+                                    <p style="font-size:12px;margin-top:-3px;">1</p>
+                                </button>
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="Second group">
+                                <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                    data-toggle="tooltip" data-bs-placement="bottom"  data-bs-target="#new_app_modal2" data-bs-toggle="modal"
+                                    data-bs-dismiss="modal" title="Data Source">
+                                    <p style="font-size:12px;margin-top:-3px;">2</p>
+                                </button>
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="Third group">
+                                <button type="button" style="height:27px" class="btn btn-secondary rounded-circle"
+                                    data-toggle="tooltip" data-bs-placement="bottom" data-bs-target="#new_app_modal3" data-bs-toggle="modal"
+                                    data-bs-dismiss="modal" title="Access Policies">
+                                    <p style="font-size:12px;margin-top:-3px;">3</p>
+                                </button>
+                            </div>
+                            <div class="btn-group me-2" role="group" aria-label="Fourth group">
+                                <button type="button" style="height:27px" class="btn btn-info rounded-circle"
+                                    data-toggle="tooltip" data-bs-placement="bottom"  data-bs-placement="bottom" data-bs-target="#new_app_modal4" data-bs-toggle="modal"  title="Review">
+                                    <p style="font-size:12px;margin-top:-3px;">4</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-body">
+                    <div class="text-center">
+                        <p style="font-size:20px;">Step 4: Let's do a quick recap to make sure we got everything right for 
+                            {{selected_app.APP_NAME}}.</p>
+                        <p style="font-size:16px;">You can also go back and update any of these settings in the application module.</p>
+                    </div>
+
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <div id="setup_recap" class="carousel carousel-dark slide" data-bs-ride="carousel">
+                                        <div class="carousel-indicators" >
+                                          <button type="button" style="margin-top:50px;" data-bs-target="#setup_recap" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+                                          <button type="button" style="margin-top:50px;" data-bs-target="#setup_recap" data-bs-slide-to="1" aria-label="Slide 2"></button>
+                                          <button type="button" style="margin-top:50px;" data-bs-target="#setup_recap" data-bs-slide-to="2" aria-label="Slide 3"></button>
+                                        </div>
+                                        <div class="carousel-inner">
+                                          <div class="carousel-item active" data-bs-interval="50000">
+                                            <div class="card" style="margin-top:20px;margin-left:70px;margin-right:70px;border:none">
+                                           
+                                                    <p style="font-size:20px;">Authentication/Password:</p>
+                                                    {% if pw_check.AUTH_METHOD == 'sso' %}
+                                                    <p style="font-size:16px;">{{selected_app.APP_NAME}} users are authenticated through <b><u>Single-Sign-On (SSO)</u></b>. Since no users are logging in directly, network password requirements are utilized.</p>
+                                                    <p>Password Length: {{pw_check.LENGTH}}</p>
+                                                    
+                                                    {% elif pw_check.AUTH_METHOD == 'native' %}
+                                                    <p style="font-size:14px;">{{selected_app.APP_NAME}} users are authenticated through <b><u>native/direct login</u></b> and single-sign-on (SSO) is not configured. </p>
+                                                    <p style="font-size:13px;">The following password attributes are required for direct login: </p>
+                                                            <p style="font-size:12px;">1. Password Length: <b>{{pw_check.LENGTH}} characters</b> </p>
+                                                            <p style="font-size:12px;">2. Password Expire After: <b>{{pw_check.AGE}} days</b></p>
+                                                            <p style="font-size:12px;">3. Password Remembered: <b>{{pw_check.HISTORY}} password</b></p>
+                                                            <p style="font-size:12px;">4. Account Lock-out: <b>{{pw_check.LOCKOUT_ATTEMPT}} attempts</b> </p>
+                                                            <p style="font-size:12px;">5. Lockout Duration: <b>{{pw_check.LOCKOUT_DURATION}} minutes</b></p>
+                                                            <p style="font-size:12px;">6. Complexity Requirement:</p>
+                                                            <p style="font-size:12px;margin-left:30px;" >a. Require Special Character: {% if pw_check.SPECIAL_CHAR %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                            <p style="font-size:12px;margin-left:30px;" >b. Require Upper Case: {% if pw_check.UPPER %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                            <p style="font-size:12px;margin-left:30px;" >c. Require Lower Case: {% if pw_check.LOWER %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                            <p style="font-size:12px;margin-left:30px;" >d. Require Numeric: {% if pw_check.NUMBER %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                            <p style="font-size:12px;">7. Multi-Factor Enabled?: {% if pw_check.MFA_ENABLED %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                      
+                                                    {% elif pw_check.AUTH_METHOD == 'bothssonative' %}
+                                      
+                                                    <p style="font-size:14px;">{{selected_app.APP_NAME}} users are authenticated through either <b><u>Single-Sign-On (SSO) or native/direct login</u></b>.</p>
+                                                    <p style="font-size:13px;">The following password attributes are required for direct login: </p>
+                                                    <p style="font-size:12px;">1. Password Length: <b>{{pw_check.LENGTH}} characters</b> </p>
+                                                    <p style="font-size:12px;">2. Password Expire After: <b>{{pw_check.AGE}} days</b></p>
+                                                    <p style="font-size:12px;">3. Password Remembered: <b>{{pw_check.HISTORY}} password</b></p>
+                                                    <p style="font-size:12px;">4. Account Lock-out: <b>{{pw_check.LOCKOUT_ATTEMPT}} attempts</b> </p>
+                                                    <p style="font-size:12px;">5. Lockout Duration: <b>{{pw_check.LOCKOUT_DURATION}} minutes</b></p>
+                                                    <p style="font-size:12px;">6. Complexity Requirement:</p>
+                                                    <p style="font-size:12px;margin-left:30px;" >a. Require Special Character: {% if pw_check.SPECIAL_CHAR %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                    <p style="font-size:12px;margin-left:30px;" >b. Require Upper Case: {% if pw_check.UPPER %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                    <p style="font-size:12px;margin-left:30px;" >c. Require Lower Case: {% if pw_check.LOWER %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                    <p style="font-size:12px;margin-left:30px;" >d. Require Numeric: {% if pw_check.NUMBER %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                    <p style="font-size:12px;">7. Multi-Factor Enabled?: {% if pw_check.MFA_ENABLED %} <b>Yes</b> {% else %} <b>Not Set</b> {% endif %}</p>
+                                                    
+                                                    {% else %}
+                                                    <p style="font-size:14px;">No password settings has been configured yet for {{selected_app.APP_NAME}}. This can be updated in step number 1 or you can also update this in the application settings later on.  </p>
+                                                    {% endif %}
+                                            </div>
+                                          </div>
+                                          <div class="carousel-item" data-bs-interval="50000">
+                                            <div class="card" style="margin-top:20px;margin-left:70px;margin-right:70px;border:none">
+                                                <p style="font-size:20px;">Data Source:</p>
+                                                {% if sftp_check.HOST_NAME %}
+                                                <p style="font-size:14px;">User access report for {{selected_app.APP_NAME}} is configured to import data from a secure file transfer protocol (SFTP) server based on scheduled jobs.</p>
+                                                <p style="font-size:13px;"> SFTP server, source directory, and file path destination are currently configured as follows:</p>
+                                                <p style="font-size:13px;">Host Name/IP: <u><b>{{ sftp_check.HOST_NAME }}</b></u></p>
+                                                <p style="font-size:13px;">Source Directory:<u><b>{{ sftp_check.SFTP_DIRECTORY }}</b></u></p>
+                                                <p style="font-size:20px;margin-top:20px;">Job Schedule:</p>
+                                                <p style="font-size:14px;margin-bottom:50px;">Raw files from the SFTP server are picked-up and parsed to automatically update the user access report of {{selected_app.APP_NAME}} every <b>{% if job_sched_check.MONDAY %} Monday, {% endif %}</b> <b>{% if job_sched_check.TUESDAY %} Tuesday, {% endif %}</b>
+                                                    <b>{% if job_sched_check.WEDNESDAY %} Wednesday, {% endif %}</b><b>{% if job_sched_check.THURSDAY %} Thursday, {% endif %}</b><b>{% if job_sched_check.FRIDAY %} Friday, {% endif %}</b><b>{% if job_sched_check.SATURDAY %} Saturday, {% endif %}</b><b>{% if job_sched_check.SUNDAY %} Sunday {% endif %}</b> at a scheduled time of <b>{% if job_sched_check.SCHEDULE_TIME %}{{ job_sched_check.SCHEDULE_TIME }} {% endif %}</b></p>
+                                                {% else%}
+                                                <p style="font-size:14px;">No SFTP server and job schedule is currently setup for {{selected_app.APP_NAME}} for access reports. This can be updated in step number 2 or you can also update this in the application settings later on.  </p>
+                                                {% endif %} 
+                                             </div>
+                                          </div>
+                                          <div class="carousel-item" data-bs-interval="50000">
+                                            <div class="card" style="margin-left:70px;margin-right:70px;border:none">
+                                                <p style="font-size:20px;">Access Provisioning:</p>
+                                                {% if prov_policy.REQ_APPROVAL %}
+                                                <p style="font-size:13px;">Access requests in {{selected_app.APP_NAME}}<b> are required to be documented and approved by their {% if prov_policy.MANAGER_APPROVAL %} Supervisor/Manager or equivalent {% endif %}{% if prov_policy.IT_APPROVAL %} IT system owner {% endif %}{% if prov_policy.BOTH_MANAGER_IT %} Manager and IT system owner {% endif %} </b> prior to granting access</p>
+                                                {% else %}
+                                                <p style="font-size:13px;">Access in SAP are currently granted <b>without requiring any approval</b> from user's manager or IT system owner. </p>
+                                                {% endif %}
+                                                <p style="font-size:20px;">Access Termination:</p>
+                                                {% if termed_policy.DAYS_TO_TERMINATE %}
+                                                <p style="font-size:13px;">Access of terminated employees including employees and contractors are removed from {{selected_app.APP_NAME}} within <b>{{termed_policy.DAYS_TO_TERMINATE}} days</b> from their last employement date.</p>
+                                                <p style="font-size:13px;"><b>{% if termed_policy.WHO_NOTIFY_HR %} HR team is responsible in notifying the system administrators of the details of terminated users {% endif %} {% if termed_policy.WHO_NOTIFY_MANAGER %} User's manager is responsible in notifying the system administrators of the details of terminated users via {% endif %} {% if termed_policy.WHO_NOTIFY_AUTOMATED %} No alerts are sent as the process of removing terminated employees in {{ selected_app.APP_NAME }} is automated {% endif %} </b></p>
+                                                {% else %}
+                                                {% endif %}
+
+                                            </div>
+                                          </div>
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#setup_recap" data-bs-slide="prev">
+                                          <span class="carousel-control-prev-icon" style="margin-right:120px;" aria-hidden="true"></span>
+                                          <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#setup_recap" data-bs-slide="next">
+                                          <span class="carousel-control-next-icon" style="margin-left:120px;" aria-hidden="true"></span>
+                                          <span class="visually-hidden">Next</span>
+                                        </button>
+                                      </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary btn-sm" data-bs-target="#new_app_modal4" data-bs-toggle="modal"
+                    data-bs-dismiss="modal">Complete Setup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="{% static 'js/select.js' %}"></script>
+<script>
+    new MultiSelectTag('admin_role_list_2', {
+        rounded: true,
+        shadow: true,
+        placeholder: 'Select Role',
+    })
+</script>
+
+{% endblock content %}

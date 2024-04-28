@@ -1,0 +1,207 @@
+{% extends 'base/base-admin.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+
+<div class="card">
+    <div class="card-body">
+
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}"
+                        style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:systemsettings'%}"
+                        style="text-decoration:none;color:#474b4d">System Settings</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d"><a
+                        href="{% url 'appAUDITAI:manage-user-roles'%}" style="text-decoration:none;color:#474b4d">User
+                        and Roles</i></a>
+                </li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    {% if selected_user.first_name or selected_user.last_name %}
+                    <a style="font-size:25px;">
+                        <span class="fa-solid fa-user-pen" style="margin-right: 10px;color:#474b4d"></span>
+                        {% if selected_user.first_name %}{{ selected_user.first_name }}{% endif %}
+                        {% if selected_user.first_name and selected_user.last_name %} {% endif %}
+                        {% if selected_user.last_name %}{{ selected_user.last_name }}{% endif %}
+                    </a>
+                    {% else %}
+                    <a style="font-size:25px;">
+                        <span class="fa-solid fa-user-pen" style="margin-right: 10px;color:#474b4d"></span>
+                        {{ selected_user.username }}
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+            <p style="font-size:13px"></p>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <div class="card-body">
+                <div class="row">
+                    <form id="update_user_form" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="form_identifier" value="update_user_form">
+                        {% csrf_token %}
+                    <div class="col-5">
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width:110px;" class="col-form-label">Username:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="user_name" name="user_name" type="text"
+                                    style="font-size:12px;width:300px;" autocomplete="off" required value="{{selected_user.username}}">
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width:110px;" class="col-form-label">Email
+                                    Adress:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="email_address" name="email_address" type="text"
+                                    style="font-size:12px;width:300px;" autocomplete="off" required value="{{selected_user.email}}" >
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width:110px;" class="col-form-label">First
+                                    Name:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="first_name" name="first_name" type="text"
+                                    style="font-size:12px;width:300px;" autocomplete="off" required value="{{selected_user.first_name}}">
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center" style="margin-top:3px;margin-bottom:20px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width:110px;" class="col-form-label">Last
+                                    Name:</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="last_name" name="last_name" type="text"
+                                    style="font-size:12px;width:300px;" autocomplete="off" required value="{{selected_user.last_name}}">
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width: 300px;" class="col-form-label">Which company this
+                                    user can access?*</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="hidden" name="company_selected_values" id="control_selected_values">
+                                <select name="company_list" id="company_list" style="font-size:12px;"
+                                    class="selectpicker" multiple data-live-search="true" required>
+                                    {% for company in selected_company %}
+                                        <option value="{{ company.id }}" {% if company in selected_company %} selected {% endif %}>{{ company.COMPANY_NAME }}</option>
+                                    {% endfor %}
+                                    {% for company in non_selected_company %}
+                                        <option value="{{ company.id }}">{{ company.COMPANY_NAME }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+
+                        <div class="row g-3 align-items-center" style="margin-top:3px; margin-bottom:20px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width: 300px;" class="col-form-label">Role assignment:*</label>
+                            </div>
+                            <div class="col-auto">
+                                <input type="hidden" name="group_selected_values" id="control_selected_values">
+                                <select name="role_list" id="role_list" style="font-size:12px;" class="selectpicker" multiple data-live-search="true" required>
+                                    {% for group in selected_groups %}
+                                        <option value="{{ group.id }}" {% if group in selected_user.groups.all %} selected {% endif %}>{{ group.name }}</option>
+                                    {% endfor %}
+                                    {% for group in non_selected_groups %}
+                                        <option value="{{ group.id }}">{{ group.name }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:13px; width:250px;"
+                                    class="col-form-label">Is Active?
+                                    </label>
+                            </div>
+                            <div class="col-auto" style="font-size:13px;">
+                                <div class="form-check form-switch" style="margin-left:-170px;font-size:18px;">
+                                    <input class="form-check-input" type="checkbox" name="status" role="switch" id="flexSwitchCheckDefault" {% if selected_user.is_active %} checked="checked" {% endif %}> 
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width: 300px;" class="col-form-label">
+                                    </label>
+                            </div>
+                            <div class="col-auto"> 
+                                    <button type="submit" class="btn btn-secondary btn-sm" style="margin-left:-10px;" data-bs-dismiss="modal" >Update</button>
+                                    <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#delete_user">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                    </form>
+                </div>
+            </div>
+       
+        </div>
+
+    </div>
+</div>
+
+<form id="delete_user_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_identifier" value="delete_user_form">
+    {% csrf_token %}
+    <div class="modal fade" id="delete_user" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="delete_user" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title fs-5" id="staticBackdropLabel">Confirm Delete?</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:14px;">This will PERMANENTLY DELETE this record and all its relevant
+                        data. This action cannot be reversed. Click 'Confirm Delete' button to proceed.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-warning btn-sm">Confirm Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="{% static 'js/select.js' %}"></script>
+<script>
+    new MultiSelectTag('role_list', {
+        rounded: true,
+        shadow: true,
+        placeholder: 'Select Role',
+    })
+</script>
+
+<script>
+    new MultiSelectTag('company_list', {
+        rounded: true,
+        shadow: true,
+        placeholder: 'Select Company',
+    })
+</script>
+{% endblock content %}

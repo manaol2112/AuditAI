@@ -1,0 +1,118 @@
+{% extends 'base/base-admin.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+
+
+<div class="card" style="height:90vh">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}"
+                        style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:systemsettings'%}"
+                        style="text-decoration:none;color:#474b4d">System Settings</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Companies</a>
+                </li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fa-solid fa-building"
+                            style="margin-right: 10px;color:#474b4d"></span>Manage Companies</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Company..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="offcanvas"
+                        data-bs-target="#create_user_template" aria-expanded="false" style="height:35px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+            <p style="font-size:13px">Manage, create, modify, and delete company</p>
+        </div>
+
+        <div class="card-container"
+            style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;border-bottom:solid;border-color:lightgray">
+            {% for company in companies %}
+            <a href="{% url 'appAUDITAI:manage-companies-detais' company.id %} " style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fa-regular fa-building" style="font-size: 30px;color:#72BAED"></span>
+                    <p style="font-size: 12px; margin-top: 16px;">{{company.COMPANY_NAME}}</p>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- APPLICATION UPLOAD USERS FORM -->
+<form id="manage_user_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="manage_user_form">
+    {% csrf_token %}
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="create_user_template" aria-labelledby="create_user_template"
+        style="margin-top:40px;">
+        <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
+            <h6 class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-regular fa-square-plus"
+                    style="margin-right:5px;"></i>Add Company</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+        <div class="offcanvas-body">
+            <div class="card">
+                <div class="card-body">
+                    {% if error_message %}
+                    <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                        <small>{{ error_message }}</small>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                    {% endif %}
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width:110px;" class="col-form-label">Company ID:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="company_id" name="company_id" type="text"
+                                style="font-size:12px;width:200px;" autocomplete="off" required>
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:3px;margin-bottom:20px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width:110px;" class="col-form-label">Company Name
+                                :</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="company_name" name="company_name" type="text"
+                                style="font-size:12px;width:200px;" autocomplete="off" required>
+                        </div>
+                    </div>
+                    
+                </div>
+            </div>
+            <!-- THIS IS THE BUTTON TO UPLOAD THE ATTACH USER LIST -->
+            <div class="modal-footer" style="margin-top:20px;">
+                <button type="submit" class="btn btn-secondary btn-sm" style="font-size:13px;width:100px;">
+                    Create</button>
+            </div>
+        </div>
+    </div>
+</form>
+
+
+{% endblock content %}

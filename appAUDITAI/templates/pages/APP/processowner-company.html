@@ -1,0 +1,59 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+              <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+              <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Companies</a></li>
+            </ol>
+        </nav>
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fa-solid fa-chart-simple"
+                            style="margin-right: 10px;color:#474b4d"></span>Companies</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Application..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    
+                </form>
+            </div>
+        </nav>
+        
+        <p style="font-size:13px">Manage applications and its corresponding users by selecting organization below. </p>
+
+        <div class="card">
+            <div class="card-body">
+                <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;">
+                    {% for company in company_ids %}
+                    <a href="{% url 'appAUDITAI:applist-process-owner' company.id %}"
+                        style="text-decoration: none; color:#474b4d">
+                        <div class="card app-card" data-appname="{{ app_item.APP_NAME }}"
+                        data-apptype="{{ app_item.APP_TYPE }}"
+                        style="border-radius: 25px; cursor: pointer; height: 150px; width: 160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                        onmouseover="this.style.backgroundColor='#d5ecf7';"
+                        onmouseout="this.style.backgroundColor='#fff';">
+                        <p style="font-size: 14px; margin-top: 10px; color: #474b4d"><i class="fas fa-building" style="margin-right:10px;color:grey;font-size:18px;"></i>{{ company }}</p>
+                        </div>
+                    </a>
+                    {% endfor %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock content %}
+

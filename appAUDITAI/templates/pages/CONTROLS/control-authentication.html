@@ -1,0 +1,159 @@
+{% extends 'pages/POLICIES/compliance-policies.html' %}
+{% load static %}
+
+{% block additional_content %}
+
+<style>
+    .passwordHelpText {
+      display: none;
+    }
+</style>
+
+<form id="authentication" action="" method="POST">
+    <div class="card" style="box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);">
+        <div class="card-body">
+            <nav class="navbar bg-body-tertiary" data-bs-theme="light"
+                style="margin-bottom: 15px;">
+                <div class="container-fluid">
+                    <div class="row">
+                        <a href="#" id="passwordHelpLink" style="font-size:16px;text-decoration: none;color:#474b4d">
+                            Password Requirements <span class="fa-regular fa-circle-question" style="margin-left: 8px;color:lightblue"></span>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+            <div class="card">
+                <div class="card-body">
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label">Password Length:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="pass_length" type="text" style="font-size:13px;" autocomplete="off" required>
+                        </div>
+                        <div class="col-auto passwordHelpText" style="font-size: 12px; color: #888;" id="passwordHelpText">
+                            * Minimum characters that user must provide
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label">Password
+                                Complexity:</label>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="pass_complexity" style="margin-right:140px;" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-auto passwordHelpText" style="font-size: 12px; color: #888;" id="passwordHelpText">
+                            * Toggle button if password complexity is required
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label"></label>
+                        </div>
+                        <div class="col-auto">
+                            <div class="text-align">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                    <label class="form-check-label" for="flexCheckDefault" style="font-size:12px;">
+                                        Upper Case
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault" style="font-size:12px;">
+                                    Lower Case
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault" style="font-size:12px;">
+                                    Number
+                                </label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" value="" id="flexCheckDefault">
+                                <label class="form-check-label" for="flexCheckDefault" style="font-size:12px;">
+                                    Special Character
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label">Password History:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="pass_history" type="text" style="font-size:13px;" autocomplete="off" required>
+                        </div>
+                        <div class="col-auto passwordHelpText" style="font-size: 12px; color: #888;" id="passwordHelpText">
+                            * Password remembered that cannot be repeated
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label">Password Age:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="pass_age" type="text" style="font-size:13px;" autocomplete="off" required>
+                        </div>
+                        <div class="col-auto passwordHelpText" style="font-size: 12px; color: #888;" id="passwordHelpText">
+                            * Number of days that password must be changed
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label">Account Lockout:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="pass_lockout" type="text" style="font-size:13px;" autocomplete="off" required>
+                        </div>
+                        <div class="col-auto passwordHelpText" style="font-size: 12px; color: #888;" id="passwordHelpText">
+                            * Number of failed attempts before the account is locked out
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label">Lockout Duration:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="date_hired" type="text" style="font-size:13px;" autocomplete="off">
+                        </div>
+                        <div class="col-auto passwordHelpText" style="font-size: 12px; color: #888;" id="passwordHelpText">
+                            * Number of hours that user is locked-out after failing multiple attempts
+                        </div>
+                    </div>
+
+                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                        <div class="col-auto">
+                            <label style="font-size:13px;width:180px;" class="col-form-label">Multi-Factor
+                                Authentication:</label>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" role="switch"
+                                    id="flexSwitchCheckChecked" style="margin-right:140px;" autocomplete="off">
+                            </div>
+                        </div>
+                        <div class="col-auto passwordHelpText" style="font-size: 12px; color: #888; " id="passwordHelpText">
+                            * Toggle button if multi-factor authentication is enabled
+                        </div>
+                    </div>
+
+                    <div class="text-end" style="margin-top:20px;">
+                        <button type="submit" class="btn btn-primary" style="font-size:13px;width: 100px;">Save</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+{% endblock additional_content %}

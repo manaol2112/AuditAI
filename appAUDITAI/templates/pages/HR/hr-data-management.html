@@ -1,0 +1,52 @@
+{% extends 'base/base.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card" style="background-color:white">
+
+    <div class="card-body">
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:20px;"><span class="fa-solid fa-people-group" style="margin-right: 10px;"></span> HR
+                        Data Management</a>
+                </div>
+            </div>
+        </nav>
+     
+        <div class="row" style="padding-top:15px;">
+            <div class="col-3">
+                <div class="card" style="background-color: whitesmoke; height: 90vh;">
+                    <ul class="list-group" style="font-size:15px;">
+
+                        <a href="new-hr-record" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="fas fa-cloud-upload-alt"
+                                    style="margin-right: 15px;"></span> New HR Record</li></a>
+                        <a href="update-hr-record" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="far fa-edit"
+                                    style="margin-right: 15px;"></span> Update HR Record</li></a>
+                        <a href="upload-hr-setting" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="fas fa-cog"
+                                    style="margin-right: 15px;"></span> Upload Setting</li></a>
+                        <a href="upload-hr-history" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="fas fa-history"
+                                    style="margin-right: 15px;"></span> Update History</li></a>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-9">
+                    {% block additional_content %}
+                    {% endblock additional_content %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

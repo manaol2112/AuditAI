@@ -1,0 +1,42 @@
+{% extends 'base/base-admin.html' %} 
+{% load static %} 
+{% block content %}
+
+<div class="card" style="height:90vh">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+              <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:systemsettings'%}" style="text-decoration:none;color:#474b4d">System Settings</i></a></li>
+              <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">System Security</a></li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fa-solid fa-shield"
+                            style="margin-right: 10px;color:#474b4d"></span>Manage Security</a>
+                </div>
+            
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+            <p style="font-size:13px">Configure password requirements, session timeout, and lockout duration</p>
+        </div>
+        
+        <div class="card-container" style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;border-bottom:solid;border-color:lightgray">
+            <a href="{% url 'appAUDITAI:manage-password-policy' %} " style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fa-solid fa-key" style="font-size: 30px;color:#72BAED"></span>
+                    <p style="font-size: 13px; margin-top: 16px;">Password Policy</p>
+                </div>
+            </a>
+    </div>
+</div>
+
+{% endblock content %}

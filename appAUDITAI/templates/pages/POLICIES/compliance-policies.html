@@ -1,0 +1,49 @@
+{% extends 'base/base-compliance.html' %}
+{% load static %}
+{% block content %}
+<div class="card" style="background-color:white">
+    <div class="card-body">
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:20px;"><span class="fa-solid fa-book" style="margin-right: 10px;"></span>Policies</a>
+                </div>
+            </div>
+        </nav>
+        <div class="row">
+            <div class="col-3">
+                <div class="card" style="background-color: whitesmoke; height: 90vh;">
+                    <ul class="list-group" style="font-size:15px;">
+                        <a href="{% url 'appAUDITAI:policies-authentication' %}" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="fa-solid fa-key"
+                                    style="margin-right: 15px;"></span>Authentication</li></a>
+                        <a href="{% url 'appAUDITAI:policies-provisioning' %}" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="fa-solid fa-user-plus"
+                                    style="margin-right: 15px;"></span>Access Creation</li></a>
+                        <a href="{% url 'appAUDITAI:policies-termination' %}" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="fa-solid fa-user-xmark"
+                                    style="margin-right: 15px;"></span>Access Termination</li></a>
+                        <a href="{% url 'appAUDITAI:policies-useraccessreview' %}" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="fa-solid fa-magnifying-glass"
+                                    style="margin-right: 15px;"></span>Access Review</li></a>
+                        <a href="{% url 'appAUDITAI:policies-adminaccounts' %}" style="text-decoration: none;color:#474b4d"><li class="list-group-item" style="background-color: white;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='white';"> <span class="fa-solid fa-toolbox"
+                                    style="margin-right: 15px;"></span>Administrative Accounts</li></a>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-9">
+                    {% block additional_content %}
+                    {% endblock additional_content %}
+            </div>
+        </div>
+    </div>
+
+</div>
+
+{% endblock content %}

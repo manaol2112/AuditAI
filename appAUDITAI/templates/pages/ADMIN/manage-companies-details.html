@@ -1,0 +1,109 @@
+{% extends 'base/base-admin.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+
+
+<div class="card" style="height:90vh">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}"
+                        style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:systemsettings'%}"
+                        style="text-decoration:none;color:#474b4d">System Settings</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Companies</a>
+                </li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fa-solid fa-building"
+                            style="margin-right: 10px;color:#474b4d"></span>Manage Companies</a>
+                </div>
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+            <p style="font-size:13px">Manage, create, modify, and delete company</p>
+        </div>
+        <form id="update_company_form" method="post" enctype="multipart/form-data">
+            <input type="hidden" name="form_identifier" value="update_company_form">
+            {% csrf_token %}
+            <div class="card-container">
+                <div class="form-container">
+                    {% for company in companies %}
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width:110px;" class="col-form-label">Company ID:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="company_id" name="company_id" type="text"
+                                style="font-size:12px;width:300px;" autocomplete="off" required
+                                value="{{company.COMPANY_ID}}">
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:3px;margin-bottom:20px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width:110px;" class="col-form-label">Company Name:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="company_name" name="company_name" type="text"
+                                style="font-size:12px;width:300px;" autocomplete="off" required
+                                value="{{company.COMPANY_NAME}}">
+                        </div>
+                    </div>
+
+                    {% endfor %}
+
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto" style="margin-left:300px;">
+                            <div class="col-auto">
+                                <button type="submit" class="btn btn-secondary btn-sm" style="margin-right:-5px;margin-left:-10px;">Update</button>
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="col-auto">
+                                <button type="button" class="btn btn-warning btn-sm" data-bs-toggle="modal"
+                                    data-bs-target="#delete_company">Delete</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <form id="delete_company_form" method="post" enctype="multipart/form-data">
+        <input type="hidden" name="form_identifier" value="delete_company_form">
+        {% csrf_token %}
+        <div class="modal fade" id="delete_company" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+            aria-labelledby="delete_company" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h6 class="modal-title fs-5" id="staticBackdropLabel">Confirm Delete?</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <p style="font-size:14px;">This will PERMANENTLY DELETE this record and all its relevant
+                            data. This action cannot be reversed. Click 'Confirm Delete' button to proceed.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                        <button type="submit" class="btn btn-warning btn-sm">Confirm Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+
+
+
+    {% endblock content %}

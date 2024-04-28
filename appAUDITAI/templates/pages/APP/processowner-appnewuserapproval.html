@@ -1,0 +1,253 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <div style="font-size:12px;margin-bottom:30px;">
+            <a href="{% url 'appAUDITAI:appdetails-new-user-list' comp_id app_id %}" style="color:#474b4d"><i
+                    class="fa-regular fa-circle-left" style="margin-right:5px;"></i>Back to New Users</a>
+        </div>
+
+        <span class="fa-regular fa-user" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+        <p style="font-size:18px; display: inline-block;">{{ selected_user.FIRST_NAME }} {{ selected_user.LAST_NAME}}
+        </p>
+
+        <div class="container-fluid" style="margin-bottom:20px;">
+            <div class="row" style="margin-top:10px;">
+                <div class="text-align">
+                    <button type="button" class="btn btn-light carousel" data-bs-target="#controlcarousel"
+                        data-bs-slide-to="0"
+                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
+                        <i class="fa-solid fa-circle-info" style="margin-right:5px;"></i>Access Approval Details
+                    </button>
+                </div>
+                <div id="controlcarousel" class="carousel slide carousel-fade" data-bs-interval="false">
+                    <div class="carousel-inner">
+                        <div class="carousel-item active">
+                            <div class="card">
+                                <div class="card-body">
+                                    {% if selected_user.DATE_APPROVED >= selected_user.DATE_GRANTED and selected_user.ACCESS_APPROVER_NAME1 %}
+                                    <div class="alert alert-info" style="height:50px;" role="alert">
+                                        <p style="font-size:13px;">Access of {{ selected_user.FIRST_NAME }} {{ selected_user.LAST_NAME}} was granted on {{ selected_user.DATE_GRANTED.date }} while the approval was only made on {{ selected_user.DATE_APPROVED.date }}. Due to late approval, non-compliance is noted. 
+                                        </p>
+                                      </div>
+                                    {% endif %}
+                                    <form id="new_user_add_approval" action="" method="POST" enctype="multipart/form-data" >
+                                        <input type="hidden" name="form_id" value="new_user_add_approval">
+                                        {% csrf_token %}
+                                        <div class="row g-3 align-items-center" style="margin-left:10px;">
+                                            <div class="d-flex flex-column" style="margin-top:20px;">
+                                                <div class="mt-auto ms-auto">
+                                                    <button type="submit" class="btn btn-secondary btn-sm"
+                                                        data-toggle="tooltip" title="Save Record">
+                                                        <i class="fa-solid fa-floppy-disk"></i>
+                                                    </button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    
+                                    <div class="row g-3 align-items-center" style="margin-top: 3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size: 12px; width: 150px;" class="col-form-label">Date
+                                                Approved:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="input-group date" id="new_user_date_approved">
+                                                <input type="text" class="form-control sm"
+                                                    style="width: 260px; font-size: 12px;" id="date_approved" name="date_approved"
+                                                    {% if selected_user.DATE_APPROVED %}
+                                                    value="{{ selected_user.DATE_APPROVED|date:'m/d/Y' }}" {% endif %} required autocomplete="off">
+                                                <span class="input-group-append">
+                                                    <span class="input-group-text bg-light d-block">
+                                                        <i class="fa fa-calendar"></i>
+                                                    </span>
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Approver
+                                                1:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input type="hidden" name="approver1_id" id="approver1_id" autocomplete="off"
+                                            {% if selected_user.ACCESS_APPROVER_NAME1.id %}
+                                                    value="{{ selected_user.ACCESS_APPROVER_NAME1.id }}" {% endif %} required>
+                                            <input class="form-control" list="approver1_list" id="approver1" name="approver1"
+                                                style="font-size:12px;width:300px;" placeholder="" required
+                                                {% if selected_user.ACCESS_APPROVER_NAME1 %}
+                                                    value="{{ selected_user.ACCESS_APPROVER_NAME1 }}" {% endif %}>
+                                            <datalist id="approver1_list">
+                                                <option selected disabled>Select Approver</option>
+                                                {% for user in active_hr_users %}
+                                                <option value="{{ user.FIRST_NAME }} {{user.LAST_NAME}}"
+                                                    data-user-id="{{ user.id }}"></option>
+                                                {% endfor %}
+                                            </datalist>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Approver
+                                                Job Title:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="approver1_title" name="approver1_title"
+                                                type="text" style="font-size:12px;width:300px;" 
+                                                {% if selected_user.ACCESS_APPROVER_NAME1 %}
+                                                value="{{ selected_user.ACCESS_APPROVER_NAME1.JOB_TITLE }}" {% endif %} readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Approver
+                                                2:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input type="hidden" name="approver2_id" id="approver2_id" autocomplete="off"
+                                            {% if selected_user.ACCESS_APPROVER_NAME2.id %}
+                                                value="{{ selected_user.ACCESS_APPROVER_NAME2.id }}" {% endif %}>
+                                            <input class="form-control" list="approver2_list" id="approver2" name="approver2"
+                                                style="font-size:12px;width:300px;" placeholder="" autocomplete="off" 
+                                                {% if selected_user.ACCESS_APPROVER_NAME2 %}
+                                                value="{{ selected_user.ACCESS_APPROVER_NAME2 }}" {% endif %}>
+                                            <datalist id="approver2_list">
+                                                <option selected disabled>Select Approver</option>
+                                                {% for user in active_hr_users %}
+                                                <option value="{{ user.FIRST_NAME }} {{user.LAST_NAME}}"
+                                                    data-user-id="{{user.id}}"></option>
+                                                {% endfor %}
+                                            </datalist>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Approver
+                                                Job Title:</label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="approver2_title2" name="approver2_title2"
+                                                type="text" style="font-size:12px;width:300px;" 
+                                                {% if selected_user.ACCESS_APPROVER_NAME2 %}
+                                                value="{{ selected_user.ACCESS_APPROVER_NAME2.JOB_TITLE }}" {% endif %} readonly>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Approval
+                                                Type: </label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div class="col-auto">
+                                                <input class="form-control" list="approval_type_list" id="approval_type" name="approval_type"
+                                                    style="font-size:12px;width:300px;" 
+                                                    {% if selected_user.APPROVAL_TYPE %}
+                                                    value="{{ selected_user.APPROVAL_TYPE }}" {% endif %}
+                                                    placeholder="" required autocomplete="off">
+                                                <datalist id="approval_type_list">
+                                                    <option>Tickets</option>
+                                                    <option>Email</option>
+                                                    <option>Others</option>
+                                                </datalist>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Approval
+                                                Reference:</i> </label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <input class="form-control sm" id="approval_ref" name="approval_ref"
+                                                type="text" style="font-size:12px;width:300px;" 
+                                                {% if selected_user.APPROVAL_REFERENCE %}
+                                                value="{{ selected_user.APPROVAL_REFERENCE }}" {% endif %} required autocomplete="off">
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;"
+                                                class="col-form-label">Attachment: <i
+                                                    class="fa-solid fa-paperclip"></i></label>
+                                        </div>
+                                        <!-- THIS IS THE MANUAL UPLOAD SECTION -->
+                                        <div class="col-auto">
+                                            <div class="card" style="border:none">
+                                                <div class="card-body"
+                                                    style="font-size:12px;border-style:dashed;border-color:lightblue;margin-top:10px;">
+                                                    {{ new_user_approval_form.file_name }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    {% if existing_attachment %}
+                                    <div class="row g-3 align-items-center" style="margin-top:1px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;"
+                                                class="col-form-label"></label>
+                                        </div>
+                                        <div class="col-auto">
+                                            <div id="file-preview-container"
+                                                style="width: 300px; height: 70px; box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); margin: 0; background-color:#f0f0f5; overflow: hidden; position: relative;">
+                                                <button type="button" class="btn-close" aria-label="Close"
+                                                    id="attach_close_button_new_user" data-bs-toggle="modal" data-bs-target="#new_user_attachment_delete"
+                                                    style="position: absolute; top: 0; right: 5px; font-size: 0.75rem; line-height: 1; background-color: lightblue; border: none;"></button>
+                                                <a href="#" style="font-size: 12px; cursor: zoom-in" id="openModalLink"
+                                                    title="Click to preview">
+                                                    <div id="file-preview" style="display: flex; align-items: center; justify-content: left; height: 100%;color:#474b4d;">
+                                                        <i class="fas fa-file" style="font-size: 24px;margin-right:10px;margin-left:10px;"></i><span id="file_upload_user_approval" style="font-size:13px; max-width: 250px;">{{existing_attachment}}</span>
+                                                    </div>
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    {% else %}
+                                    
+                                    {% endif %}
+                                </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="new_user_attachment_delete" data-bs-backdrop="static" data-bs-keyboard="false"
+    style="margin-top:20px;" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form id="delete_new_user_attachment" method="POST">
+                <input type="hidden" name="form_id" value="delete_new_user_attachment">
+                {% csrf_token %}
+                <div class="modal-header">
+                    <h6 class="modal-title">Confirm Delete?</h6>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p style="font-size:13px;">This will permanently delete the attachment for this user. Click
+                        Confirm Delete button below to proceed.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" id="delete_attachment" class="btn btn-primary btn-sm">Confirm Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% endblock content %}

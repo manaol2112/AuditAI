@@ -45,6 +45,16 @@ class SAP_AGR_USERS(models.Model):
         managed = True
         db_table = 'SAP_AGR_USERS'
 
+class USER_LOCKOUT(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    failed_attempts = models.IntegerField(default=0)
+    locked_out = models.BooleanField(default=False)
+    last_attempt_timestamp = models.DateTimeField(null=True, blank=True)
+    # You can add other fields as needed, such as lockout duration, etc.
+
+    def __str__(self):
+        return self.user.username
+
 
 class PASSWORDCONFIG(models.Model):
     MIN_LENGTH = models.CharField(max_length=100,blank=True,null=True)

@@ -5,9 +5,111 @@ class SystemSettingsView(View):
     template_name = 'pages/ADMIN/system-settings.html'
 
     def get(self, request):
-        context = {}
+        group_exist = Group.objects.exists()
+        context = {'group_exist': group_exist}
         return render(request, self.template_name, context)
     
+class ManageRolesListView(View):
+    template_name = 'pages/ADMIN/manage-roles-view.html'
+    def get(self,request):
+        try:
+            active_roles = Group.objects.all()
+        except Group.DoesNotExist:
+            active_roles = None
+        role_id = 0
+        context = {
+            'active_roles':active_roles,
+            'role_id':role_id
+        }
+        return render(request, self.template_name,context)
+    
+
+class ManageRolesView(View):
+    
+    template_name = 'pages/ADMIN/manage-roles.html'
+
+    def get(self, request, role_id):
+        context = self.common_data(request, role_id)
+        return render(request, self.template_name, context)
+    
+    def common_data(self, request, role_id):
+        permissions_in_group = None
+        permissions_not_in_group = None
+        group = None
+        if role_id:
+            group = Group.objects.get(id=role_id)
+            if group:
+                group = group
+            else:
+                group = None
+            permissions_in_group = group.permissions.all()
+        
+        else:
+            permissions_in_group = []
+
+        all_permissions = Permission.objects.all()
+        permissions_not_in_group = all_permissions.exclude(id__in=[permission.id for permission in permissions_in_group])
+       
+        context = {
+            'group':group,
+            'permissions_in_group': permissions_in_group,
+            'permissions_not_in_group': permissions_not_in_group
+        }
+        return context
+
+    
+    def post(self, request, role_id):
+
+        form = request.POST.get('manage_role')
+        permission_ids = request.POST.getlist('permissions')
+        assigned_permisions = request.POST.getlist('assigned_permissions')
+
+        if form == 'assign_role':
+            try:
+                role_exist = Group.objects.get(id=role_id)
+                # Update permissions for existing role
+                for permission_id in permission_ids:
+                    try:
+                        permission = Permission.objects.get(id=permission_id)
+                        role_exist.permissions.add(permission)
+                    except Permission.DoesNotExist:
+                        # Handle the case where the permission does not exist
+                        pass
+            except Group.DoesNotExist:
+                role_name = request.POST.get('assigned_roles')
+                if role_name:
+                    user_role, created = Group.objects.get_or_create(name=role_name)
+                    user_role.save()
+                    # Assign permissions to the default group
+                    for permission_id in permission_ids:
+                        try:
+                            permission = Permission.objects.get(id=permission_id)
+                            user_role.permissions.add(permission)
+                        except Permission.DoesNotExist:
+                            # Handle the case where the permission does not exist
+                            pass
+                else:
+                    role_name = None
+                    pass   
+        elif form == 'remove_role':
+            role_name = request.POST.get('remove_roles')
+            try:
+                role_exist = Group.objects.get(id=role_id)
+                # Update permissions for existing role
+                for permission_id in assigned_permisions:
+                    try:
+                        permission = Permission.objects.get(id=permission_id)
+                        role_exist.permissions.remove(permission)
+                    except Permission.DoesNotExist:
+                        # Handle the case where the permission does not exist
+                        pass
+            except Group.DoesNotExist:
+                pass
+
+        else:
+            pass
+
+        return redirect('appAUDITAI:manage-roles-view')
 
 class ManageUsersandRolesDetailsView(View):
     template_name = 'pages/ADMIN/manage-user-roles-details.html'

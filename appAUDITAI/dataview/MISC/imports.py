@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from PIL import Image
 from django.conf import settings
 from django.contrib.auth.hashers import make_password
-from django.contrib.auth.models import Group, User
+from django.contrib.auth.models import Group, User, Permission
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.password_validation import validate_password
 from django.core.exceptions import ObjectDoesNotExist, ValidationError
@@ -32,7 +32,7 @@ from appAUDITAI.dataview.APP.forms.applications_form import MappedUser, NewAPP, 
 from appAUDITAI.dataview.LOGIN.views.decorators import ProcessOwnerPermissionMixin
 from appAUDITAI.models import (ADMIN_ROLES_FILTER, APP_LIST, APP_NEW_USER_APPROVAL,
                                APP_RECORD, APP_USER_UPLOAD, COMPANY, CSV, HR_RECORD,
-                               PASSWORD, PWCONFIGATTACHMENTS, USERROLES,PASSWORDCONFIG,APP_USER_SFTP,APP_JOB_PULL,PROVISIONINGPOLICY, TERMINATIONPOLICY)
+                               PASSWORD, PWCONFIGATTACHMENTS, USERROLES,PASSWORDCONFIG,APP_USER_SFTP,APP_JOB_PULL,PROVISIONINGPOLICY, TERMINATIONPOLICY,USER_LOCKOUT)
 from django.http import JsonResponse
 import paramiko
 from django.shortcuts import get_object_or_404

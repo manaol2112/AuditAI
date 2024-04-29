@@ -7,7 +7,7 @@ from django.core.cache import cache
 from django.contrib import messages
 from appAUDITAI.dataview.LOGIN.forms.authenticate_form import LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
-from appAUDITAI.models import USERROLES
+from appAUDITAI.models import USERROLES,USER_LOCKOUT,PASSWORDCONFIG
 from django.template import TemplateDoesNotExist
 
 class UserRoleView(LoginRequiredMixin, View):
@@ -32,12 +32,14 @@ class UserRoleView(LoginRequiredMixin, View):
         return super().dispatch(request, *args, **kwargs)
 
 class AuthenticateUsers(View):
+
     model = User
     template_name = 'login/login.html'
     dashboard_name = 'pages/DASHBOARD/client-select.html'
 
     def get(self, request):
-        form = LoginForm()
+        user = request.user
+
         if request.user.is_authenticated:
             user = request.user
             if user: 
@@ -45,7 +47,9 @@ class AuthenticateUsers(View):
                 if group_names:
                     try:   
                         if 'Administrator' in group_names:
+                            context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/admin-dashboard.html'
+                            return render(request, template_name, context)
                         elif 'Auditor' in group_names:
                             template_name = 'pages/DASHBOARD/auditor-dashboard.html'
                         elif 'Process Owner' in group_names:
@@ -53,45 +57,72 @@ class AuthenticateUsers(View):
                         elif 'Compliance' in group_names:
                             template_name = 'pages/DASHBOARD/compliance-dashboard.html'
                         else:
-                            context = {'user': user, 'group_names': group_names,}
-                            return render(request, template_name, context)
+                            if user.is_superuser:
+                                context = {'user':user, 'group_names':group_names}
+                                template_name = 'pages/DASHBOARD/admin-dashboard.html'
+                                return render(request, template_name, context)
                     except TemplateDoesNotExist as e:
-                        return render(request, self.template_name, {'form':form})
+                        return redirect('appAUDITAI:authenticate-user')
                     except Exception as e:
-                        print('Something went wrong. I cant login to application right now.')
-                        pass
-                else:
-                    group_names = None         
+                        return redirect('appAUDITAI:authenticate-user')
+                else: 
+                    if user.is_superuser:
+                        context = {'user':user, 'group_names':group_names}
+                        template_name = 'pages/DASHBOARD/admin-dashboard.html'
+                        return render(request, template_name, context)      
             else:
                 user = None
-                return render(request, self.template_name, {'form':form})
-
-            context = {'user': user, 'group_names': group_names,}
-            return render(request, template_name, context)
+                return redirect('appAUDITAI:authenticate-user')
         else:
-            return render(request, self.template_name, {'form':form})
+            context = {'user': user}
+            return render(request, self.template_name,context)
 
     def post(self, request):
         username = request.POST.get('username')
         password = request.POST.get('password')
 
+        try:
+            max_attempt = PASSWORDCONFIG.objects.all().first()
+            if not max_attempt:
+                PASSWORDCONFIG.objects.create(LOCKOUT=5)
+                max_attempt = PASSWORDCONFIG.objects.first()  # Retrieve the newly created object
+        except PASSWORDCONFIG.DoesNotExist:
+            PASSWORDCONFIG.objects.create(LOCKOUT=5)
+            max_attempt = PASSWORDCONFIG.objects.first()
+
         user = authenticate(request, username=username, password=password)
         if user is not None:
             if user.is_active:
+                try:
+                    user_lockout = USER_LOCKOUT.objects.get(user__username=username)
+                    user_lockout.failed_attempts = 0
+                    user_lockout.save()
+                except USER_LOCKOUT.DoesNotExist:
+                    # Create UserLockout record if it doesn't exist
+                    USER_LOCKOUT.objects.create(user=User.objects.get(username=username))
                 login(request, user)
-                return redirect('appAUDITAI:mydashboard')
+                
             else:
                 # User is not active
-                messages.error(request, 'Your account is locked. We cannot access your account right now. Please reach out to your system administrator.')
+                messages.error(request, 'Your account is locked. Please contact your system administrator.')
         else:
             # Authentication failed
-            messages.error(request, 'Username or password is incorrect. Please try again.')
+            try:
+                user_lockout = USER_LOCKOUT.objects.get(user__username=username)
+                user_lockout.failed_attempts += 1
+                user_lockout.save()
+                if user_lockout.failed_attempts >= int(max_attempt.LOCKOUT):
+                    user_lockout.locked_out = True
+                    user_lockout.save()
+                    messages.error(request, 'Your account has been locked due to multiple failed login attempts. Please contact your system administrator to reset password.')
+            except USER_LOCKOUT.DoesNotExist:
+                # Create UserLockout record for the user if it doesn't exist
+                messages.error(request, 'Incorrect username or password. Please try again.')
+                return redirect('appAUDITAI:authenticate-user') 
 
         # Redirect back to the login page
-        return redirect('appAUDITAI:authenticate-user')
+        return redirect('appAUDITAI:authenticate-user')  # Redirect to the login page
        
-       
-
 class LogoutUser(View):
     def get(self, request):
         logout(request)

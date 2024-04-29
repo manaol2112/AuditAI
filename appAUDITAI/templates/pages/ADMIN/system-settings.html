@@ -2,6 +2,8 @@
 {% load static %} 
 {% block content %}
 
+<script src="{% static 'js/main.js' %}"></script>
+
 <div class="card" style="height:90vh">
     <div class="card-body">
         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
@@ -35,12 +37,41 @@
         </div>
         
         <div class="card-container" style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;border-bottom:solid;border-color:lightgray">
+            <a href="{% url 'appAUDITAI:manage-companies' %}" style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fa-solid fa-building" style="font-size: 30px;color:#72BAED"></span>
+                    <p style="font-size: 13px; margin-top: 16px;">Companies</p>
+                </div>
+            </a>
+          
+            {% if not group_exist %}
+            <a href="{% url 'appAUDITAI:manage-roles' role_id|default:0 %} " style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fas fa-sliders-h" style="font-size: 30px;color:#72BAED"></span>
+                    <p style="font-size: 13px; margin-top: 16px;">Roles</p>
+                </div>
+            </a>
+            {% else %}
+            <a href="{% url 'appAUDITAI:manage-roles-view' %} " style="text-decoration: none;color:#474b4d">
+                <div class="card"
+                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                    <span class="fas fa-sliders-h" style="font-size: 30px;color:#72BAED"></span>
+                    <p style="font-size: 13px; margin-top: 16px;">Roles</p>
+                </div>
+            </a>
+            {% endif %}
+            
             <a href="{% url 'appAUDITAI:manage-user-roles' %} " style="text-decoration: none;color:#474b4d">
                 <div class="card"
                     style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
                     onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
                     <span class="fas fa-user-lock" style="font-size: 30px;color:#72BAED"></span>
-                    <p style="font-size: 13px; margin-top: 16px;">Users and Roles</p>
+                    <p style="font-size: 13px; margin-top: 16px;">Users</p>
                 </div>
             </a>
             <a href="{% url 'appAUDITAI:manage-security' %}" style="text-decoration: none;color:#474b4d">
@@ -51,16 +82,6 @@
                     <p style="font-size: 13px; margin-top: 16px;">Security</p>
                 </div>
             </a>
-         
-            <a href="{% url 'appAUDITAI:manage-companies' %}" style="text-decoration: none;color:#474b4d">
-                <div class="card"
-                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
-                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
-                    <span class="fa-solid fa-building" style="font-size: 30px;color:#72BAED"></span>
-                    <p style="font-size: 13px; margin-top: 16px;">Companies</p>
-                </div>
-            </a>
-
             <a href="{% url 'appAUDITAI:manage-riskandcontrols' %}" style="text-decoration: none;color:#474b4d">
                 <div class="card"
                     style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"

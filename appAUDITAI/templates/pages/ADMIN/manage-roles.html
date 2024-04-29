@@ -1,0 +1,132 @@
+{% extends 'base/base-admin.html' %}
+{% load static %}
+{% block content %}
+
+<div class="card">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}"
+                        style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:systemsettings'%}"
+                        style="text-decoration:none;color:#474b4d">System Settings</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Roles</a>
+                </li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fas fa-users-cog"
+                            style="margin-right: 10px;color:#474b4d"></span>Manage Roles</a>
+                </div>
+               
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+            <p style="font-size:13px">Manages roles and permission</p>
+        </div>
+            <div class="card-container">
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px;" class="col-form-label">Role Name:</label>
+                    </div>
+                    <div class="col-auto">
+                        {% if group.name %}
+                        <input class="form-control" id="role_name" name="role_name" type="text"
+                            style="font-size:12px;width:300px;" autocomplete="off" value="{{group.name}}" readonly required>
+                        {% else %}
+                        <input class="form-control" id="role_name" name="role_name" type="text"
+                            style="font-size:12px;width:300px;" autocomplete="off" required>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-6">
+                        <div class="card" style="margin-top:20px;">
+                            <div class="card-header" style="max-height:40px;">
+                                <p style="font-size:14px">Available Permissions</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-md-12">
+                                    <div class="input-group has-validation">
+                                    <span class="input-group-text" id="inputGroupPrepend"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control"  id="filter_group" style="font-size:12px;" aria-describedby="inputGroupPrepend">
+                                    </div>
+                                    <div style="margin-top:10px;">
+                                        <input type="checkbox" id="select_all_permission" name="select_all_permission" value="Select All">
+                                        <label style="font-size:12px;"for="select_all_permission"><b>Check All</b></label><br>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="card-body" style="max-height:350px;min-height:350px;overflow-y: auto;margin-top:-20px;">
+                                <form id="assign_role" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="manage_role" value="assign_role">
+                                    <input type="hidden" id="assigned_roles" name="assigned_roles">
+                                    {% csrf_token %}
+                                {% for permission in permissions_not_in_group %}
+                                    <div class="permission-row">
+                                        <input type="checkbox" id="permission_{{ permission.id }}" name="permissions" value="{{ permission.id }}">
+                                        <label style="font-size:12px;"for="permission_{{ permission.id }}">{{ permission.name }}</label><br>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="text-center" style="margin-top:20px;margin-bottom:20px;">
+                                <button type="submit" class="btn btn-primary btn-sm">Assigned Selected <i class="fas fa-angle-double-right" style="margin-left:5px;"></i> </button>
+                            </div>
+                        </div>
+                       
+                    </form>
+                    </div>
+                    <div class="col-6">
+                        <div class="card" style="margin-top:20px;">
+                            <div class="card-header" style="max-height:40px;">
+                                <p style="font-size:14px">Assigned Permissions</p>
+                            </div>
+                            <div class="card-body">
+                                <div class="col-md-12">
+                                    <div class="input-group has-validation">
+                                    <span class="input-group-text" id="inputGroupPrepend"><i class="fas fa-search"></i></span>
+                                    <input type="text" class="form-control"  id="filter_assigned_group" style="font-size:12px" aria-describedby="inputGroupPrepend">
+                                    </div>
+                                    <div style="margin-top:10px;">
+                                        <input type="checkbox" id="select_all_assigned_permission" name="select_all_assigned_permission" value="Select All">
+                                        <label style="font-size:12px;"for="select_all_assigned_permission"><b>Check All</b></label><br>
+                                    </div>
+                                    
+                                </div>
+                            </div>
+                            <div class="card-body" style="max-height:350px;min-height:350px;overflow-y:auto ;margin-top:-20px;">
+                                <form id="remove_role" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="manage_role" value="remove_role">
+                                    <input type="hidden" id="remove_roles" name="remove_roles">
+                                    {% csrf_token %}
+                                {% for permission in permissions_in_group %}
+                                    <div class="permission-row-assigned">
+                                        <input type="checkbox" id="assigned_permission_{{ permission.id }}" name="assigned_permissions" value="{{ permission.id }}">
+                                        <label style="font-size:12px;"for="assigned_permission_{{ permission.id }}">{{ permission.name }}</label><br>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                            <div class="text-center" style="margin-top:20px;margin-bottom:20px;">
+                                <button type="submit" class="btn btn-primary btn-sm"><i class="fas fa-angle-double-left" style="margin-right:5px;"></i> Remove Selected  </button>
+                            </div>
+                        </div>
+                        
+                    </form>
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+
+
+{% endblock content %}

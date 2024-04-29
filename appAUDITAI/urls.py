@@ -21,6 +21,8 @@ path("administration/systemsettings/manage/user-roles/<int:user_id>",systemsetti
 path("administration/systemsettings/manage/security/",systemsettings.ManageSecurityView.as_view(),name="manage-security"),
 path("administration/systemsettings/manage/security/passwordpolicy",systemsettings.ManagePasswordView.as_view(),name="manage-password-policy"),
 path("administration/systemsettings/manage/companies/",systemsettings.ManageCompaniesView.as_view(),name="manage-companies"),
+path("administration/systemsettings/manage/roles/<int:role_id>",systemsettings.ManageRolesView.as_view(),name="manage-roles"),
+path("administration/systemsettings/manage/roles/",systemsettings.ManageRolesListView.as_view(),name="manage-roles-view"),
 path("administration/systemsettings/manage/companies/<int:comp_id>",systemsettings.ManageCompaniesDetailsView.as_view(),name="manage-companies-detais"),
 path("administration/systemsettings/manage/riskandcontrols/",systemsettings.ManageRiskandControlView.as_view(),name="manage-riskandcontrols"),
 

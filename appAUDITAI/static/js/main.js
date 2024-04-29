@@ -1,3 +1,61 @@
+//COPY ROLE NAME AND ATTACH TO SUBMIT
+$(document).ready(function() {
+  // Event listener for changes in the role_name input field
+  $('#role_name').on('input', function() {
+      // Get the value of the role_name input field
+      var roleNameValue = $(this).val();
+      
+      // Update the value of the assigned_roles hidden field with the value of role_name
+      $('#assigned_roles').val(roleNameValue);
+      $('#remove_roles').val(roleNameValue);
+  });
+});
+
+
+//FIlTER THE PERMISSIONS IN BOTH NOT ASSIGNED AND ASSIGNED GROUP
+$(document).ready(function(){
+  $('#filter_group').on('input', function() {
+      var searchText = $(this).val().toLowerCase();
+      $('.permission-row').each(function() {
+          var permissionName = $(this).find('label').text().toLowerCase();
+          if (permissionName.indexOf(searchText) === -1) {
+              $(this).hide();
+          } else {
+              $(this).show();
+          }
+      });
+  });
+
+  $('#select_all_permission').click(function() {
+      var isChecked = $(this).prop('checked');
+      $('.permission-row:visible').each(function() {
+          $(this).find('input[name="permissions"]').prop('checked', isChecked);
+      });
+  });
+
+  //MANAGE ASSIGNED PERMISSIONS
+  $('#filter_assigned_group').on('input', function() {
+    var searchText = $(this).val().toLowerCase();
+    $('.permission-row-assigned').each(function() {
+        var permissionName = $(this).find('label').text().toLowerCase();
+        if (permissionName.indexOf(searchText) === -1) {
+            $(this).hide();
+        } else {
+            $(this).show();
+        }
+    });
+});
+
+  $('#select_all_assigned_permission').click(function() {
+    var isChecked = $(this).prop('checked');
+    $('.permission-row-assigned:visible').each(function() {
+        $(this).find('input[name="assigned_permissions"]').prop('checked', isChecked);
+    });
+});
+});
+
+
+
 //VALIDATE IF THE ADMIN FILTER IS COMPLETE
 $('#policy_create_form').on('submit', function(event) {
   var selectedItems = $('#admin_role_list_2').val();

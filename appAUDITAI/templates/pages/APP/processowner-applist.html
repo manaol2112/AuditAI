@@ -4,7 +4,7 @@
 
 {% block content %}
 
-<div class="card" style="height:90vh">
+<div class="card">
     <div class="card-body">
         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
             <ol class="breadcrumb" style="font-size:14px;">
@@ -42,33 +42,43 @@
         <div class="card" style="margin-top:30px;">
             <div class="card-body">
                 <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;">
-                    {% for app_item in app %}
-                    <a href="{% url 'appAUDITAI:appdetails-process-owner' comp_id app_item.id %}"
-                        style="text-decoration: none; color:#474b4d">
-                        <div class="card app-card" data-appname="{{ app_item.APP_NAME }}"
-                            data-apptype="{{ app_item.APP_TYPE }}"
-                            style=" border-radius: 25px;cursor:pointer;height: 150px; width:160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
-                            onmouseover="this.style.backgroundColor='#d5ecf7';"
-                            onmouseout="this.style.backgroundColor='#fff';">
 
-                            {% if app_item.APP_TYPE == 'Application' %}
-                            <span class="fab fa-app-store-ios" style="font-size: 40px;color:#8bd5f7"></span>
-                            {% elif app_item.APP_TYPE == 'Network' %}
-                            <span class="fab fa-hive" style="font-size: 40px;color:#8bd5f7"></span>
-                            {% elif app_item.APP_TYPE == 'Database' %}
-                            <span class="fas fa-database" style="font-size: 40px;color:#8bd5f7"></span>
-                            {% elif app_item.APP_TYPE == 'Operating System' %}
-                            <span class="fab fa-centos" style="font-size: 40px;color:#8bd5f7"></span>
-                            {% elif app_item.APP_TYPE == 'Server' %}
-                            <span class="fas fa-server" style="font-size: 40px;color:#8bd5f7"></span>
-                            {% endif %}
+                    {% if app %}
+                        {% for app_item in app %}
+                        <a href="{% url 'appAUDITAI:appdetails-process-owner' comp_id app_item.id %}"
+                            style="text-decoration: none; color:#474b4d">
+                            <div class="card app-card" data-appname="{{ app_item.APP_NAME }}"
+                                data-apptype="{{ app_item.APP_TYPE }}"
+                                style=" border-radius: 25px;cursor:pointer;height: 150px; width:160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                                onmouseover="this.style.backgroundColor='#d5ecf7';"
+                                onmouseout="this.style.backgroundColor='#fff';">
 
-                            <p style="font-size: 16px; margin-top: 10px;color:#474b4d">{{ app_item.APP_NAME }}</p>
-                            <p style="font-size: 10px;margin-top:-10px" style="color:lightgray">({{ app_item.APP_TYPE}})
-                                </p>
+                                {% if app_item.APP_TYPE == 'Application' %}
+                                <span class="fab fa-app-store-ios" style="font-size: 40px;color:#8bd5f7"></span>
+                                {% elif app_item.APP_TYPE == 'Network' %}
+                                <span class="fab fa-hive" style="font-size: 40px;color:#8bd5f7"></span>
+                                {% elif app_item.APP_TYPE == 'Database' %}
+                                <span class="fas fa-database" style="font-size: 40px;color:#8bd5f7"></span>
+                                {% elif app_item.APP_TYPE == 'Operating System' %}
+                                <span class="fab fa-centos" style="font-size: 40px;color:#8bd5f7"></span>
+                                {% elif app_item.APP_TYPE == 'Server' %}
+                                <span class="fas fa-server" style="font-size: 40px;color:#8bd5f7"></span>
+                                {% endif %}
+
+                                <p style="font-size: 16px; margin-top: 10px;color:#474b4d">{{ app_item.APP_NAME }}</p>
+                                <p style="font-size: 10px;margin-top:-10px" style="color:lightgray">({{ app_item.APP_TYPE}})
+                                    </p>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    {% else %}
+                    <div class="alert alert-light" role="alert">
+                        <div class="text-center">
+                            <p style="font-size:12px;">No applications has been setup for this company yet. Click the + icon on the upper left corner of the page to add a new application.</p>
                         </div>
-                    </a>
-                    {% endfor %}
+                    </div>
+                   
+                    {%endif%}
                 </div>
 
             </div>
@@ -136,7 +146,7 @@
                                                     style="font-size:12px;width:300px;" required>
                                                     <option value="" disabled selected></option>
                                                     <option value="On-prem">On-prem</option>
-                                                    <option value="Hosted">Hosted</option>
+                                                    <option value="Hosted">Vendor Hosted</option>
                                                     <option value="Others">Others</option>
                                                 </select>
                                             </div>
@@ -169,7 +179,7 @@
                                             <div class="col-auto">
                                                 <input class="form-control sm" id="relevant_process"
                                                     name="relevant_process" type="text"
-                                                    placeholder="e.g., Financial Reporting, Payroll, HR"
+                                                    placeholder="e.g., Financial Reporting, Revenue, Payroll, HR"
                                                     style="font-size:12px;width:300px;" autocomplete="false">
                                             </div>
                                         </div>
@@ -204,25 +214,6 @@
                                                 </datalist>
                                             </div>
                                         </div>
-
-                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                            <div class="col-auto">
-                                                <label style="font-size:12px; width: 110px;" class="col-form-label">Auth Type:
-                                                </label>
-                                            </div>
-                                            <div class="col-auto">
-                                                <select class="form-control sm" id="auth_type" name="auth_type"
-                                                    style="font-size:12px;width:300px;" required>
-                                                    <option value="" disabled selected></option>
-                                                    <option value="Low">Single-Sign-On (SSO)</option>
-                                                    <option value="Medium">Local/Direct Authentication</option>
-                                                    <option value="High">Both</option>
-                                                </select>
-                                            </div>
-                                        </div>
-
-                                        
-
                                     </div>
                                 </div>
                             </div>

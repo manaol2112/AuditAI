@@ -1,3 +1,50 @@
+//TEST SFTP CONNECTION
+$(document).ready(function() {
+  $('#sftp_test_failed').hide();
+  $('#sftp_test_success').hide();
+  $('#test_sftp').click(function() {
+      var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+      // Retrieve input field values
+      var hostName = $('#host_name').val();
+      var directory = $('#sftp_directory').val();
+      var username = $('#sftp_username').val();
+      var password = $('#sftp_password').val();
+
+      var url = $(this).data('url');
+
+      // Send AJAX request to test SFTP connection
+      $.ajax({
+          url: url, // Django template tag to generate URL
+          type: 'POST',
+          data: {
+              host_name: hostName,
+              sftp_directory: directory,
+              sftp_username: username,
+              sftp_password: password,
+              csrfmiddlewaretoken: csrfToken
+          },
+          success: function(response) {
+              // Update UI based on response
+              if (response.success) {
+                  // Connection successful
+                  $('#sftp_test_success').show();
+                  $('#sftp_test_failed').hide();
+              } else {
+                $('#sftp_test_success').hide();
+                $('#sftp_test_failed').show();
+                  alert('SFTP connection test failed. Error: ' + response.error);
+              }
+          },
+          error: function(xhr, status, error) {
+              // Handle AJAX errors
+              $('#sftp_test_failed').show();
+              console.error('Error:', error);
+          }
+      });
+  });
+});
+
 //COPY ROLE NAME AND ATTACH TO SUBMIT
 $(document).ready(function() {
   // Event listener for changes in the role_name input field

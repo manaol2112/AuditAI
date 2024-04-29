@@ -20,3 +20,7 @@ class TagUnmappedUser(forms.ModelForm):
     class Meta:
         model = APP_RECORD
         fields = ['id']
+
+class User_UploadForm(forms.Form):
+    file_name = forms.FileField()
+    uploadappname = forms.CharField(widget=forms.HiddenInput)

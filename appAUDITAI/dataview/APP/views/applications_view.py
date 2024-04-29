@@ -1,4 +1,6 @@
 from appAUDITAI.dataview.MISC.imports import *
+from django.http import JsonResponse
+from paramiko import SSHClient, AuthenticationException, SSHException
 
 # THIS CLASS HANDLES ALL THE ACTIONS TAKEN BY THE SYSTEM ADMINISTRATOR (USER ADDITION, TERMINATION, UPLOAD)
 
@@ -66,6 +68,46 @@ class ApplistByProcessOwner(ProcessOwnerPermissionMixin, View):
 
         context = self.common_data(request, comp_id)
         return render(request, self.template_name, context)
+    
+
+def test_sftp_connection(request):
+    if request.method == 'POST':
+        # Retrieve POST data
+        host_name = request.POST.get('host_name')
+        sftp_directory = request.POST.get('sftp_directory')
+        sftp_username = request.POST.get('sftp_username')
+        sftp_password = request.POST.get('sftp_password')
+        
+        try:
+            # Establish SFTP connection
+            transport = paramiko.Transport((host_name, 22))
+            transport.connect(username=sftp_username, password=sftp_password)
+            sftp = paramiko.SFTPClient.from_transport(transport)
+            sftp.close()
+            transport.close()
+            return JsonResponse({'success': True})
+        except AuthenticationException:
+            return JsonResponse({'success': False, 'error': 'Authentication failed'})
+        except SSHException as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+        except Exception as e:
+            return JsonResponse({'success': False, 'error': str(e)})
+        finally:
+            # Ensure connections are closed
+            try:
+                if sftp:
+                    sftp.close()
+            except:
+                pass
+            try:
+                if transport:
+                    transport.close()
+            except:
+                pass
+            
+    # Return error if request method is not POST
+    return JsonResponse({'success': False, 'error': 'Method not allowed'}, status=405)
+
 
 
 class SetupNewAppView(ProcessOwnerPermissionMixin,View):
@@ -119,6 +161,11 @@ class SetupNewAppView(ProcessOwnerPermissionMixin,View):
                 termed_policy = TERMINATIONPOLICY.objects.get(APP_NAME = selected_app)
             except TERMINATIONPOLICY.DoesNotExist:
                 termed_policy = None
+            form = None
+            try:
+                form = MANUAL_USER_UPLOAD_FORM()
+            except:
+                pass
 
             context = {
                 'comp_id':comp_id,
@@ -131,7 +178,8 @@ class SetupNewAppView(ProcessOwnerPermissionMixin,View):
                 'unique_role_names':unique_role_names,
                 'prov_policy':prov_policy,
                 'termed_policy':termed_policy,
-                'selected_admins':selected_admins
+                'selected_admins':selected_admins,
+                'form':form
 
             }
             return context
@@ -1044,9 +1092,18 @@ class ApplicationList(View):
     template_name = 'pages/APP/app-list.html'
 
     def get(self, request, user_id=0, *args, **kwargs):
-        # Load all employees
-        app = APP_LIST.objects.filter(APP_NAME__isnull=False)
-        active_users = User.objects.filter(is_active=True)
+        # Load all applications
+        try:
+            app = APP_LIST.objects.filter(APP_NAME__isnull=False)
+        except APP_LIST.DoesNotExist:
+            app = None
+        except Exception as e:
+            print(str(e))
+            pass
+        try:
+            active_users = User.objects.filter(is_active=True)
+        except User.DoesNotExist:
+            active_users = None
         context = {'app': app,
                    'active_users': active_users}
         return render(request, self.template_name, context)

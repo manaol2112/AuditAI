@@ -27,6 +27,10 @@ path("administration/systemsettings/manage/companies/<int:comp_id>",systemsettin
 path("administration/systemsettings/manage/riskandcontrols/",systemsettings.ManageRiskandControlView.as_view(),name="manage-riskandcontrols"),
 
 
+#SFTPCHECK
+path('test_sftp_connection/', applications_view.test_sftp_connection, name='test_sftp'),
+
+
 #--------------URL FOR AUDITORS--------------------------------# 
 #CLIENTS
 path("myclients/actions/<int:id>",clientactions.ClientActions.as_view(),name="client-actions"),

@@ -51,11 +51,17 @@ class AuthenticateUsers(View):
                             template_name = 'pages/DASHBOARD/admin-dashboard.html'
                             return render(request, template_name, context)
                         elif 'Auditor' in group_names:
+                            context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/auditor-dashboard.html'
+                            return render(request, template_name, context)
                         elif 'Process Owner' in group_names:
+                            context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/processowner-dashboard.html'
+                            return render(request, template_name, context)
                         elif 'Compliance' in group_names:
+                            context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/compliance-dashboard.html'
+                            return render(request, template_name, context)
                         else:
                             if user.is_superuser:
                                 context = {'user':user, 'group_names':group_names}
@@ -106,6 +112,7 @@ class AuthenticateUsers(View):
                 # User is not active
                 messages.error(request, 'Your account is locked. Please contact your system administrator.')
         else:
+            messages.error(request, 'Incorrect username or password. Please try again.')
             # Authentication failed
             try:
                 user_lockout = USER_LOCKOUT.objects.get(user__username=username)

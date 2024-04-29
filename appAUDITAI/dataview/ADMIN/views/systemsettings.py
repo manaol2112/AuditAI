@@ -288,16 +288,20 @@ def verification_error_view(request):
 def validate_password(new_password):
     # Validate password strength
     special_characters = "!@#$%^&*()_+{}:<>?[];'./,\|-="
-    required_pw = PASSWORDCONFIG.objects.all()
-    for pw in required_pw:
-        if len(new_password) >= int(pw.MIN_LENGTH):
-            if any(char in special_characters for char in new_password):
-                if any(char.isdigit() for char in new_password):
-                    if any(char.isupper() for char in new_password):
-                        if any(char.islower() for char in new_password):
-                            return True
-    return False
-
+    try:
+        required_pw = PASSWORDCONFIG.objects.all()
+        for pw in required_pw:
+            if len(new_password) >= int(pw.MIN_LENGTH):
+                if any(char in special_characters for char in new_password):
+                    if any(char.isdigit() for char in new_password):
+                        if any(char.isupper() for char in new_password):
+                            if any(char.islower() for char in new_password):
+                                return True
+                            return False
+    except PASSWORDCONFIG.DoesNotExist:
+        required_pw = None
+        pass
+   
 def verification_success_view(request, uidb64, token):
     try:
         uid = urlsafe_base64_decode(uidb64).decode()

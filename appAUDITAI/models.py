@@ -55,7 +55,6 @@ class USER_LOCKOUT(models.Model):
     def __str__(self):
         return self.user.username
 
-
 class PASSWORDCONFIG(models.Model):
     MIN_LENGTH = models.CharField(max_length=100,blank=True,null=True)
     HISTORY = models.CharField(max_length=100,blank=True,null=True)
@@ -391,6 +390,42 @@ class APP_RECORD(models.Model):
     class Meta:
         managed = True
         db_table = 'APP_RECORD'
+
+class CSV_UPLOAD_FIELDS(models.Model):
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
+    FIELD_NAME = models.CharField(max_length=128,blank=True,null=True)
+    DATE = models.DateTimeField(null=True, blank=True)
+
+     #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'CSV_UPLOAD_FIELDS'
+
+class CSV_MAPPING_TABLE(models.Model):
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
+    USER_ID = models.CharField(max_length=128,blank=True,null=True)
+    FIRST_NAME = models.CharField(max_length=128,blank=True,null=True)
+    LAST_NAME = models.CharField(max_length=128,blank=True,null=True)
+    ROLE = models.CharField(max_length=128,blank=True,null=True)
+    STATUS = models.CharField(max_length=128,blank=True,null=True)
+    DATE_GRANTED = models.CharField(max_length=128,blank=True,null=True)
+    DATE_REVOKED = models.CharField(max_length=128,blank=True,null=True)
+    LAST_LOGIN = models.CharField(max_length=128,blank=True,null=True)
+
+     #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'CSV_MAPPING_TABLE'
 
 
 class ADMIN_ROLES_FILTER(models.Model):

@@ -1,6 +1,7 @@
 from appAUDITAI.dataview.MISC.imports import *
 from django.http import JsonResponse
 from paramiko import SSHClient, AuthenticationException, SSHException
+from django.core.files.storage import default_storage
 
 # THIS CLASS HANDLES ALL THE ACTIONS TAKEN BY THE SYSTEM ADMINISTRATOR (USER ADDITION, TERMINATION, UPLOAD)
 
@@ -197,11 +198,43 @@ class SetupNewAppView(ProcessOwnerPermissionMixin,View):
             if form == 'password_create_form':
                 self.password_create(request, comp_id, app_id)
             elif form == 'sftp_create_form':
+                print('sftp_form')
                 self.sfpt_create(request, comp_id,app_id)
             elif form == 'policy_create_form':
                 self.access_policy_create(request, comp_id,app_id)
-            else:
-                print('No form is selected')
+            elif form == 'manual_user_upload_form':
+                self.process_manual_upload(request, comp_id,app_id)
+            elif form =='review_setup_form':
+
+                try:
+                    pw_check = PASSWORD.objects.get(APP_NAME = app_id)
+                except PASSWORD.DoesNotExist:
+                    pw_check = None
+                except Exception:
+                    pass
+
+                try: 
+                    sftp_check = APP_USER_SFTP.objects.get(APP_NAME = app_id)
+                except APP_USER_SFTP.DoesNotExist:
+                    sftp_check = None
+                except Exception:
+                    pass
+
+                try:
+                    policy_check = PROVISIONINGPOLICY.objects.get(APP_NAME = app_id)
+                except PROVISIONINGPOLICY.DoesNotExist:
+                    policy_check = None
+                except Exception:
+                    pass
+
+                if pw_check.SETUP_COMPLETE == True and sftp_check.SETUP_COMPLETE == True and policy_check.SETUP_COMPLETE == True:
+                     selected_app = APP_LIST.objects.get(id=app_id)
+                     selected_app.SETUP_COMPLETE =  True
+                     selected_app.save()
+
+                     return redirect('')
+                else:
+                    print('You are not able to finish this yet')
         
         except ValueError as e:
             print('Error:Value Error',e)
@@ -210,6 +243,126 @@ class SetupNewAppView(ProcessOwnerPermissionMixin,View):
 
         context = self.common_data(request, comp_id, app_id)
         return render(request, self.template_name, context)
+    
+    def parse_date(self, date_str, date_formats):
+        for date_format in date_formats:
+            try:
+                return datetime.strptime(date_str, date_format)
+            except ValueError:
+                pass
+        # If none of the formats match, return a default date
+        return datetime(1900, 1, 1)
+
+    
+    def process_manual_upload(self, request, comp_id, app_id):
+        user = request.user
+        date_formats = ["%Y-%m-%d", "%d/%m/%Y",
+                                "%m/%d/%Y", "%Y%m%d", "%m/%d/%y"] 
+        
+
+        user_id_mapped = request.POST.get('user_id_mapped')
+        email_mapped = request.POST.get('email_mapped')
+        first_name_mapped = request.POST.get('first_name_mapped')
+        last_name_mapped = request.POST.get('last_name_mapped')
+        roles_mapped = request.POST.get('roles_mapped')
+        status_mapped = request.POST.get('status_mapped')
+        date_granted_mapped = request.POST.get('date_granted_mapped')
+        date_revoked_mapped = request.POST.get('date_revoked_mapped')
+        last_login_mapped = request.POST.get('last_login_mapped').strip().replace('\r\n', '')
+    
+
+        form = MANUAL_USER_UPLOAD_FORM(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = form.cleaned_data['file_name']
+            # Check if the uploaded file is a CSV file
+            if uploaded_file.name.endswith('.csv'):
+                # Save the uploaded file temporarily
+                file_path = default_storage.save('temp/' + uploaded_file.name, uploaded_file)
+                # Get the absolute file path
+                absolute_file_path = default_storage.path(file_path)
+                # Process the CSV file
+                with open(absolute_file_path, 'r', encoding='utf-8-sig') as file:
+                    csv_rows = csv.reader(file)
+                    # Extract headers from the CSV file
+
+                    headers = [header.strip().replace('\r\n', '') for header in next(csv_rows, [])]
+
+                    # Get indices of mapped values in headers
+                    try:
+                        user_id_index = headers.index(user_id_mapped)
+                        email_index = headers.index(email_mapped)
+                        first_name_index = headers.index(first_name_mapped)
+                        last_name_index = headers.index(last_name_mapped)
+                        roles_index = headers.index(roles_mapped)
+                        status_index = headers.index(status_mapped)
+                        date_granted_index = headers.index(date_granted_mapped)
+                        date_revoked_index = headers.index(date_revoked_mapped)
+                        last_login_index = headers.index(last_login_mapped)
+                    except ValueError as e:
+                        print(f"Error: {e}. Mapped value not found in headers.")
+
+
+                    for row in csv_rows:
+                        # Access the value in the 'USER_ID' column
+                        user_id_value = row[user_id_index]
+                        email_value = row[email_index]
+                        first_name_value = row[first_name_index]
+                        last_name_value = row[last_name_index]
+                        roles_value = row[roles_index]
+                        status_value = row[status_index]
+                        
+                        date_granted_value = row[date_granted_index]
+                        date_granted_value = timezone.make_aware(self.parse_date(
+                                    str(date_granted_value), date_formats))
+                        date_revoked_value = row[date_revoked_index]
+                        date_revoked_value = timezone.make_aware(self.parse_date(
+                                    str(date_revoked_value), date_formats))
+                        last_login_value = row[last_login_index]
+                        last_login_value = timezone.make_aware(self.parse_date(
+                                    str(last_login_value), date_formats))
+                        
+                        try:
+                            selected_app = APP_LIST.objects.get(id=app_id)
+                        except APP_LIST.DoesNotExist:
+                            selected_app = None
+                        
+                        if selected_app:
+                            try:
+                                app_record, created = APP_RECORD.objects.get_or_create(APP_NAME=selected_app,USER_ID = user_id_value, EMAIL_ADDRESS = email_value)
+                                app_record.FIRST_NAME = first_name_value
+                                app_record.LAST_NAME = last_name_value
+                                app_record.ROLE_NAME = roles_value
+                                app_record.STATUS = status_value
+                                app_record.DATE_GRANTED = date_granted_value
+                                app_record.DATE_REVOKED = date_revoked_value
+                                app_record.LAST_LOGIN = last_login_value
+
+                                if created:  # Check if the record was just created
+                                    app_record.CREATED_BY = user.username
+                                    app_record.CREATED_ON = timezone.now()
+                                else:
+                                    app_record.MODIFIED_BY = user.username
+                                    app_record.LAST_MODIFIED = timezone.now()
+                                
+                                app_record.save()  # Save the changes to the database
+
+                               
+                            except ValueError as e:
+                                print('Error:', e)
+                            except Exception as e:
+                                # Handle exceptions appropriately
+                                print("Error:", e)
+                    sftp, created = APP_USER_SFTP.objects.get_or_create(APP_NAME = selected_app)
+                    sftp.SETUP_COMPLETE = True
+                    sftp.save()
+                            
+                    # Further processing...
+                    # Return a response or perform any necessary action
+                    return HttpResponse("CSV file processed successfully.")
+            else:
+                return HttpResponse("Uploaded file is not a CSV.")
+        else:
+            return HttpResponse("Form is not valid.")
     
     def access_policy_create(self,request,comp_id,app_id):
         #ACCESS PROVISIONING POLICY
@@ -1019,7 +1172,6 @@ class GenericAccountListView(ProcessOwnerPermissionMixin,View):
         generic_accounts = generic_account = APP_RECORD.objects.filter(
         Q(TYPE='system_account') | Q(TYPE='integration_account'),
         Q(STATUS__iexact='ACTIVE'),APP_NAME = app_name).order_by('EMAIL_ADDRESS', 'TYPE')
-        print(generic_account)
         company_name = COMPANY.objects.get(id=comp_id)
         selected_app = APP_LIST.objects.get(id = app_id)
         context = {

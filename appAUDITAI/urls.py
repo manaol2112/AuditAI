@@ -57,6 +57,7 @@ path("dashboard/company/list/",applications_view.AppListByCompany.as_view(),name
 path("dashboard/company/applications/<int:comp_id>/",applications_view.ApplistByProcessOwner.as_view(),name="applist-process-owner"),
 path("dashboard/my-applications/details/<int:comp_id>/<int:app_id>/",applications_view.AppdetailsByProcessOwner.as_view(),name="appdetails-process-owner"),
 path("dashboard/my-applications/details/setup/<int:comp_id>/<int:app_id>",applications_view.SetupNewAppView.as_view(),name="setup-new-app"),
+path("dashboard/my-applications/details/compliance/<int:comp_id>/<int:app_id>",applications_view.AppCompliance.as_view(),name="app-compliance"),
 path("dashboard/my-applications/details/<int:comp_id>/<int:app_id>/<str:username>/",applications_view.AppUserRecordView.as_view(),name="appdetails-view-user-record"),
 path("dashboard/my-applications/details/app-new-users-list/<int:comp_id>/<int:app_id>/",applications_view.AppNewUserListView.as_view(),name="appdetails-new-user-list"),
 path("dashboard/my-applications/details/app-new-users-list/<int:comp_id>/<int:app_id>/<int:user_id>",applications_view.AppNewUserApprovalView.as_view(),name="appdetails-new-user-approval"),
@@ -65,6 +66,7 @@ path("dashboard/my-applications/details/app-hr-mapping-list/<int:comp_id>/<int:a
 path("dashboard/my-applications/details/administrative-accounts-list/<int:comp_id>/<int:app_id>/",applications_view.AdminAccountListView.as_view(),name="appdetails-admin-list"),
 path("dashboard/my-applications/details/generic-accounts-list/<int:comp_id>/<int:app_id>/",applications_view.GenericAccountListView.as_view(),name="appdetails-generic-list"),
 path("dashboard/my-applications/delete/<int:id>/",applications_view.DeletePWAttachment.as_view(),name="delete-pw-attachment"),
+
 
 
 

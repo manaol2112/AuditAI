@@ -3,7 +3,40 @@ from django.http import JsonResponse
 from paramiko import SSHClient, AuthenticationException, SSHException
 from django.core.files.storage import default_storage
 
-# THIS CLASS HANDLES ALL THE ACTIONS TAKEN BY THE SYSTEM ADMINISTRATOR (USER ADDITION, TERMINATION, UPLOAD)
+class AppCompliance(ProcessOwnerPermissionMixin,View):
+    template_name = 'pages/APP/process-owner-compliance-auth.html'
+
+    def get(self,request, comp_id, app_id):
+        try:
+            company_name = COMPANY.objects.get(id = comp_id)
+        except COMPANY.DoesNotExist:
+            company_name = None
+
+        try:
+            selected_app = APP_LIST.objects.get(id = app_id)
+        except COMPANY.DoesNotExist:
+            selected_app = None
+
+        try:
+            pw_configured = PASSWORD.objects.get(APP_NAME = selected_app)
+        except PASSWORD.DoesNotExist:
+            pw_configured = None
+
+        try: 
+            pw_policy = PASSWORDPOLICY.objects.get(id = comp_id)
+        except PASSWORDPOLICY.DoesNotExist:
+            pw_policy = None
+
+        context = {
+            'comp_id':comp_id,
+            'app_id':app_id,
+            'company_name':company_name,
+            'selected_app':selected_app,
+            'pw_configured':pw_configured,
+            'pw_policy':pw_policy
+        }
+        return render(request,self.template_name, context)
+
 
 class AppListByCompany(ProcessOwnerPermissionMixin,View):
     template_name = 'pages/APP/processowner-company.html'
@@ -231,7 +264,6 @@ class SetupNewAppView(ProcessOwnerPermissionMixin,View):
                      selected_app = APP_LIST.objects.get(id=app_id)
                      selected_app.SETUP_COMPLETE =  True
                      selected_app.save()
-
                      return redirect('')
                 else:
                     print('You are not able to finish this yet')
@@ -258,7 +290,6 @@ class SetupNewAppView(ProcessOwnerPermissionMixin,View):
         user = request.user
         date_formats = ["%Y-%m-%d", "%d/%m/%Y",
                                 "%m/%d/%Y", "%Y%m%d", "%m/%d/%y"] 
-        
 
         user_id_mapped = request.POST.get('user_id_mapped')
         email_mapped = request.POST.get('email_mapped')

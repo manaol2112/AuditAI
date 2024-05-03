@@ -59,13 +59,13 @@ $(document).ready(function() {
                                 $("#email_mapped").append(`<option value="${header}">${header}</option>`);
                             }
 
-                            if (header.toLowerCase().includes("first")) {
+                            if (header.toLowerCase().match(/first[\s_]?name/)) {
                                 $("#first_name_mapped").append(`<option value="${header}" selected>${header}</option>`);
                             } else {
                                 $("#first_name_mapped").append(`<option value="${header}">${header}</option>`);
                             }
 
-                            if (header.toLowerCase().includes("last")) {
+                            if (header.toLowerCase().match(/last[\s_]?name/)) {
                                 $("#last_name_mapped").append(`<option value="${header}" selected>${header}</option>`);
                             } else {
                                 $("#last_name_mapped").append(`<option value="${header}">${header}</option>`);

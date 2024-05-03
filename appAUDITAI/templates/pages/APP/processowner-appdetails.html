@@ -39,7 +39,11 @@
         </div>
         <nav id="dashboardnav" style="margin-top:10px;">
             <div class="nav nav-tabs" id="nav-tab-dashboard" role="tablist">
-                <a class="nav-link active" id="nav-users-tab" data-bs-toggle="tab" href="#nav-users" role="tab"
+
+                <a class="nav-link active" id="nav-compliance-tab" data-bs-toggle="tab" href="#nav-compliance" role="tab"
+                aria-controls="nav-compliance" aria-selected="true"><span class="fa fa-user"
+                    style="margin-right:5px;"></span> Dashboard</a>
+                <a class="nav-link" id="nav-users-tab" data-bs-toggle="tab" href="#nav-users" role="tab"
                     aria-controls="nav-users" aria-selected="true"><span class="fa fa-user"
                         style="margin-right:5px;"></span> Users</a>
                 <a class="nav-link" id="nav-audits-tab" data-bs-toggle="tab" href="#nav-audits" role="tab"
@@ -47,19 +51,71 @@
                         style="margin-right:5px;"></span> Policies</a>
                 <a class="nav-link" id="nav-workpapers-tab" data-bs-toggle="tab" href="#nav-workpapers" role="tab"
                     aria-controls="nav-workpapers" aria-selected="false"><span class="fa-solid fa-address-card"
-                        style="margin-right:5px;"></span>Access Review</a>
+                        style="margin-right:5px;"></span>New Users</a>
                 <a class="nav-link" id="nav-issues-tab" data-bs-toggle="tab" href="#nav-issues" role="tab"
                     aria-controls="nav-issues" aria-selected="false"><span class="fas fa-cog"
-                        style="margin-right:5px;"></span>Manage</a>
+                        style="margin-right:5px;"></span>Termination</a>
                 <a class="nav-link" id="nav-requests-tab" data-bs-toggle="tab" href="#nav-requests" role="tab"
                     aria-controls="nav-requests" aria-selected="false"><span
-                        class="fa fa-tasks fa-fw me-1"></span>Requests</a>
+                        class="fa fa-tasks fa-fw me-1"></span>Admins</a>
             </div>
         </nav>
 
-        <div class="tab-content" id="nav-tabContent">
-            <!-- APPLICATION USER TAB -->
-            <div class="tab-pane fade show active" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
+        <div class="tab-content" id="nav-tabContent" style="min-height:90vh;">
+            <div class="tab-pane fade show active" id="nav-compliance" role="tabpanel" aria-labelledby="nav-compliance-tab">
+                <div class="card">
+                    <div class=card-body>
+                        <p style="font-size:20px;">Compliance Overview</p>
+                        <p style="font-size:13px;">View compliance status of access security controls for each controls</p>
+                        <div style="border-bottom:solid;border-color:lightgray;" style="font-size:13px">
+                            <p style="font-size:13px;margin-top:30px;"></p>
+                        </div>
+                        <div class="card-container" style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;">
+                            <a href="{% url 'appAUDITAI:app-compliance' comp_id=company_name.id app_id=selected_app.id %}" style="text-decoration: none;color:#474b4d">
+                                <div class="card"
+                                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                                    <span class="fa-solid fa-key" style="font-size: 30px;color:#72BAED"></span>
+                                    <p style="font-size: 13px; margin-top: 16px;">Authentication</p>
+                                </div>
+                            </a>
+                            <a href="" style="text-decoration: none;color:#474b4d">
+                                <div class="card"
+                                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                                    <span class="fa-solid fa-user-plus" style="font-size: 30px;color:#72BAED"></span>
+                                    <p style="font-size: 13px; margin-top: 16px;">Access Provisioning</p>
+                                </div>
+                            </a>
+                            <a href="" style="text-decoration: none;color:#474b4d">
+                                <div class="card"
+                                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                                    <span class="fa-solid fa-user-lock" style="font-size: 30px;color:#72BAED"></span>
+                                    <p style="font-size: 13px; margin-top: 16px;">Access Termination</p>
+                                </div>
+                            </a>
+                            <a href="" style="text-decoration: none;color:#474b4d">
+                                <div class="card"
+                                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                                    <span class="fa-solid fa-user-tie" style="font-size: 30px;color:#72BAED"></span>
+                                    <p style="font-size: 13px; margin-top: 16px;">Admin Accounts</p>
+                                </div>
+                            </a>
+                            <a href="" style="text-decoration: none;color:#474b4d">
+                                <div class="card"
+                                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                                    <span class="fa-solid fa-user-check" style="font-size: 30px;color:#72BAED"></span>
+                                    <p style="font-size: 13px; margin-top: 16px;">User Access Review</p>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
                 <div class="card">
                     <div class=card-body>
                         <nav class="navbar bg-body-tertiary" data-bs-theme="light">
@@ -157,7 +213,6 @@
                     </div>
                 </div>
             </div>
-            <!-- Policies -->
             <div class="tab-pane fade" id="nav-audits" role="tabpanel" aria-labelledby="nav-audits-tab">
                 <div class="card">
                     <div class="card-body">
@@ -491,7 +546,6 @@
             <div class="tab-pane fade" id="nav-workpapers" role="tabpanel" aria-labelledby="nav-workpapers-tab">My
                 Workpapers
             </div>
-            <!-- THIS SECTION IS FOR USER MANAGEMENT -->
             <div class="tab-pane fade" id="nav-issues" role="tabpanel" aria-labelledby="nav-issues-tab">
                 <div class="card">
                     <div class="card-body">
@@ -753,9 +807,9 @@
 
                 </div>
             </div>
-        </div>
-        <div class="tab-pane fade" id="nav-requests" role="tabpanel" aria-labelledby="nav-requests-tab">My
-            Requests
+            <div class="tab-pane fade" id="nav-requests" role="tabpanel" aria-labelledby="nav-requests-tab">My
+                Requests
+            </div>
         </div>
     </div>
 

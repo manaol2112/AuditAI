@@ -27,13 +27,19 @@ class AppCompliance(ProcessOwnerPermissionMixin,View):
         except PASSWORDPOLICY.DoesNotExist:
             pw_policy = None
 
+        if pw_policy.LENGTH <= pw_configured.LENGTH and pw_policy.AGE >= pw_configured.AGE and pw_policy.HISTORY <= pw_configured.HISTORY and pw_policy.LOCKOUT_ATTEMPT >= pw_configured.LOCKOUT_ATTEMPT and pw_policy.LOCKOUT_DURATION <= pw_configured.LOCKOUT_DURATION and pw_policy.SPECIAL_CHAR == pw_configured.SPECIAL_CHAR and pw_policy.UPPER and pw_configured.UPPER and pw_policy.LOWER == pw_configured.LOWER and pw_policy.NUMBER == pw_configured.NUMBER and pw_policy.MFA_ENABLED == pw_configured.MFA_ENABLED:
+            auth_compliant = 'Yes'
+        else:
+            auth_compliant = 'No'
+
         context = {
             'comp_id':comp_id,
             'app_id':app_id,
             'company_name':company_name,
             'selected_app':selected_app,
             'pw_configured':pw_configured,
-            'pw_policy':pw_policy
+            'pw_policy':pw_policy,
+            'auth_compliant':auth_compliant
         }
         return render(request,self.template_name, context)
 

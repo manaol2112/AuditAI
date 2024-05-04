@@ -6,6 +6,7 @@ from appAUDITAI.dataview.APP.views import applications_view,policies_view
 from appAUDITAI.dataview.DASHBOARD.views import dashboard
 from appAUDITAI.dataview.CLIENTS.views import clientactions
 from appAUDITAI.dataview.AUDIT.views import auditview
+from appAUDITAI.dataview.TICKETS.views import accessrequest
 from django.urls import path
 
 app_name = 'appAUDITAI'
@@ -23,8 +24,13 @@ path("administration/systemsettings/manage/security/passwordpolicy",systemsettin
 path("administration/systemsettings/manage/companies/",systemsettings.ManageCompaniesView.as_view(),name="manage-companies"),
 path("administration/systemsettings/manage/roles/<int:role_id>",systemsettings.ManageRolesView.as_view(),name="manage-roles"),
 path("administration/systemsettings/manage/roles/",systemsettings.ManageRolesListView.as_view(),name="manage-roles-view"),
+path("administration/systemsettings/manage/hrrecord/",systemsettings.ManageHRRecordView.as_view(),name="manage-hr-record"),
+path("administration/systemsettings/manage/hrrecord/<int:comp_id>",systemsettings.ManageHRRecordDetailsView.as_view(),name="manage-hr-record-details"),
 path("administration/systemsettings/manage/companies/<int:comp_id>",systemsettings.ManageCompaniesDetailsView.as_view(),name="manage-companies-detais"),
 path("administration/systemsettings/manage/riskandcontrols/",systemsettings.ManageRiskandControlView.as_view(),name="manage-riskandcontrols"),
+
+#TICKETINGURLS
+path('access-request/home/', accessrequest.AccessRequestHome.as_view(), name='access-request-home'),
 
 
 #SFTPCHECK

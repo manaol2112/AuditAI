@@ -9,6 +9,299 @@ class SystemSettingsView(View):
         context = {'group_exist': group_exist}
         return render(request, self.template_name, context)
     
+class ManageHRRecordView(View):
+    template_name = 'pages/ADMIN/manage-hr-record.html'
+
+    def get(self,request):
+        try:
+            companies = COMPANY.objects.all()
+        except COMPANY.DoesNotExist:
+            companies = None
+        
+        context = {
+            'companies':companies
+        }
+
+        return render(request,self.template_name,context)
+    
+class ManageHRRecordDetailsView(View):
+    template_name = 'pages/ADMIN/manage-hr-record-details.html'
+
+    def get(self,request,comp_id):
+        try:
+            companies = COMPANY.objects.all()
+        except COMPANY.DoesNotExist:
+            companies = None
+
+        try:
+            selected_company = COMPANY.objects.get(id = comp_id)
+            sftp_check = HR_LIST_SFTP.objects.get(COMPANY_ID = selected_company)
+        except Exception as e:
+            selected_company = None
+            sftp_check = None
+            pass
+
+        try:
+            job_sched_check = HR_JOB_PULL.objects.get(COMPANY_ID=selected_company)
+        except:
+            job_sched_check = None
+
+        context = {
+            'companies':companies,
+            'comp_id':comp_id,
+            'sftp_check':sftp_check,
+            'job_sched_check':job_sched_check
+        }
+
+        return render(request,self.template_name,context)
+    
+    def post(self, request, comp_id):
+        form = request.POST.get('form_id')
+        if form == 'hr_sftp_create_form':
+            self.hr_sftp_upload(request, comp_id)
+        elif form == 'hr_manual_upload':
+            self.hr_manual_upload(request,comp_id)
+        else:
+            pass
+
+        return self.get(request, comp_id)
+    
+    def parse_date(self, date_str, date_formats):
+        for date_format in date_formats:
+            try:
+                return datetime.strptime(date_str, date_format)
+            except ValueError:
+                pass
+        # If none of the formats match, return a default date
+        return datetime(1900, 1, 1)
+    
+    def hr_manual_upload(self,request,comp_id):
+        user = request.user
+        date_formats = ["%Y-%m-%d", "%d/%m/%Y",
+                                "%m/%d/%Y", "%Y%m%d", "%m/%d/%y"] 
+        
+        user_id_mapped = request.POST.get('user_id_mapped')
+        email_mapped = request.POST.get('email_mapped')
+        first_name_mapped = request.POST.get('first_name_mapped')
+        last_name_mapped = request.POST.get('last_name_mapped')
+        job_title_mapped = request.POST.get('job_title_mapped')
+        department_mapped = request.POST.get('department_mapped')
+        manager_mapped = request.POST.get('manager_mapped')
+        emp_type_mapped = request.POST.get('emp_type_mapped')
+        status_mapped = request.POST.get('status_mapped')
+        date_hired_mapped = request.POST.get('date_hired_mapped')
+        date_rehired_mapped = request.POST.get('date_rehired_mapped')
+        date_revoked_mapped = request.POST.get('date_revoked_mapped')
+
+        form = MANUAL_USER_UPLOAD_FORM(request.POST, request.FILES)
+        if form.is_valid():
+            uploaded_file = form.cleaned_data['file_name']
+            # Check if the uploaded file is a CSV file
+            if uploaded_file.name.endswith('.csv'):
+                file_path = default_storage.save('temp/' + uploaded_file.name, uploaded_file)
+                # Get the absolute file path
+                absolute_file_path = default_storage.path(file_path)
+                with open(absolute_file_path, 'r', encoding='utf-8-sig',newline='') as file:
+                    csv_rows = csv.reader(file)
+                    # Extract headers from the CSV file
+
+                    # Clean headers to handle various newline characters
+                    headers = [header.strip().replace('\r', '').replace('\n', '') for header in next(csv_rows, [])]
+                    # Clean mapping variables and headers to handle whitespace and newline characters
+                    user_id_mapped_cleaned = user_id_mapped.strip().replace('\r', '').replace('\n', '')
+                    email_mapped_cleaned = email_mapped.strip().replace('\r', '').replace('\n', '')
+                    first_name_mapped_cleaned = first_name_mapped.strip().replace('\r', '').replace('\n', '')
+                    last_name_mapped_cleaned = last_name_mapped.strip().replace('\r', '').replace('\n', '')
+                    job_title_mapped_cleaned = job_title_mapped.strip().replace('\r', '').replace('\n', '')
+                    department_mapped_cleaned = department_mapped.strip().replace('\r', '').replace('\n', '')
+                    manager_mapped_cleaned = manager_mapped.strip().replace('\r', '').replace('\n', '')
+                    emp_type_mapped_cleaned = emp_type_mapped.strip().replace('\r', '').replace('\n', '')
+                    status_mapped_cleaned = status_mapped.strip().replace('\r', '').replace('\n', '')
+                    date_hired_mapped_cleaned = date_hired_mapped.strip().replace('\r', '').replace('\n', '')
+                    date_rehired_mapped_cleaned = date_rehired_mapped.strip().replace('\r', '').replace('\n', '')
+                    date_revoked_mapped_cleaned = date_revoked_mapped.strip().replace('\r', '').replace('\n', '')
+
+
+                    # Get indices of mapped values in headers
+                    try:
+                        user_id_index = headers.index(user_id_mapped_cleaned)
+                        email_index = headers.index(email_mapped_cleaned)
+                        first_name_index = headers.index(first_name_mapped_cleaned)
+                        last_name_index = headers.index(last_name_mapped_cleaned)
+                        job_title_index = headers.index(job_title_mapped_cleaned)
+                        department_index = headers.index(department_mapped_cleaned)
+                        manager_index = headers.index(manager_mapped_cleaned)
+                        emp_type_index = headers.index(emp_type_mapped_cleaned)
+                        status_index = headers.index(status_mapped_cleaned)
+                        date_hired_index = headers.index(date_hired_mapped_cleaned)
+                        date_rehired_index = headers.index(date_rehired_mapped_cleaned)
+                        date_revoked_index = headers.index(date_revoked_mapped_cleaned)
+
+                    except ValueError as e:
+                        print(f"Error: {e}. Mapped value not found in headers.")
+                    try:
+                        for row in csv_rows:
+                        # Access the value in the 'USER_ID' column
+                            user_id_value = row[user_id_index]
+                            email_value = row[email_index]
+                            first_name_value = row[first_name_index]
+                            last_name_value = row[last_name_index]
+                            job_title_value= row[job_title_index]
+                            department_value= row[department_index]
+                            manager_value= row[manager_index]
+                            emp_type_value= row[emp_type_index]
+                            status_value= row[status_index]
+
+                            date_hired_value = row[date_hired_index]
+                            date_hired_value = timezone.make_aware(self.parse_date(
+                                        str(date_hired_value), date_formats))
+                            date_rehired_value = row[date_rehired_index]
+                            date_rehired_value = timezone.make_aware(self.parse_date(
+                                        str(date_rehired_value), date_formats))
+                            date_revoked_value = row[date_revoked_index]
+                            date_revoked_value = timezone.make_aware(self.parse_date(
+                                        str(date_revoked_value), date_formats))
+                            
+                            try:
+                                selected_company = COMPANY.objects.get(id=comp_id)
+                            except COMPANY.DoesNotExist:
+                                selected_company = None
+
+                            if selected_company:
+                                try:
+                                    hr_record, created = HR_RECORD.objects.get_or_create(COMPANY_ID = selected_company, USER_ID = user_id_value)
+                                    hr_record.EMAIL_ADDRESS = email_value
+                                    hr_record.FIRST_NAME = first_name_value
+                                    hr_record.LAST_NAME = last_name_value
+                                    hr_record.JOB_TITLE = job_title_value
+                                    hr_record.DEPARTMENT = department_value
+                                    hr_record.MANAGER = manager_value
+                                    hr_record.EMP_TYPE = emp_type_value
+                                    hr_record.STATUS = status_value
+                                    hr_record.HIRE_DATE = date_hired_value
+                                    hr_record.REHIRE_DATE = date_rehired_value
+                                    hr_record.TERMINATION_DATE = date_revoked_value
+
+                                    if created:  # Check if the record was just created
+                                        hr_record.CREATED_BY = user.username
+                                        hr_record.CREATED_ON = timezone.now()
+                                    else:
+                                        hr_record.MODIFIED_BY = user.username
+                                        hr_record.LAST_MODIFIED = timezone.now()
+                                    
+                                    hr_record.save()  # Save the changes to the database
+
+                                except ValueError as e:
+                                    print('Error:', e)
+                                except Exception as e:
+                                    # Handle exceptions appropriately
+                                    print("Error:", e)
+                    except Exception as e:
+                        print(str(e))
+            else:
+                return HttpResponse("Uploaded file is not a CSV.")
+        else:
+            return HttpResponse("Form is not valid.")
+        
+    def hr_sftp_upload(self,request,comp_id):
+        try:
+            try:
+                company = COMPANY.objects.get(id=comp_id)
+            except COMPANY.DoesNotExist:
+                company = None
+
+            host_name = request.POST.get('host_name')
+            host_name = host_name if host_name else None
+
+            sftp_directory = request.POST.get('sftp_directory')
+            sftp_directory = sftp_directory if sftp_directory else None
+            
+            sftp_username = request.POST.get('sftp_username')
+            sftp_username = sftp_username if sftp_username else None
+
+            sftp_password = request.POST.get('sftp_password')
+            sftp_password = sftp_password if sftp_password else None
+
+            monday = request.POST.get('job_monday') == 'on'
+            monday = monday if monday else None
+
+            tuesday = request.POST.get('job_tuesday') == 'on'
+            tuesday = tuesday if tuesday else None
+
+            wednesday = request.POST.get('job_wednesday') == 'on'
+            wednesday = wednesday if wednesday else None
+
+            thursday = request.POST.get('job_thursday') == 'on'
+            thursday = thursday if thursday else None
+
+            friday = request.POST.get('job_friday') == 'on'
+            friday = friday if friday else None
+
+            saturday = request.POST.get('job_saturday') == 'on'
+            saturday = saturday if saturday else None
+
+            sunday = request.POST.get('job_sunday') == 'on'
+            sunday = sunday if sunday else None
+
+            job_time = request.POST.get('job_time')
+            job_time = job_time if job_time else None
+
+            user = request.user
+
+            try:
+                sftp, created = HR_LIST_SFTP.objects.get_or_create(COMPANY_ID=company)
+                sftp.HOST_NAME = host_name
+                sftp.SFTP_DIRECTORY = sftp_directory
+                sftp.SFTP_USERNAME = sftp_username
+                sftp.SFTP_PW_HASHED = sftp_password
+                sftp.SETUP_COMPLETE = True
+                if sftp.CREATED_BY:
+                        sftp.MODIFIED_BY = user.username
+                        sftp.LAST_MODIFIED = timezone.now()
+                else:
+                    sftp.CREATED_BY = user.username
+                    sftp.CREATED_ON = timezone.now()
+               
+                sftp.SETUP_COMPLETE = True
+                sftp.save()
+                try:
+                    company_id = COMPANY.objects.get(id = comp_id)
+                    job, created = HR_JOB_PULL.objects.get_or_create(COMPANY_ID=company_id)
+                    job.JOB_NAME = str(company_id.COMPANY_ID) + "_HR_DATA_PULL"
+                    job.MONDAY = monday
+                    job.TUESDAY = tuesday
+                    job.WEDNESDAY = wednesday
+                    job.THURSDAY = thursday
+                    job.FRIDAY = friday
+                    job.SATURDAY = saturday
+                    job.SUNDAY = sunday
+                    if job_time != 'Select time':
+                        try:
+                            parsed_time = timezone.datetime.strptime(job_time, '%H:%M')
+                            job.SCHEDULE_TIME = parsed_time.time()
+                        except ValueError:
+                            error_message = "Invalid time format. Please select a valid time."
+                    else:
+                        job_time = parsed_time('12:00')
+
+                    if job.CREATED_BY:
+                        job.MODIFIED_BY = user.username
+                        job.LAST_MODIFIED = timezone.now()
+                    else:
+                        job.CREATED_BY = user.username
+                        job.CREATED_ON = timezone.now()
+                    job.save()
+                except APP_JOB_PULL.DoesNotExist:
+                    job = None
+                except Exception as e:
+                    print('Error',str(e))
+
+            except Exception as e:
+                print('Error:',e)
+    
+        except:
+            pass
+
 class ManageRolesListView(View):
     template_name = 'pages/ADMIN/manage-roles-view.html'
     def get(self,request):

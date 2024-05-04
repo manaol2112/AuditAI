@@ -12,7 +12,7 @@ $(document).ready(function() {
             let file = files[i];
             if (allowedTypes.includes(file.type)) {
                 // Update hidden input value
-                $("#manual_user_upload").val("Your selected value");
+                $("#manual_hr_upload").val("Your selected value");
 
                 // Read the file
                 let reader = new FileReader();
@@ -28,21 +28,27 @@ $(document).ready(function() {
                         $("#email_mapped").empty();
                         $("#first_name_mapped").empty();
                         $("#last_name_mapped").empty();
-                        $("#roles_mapped").empty();
+                        $("#job_title_mapped").empty();
+                        $("#department_mapped").empty();
+                        $("#manager_mapped").empty();
+                        $("#emp_type_mapped").empty();
                         $("#status_mapped").empty();
-                        $("#date_granted_mapped").empty();
+                        $("#date_hired_mapped").empty();
+                        $("#date_rehired_mapped").empty();
                         $("#date_revoked_mapped").empty();
-                        $("#last_login_mapped").empty();
 
                         $("#user_id_mapped").append(`<option>Choose fields to map</option>`);
                         $("#email_mapped").append(`<option>Choose fields to map</option>`);
                         $("#first_name_mapped").append(`<option>Choose fields to map</option>`);
                         $("#last_name_mapped").append(`<option>Choose fields to map</option>`);
-                        $("#roles_mapped").append(`<option>Choose fields to map</option>`);
+                        $("#job_title_mapped").append(`<option>Choose fields to map</option>`);
+                        $("#department_mapped").append(`<option>Choose fields to map</option>`);
+                        $("#manager_mapped").append(`<option>Choose fields to map</option>`);
+                        $("#emp_type_mapped").append(`<option>Choose fields to map</option>`);
                         $("#status_mapped").append(`<option>Choose fields to map</option>`);
-                        $("#date_granted_mapped").append(`<option>Choose fields to map</option>`);
-                        $("#date_revoked_mapped").append(`<option>Choose fields to map</option>`);
-                        $("#last_login_mapped").append(`<option>Choose fields to map</option>`);
+                        $("#date_hired_mapped").append(`<option>Choose fields to map</option>`);
+                        $("#date_rehired_mapped").append(`<option>Choose fields to map</option>`);
+                        $("#date_revoked_mapped").append(`<option>Choose fields to map</option>`); 
 
                         // Assuming headers is an array containing the options you want to populate
 
@@ -71,10 +77,28 @@ $(document).ready(function() {
                                 $("#last_name_mapped").append(`<option value="${header}">${header}</option>`);
                             }
 
-                            if (header.toLowerCase().includes("role")) {
-                                $("#roles_mapped").append(`<option value="${header}" selected>${header}</option>`);
+                            if (header.toLowerCase().includes("title")) {
+                                $("#job_title_mapped").append(`<option value="${header}" selected>${header}</option>`);
                             } else {
-                                $("#roles_mapped").append(`<option value="${header}">${header}</option>`);
+                                $("#job_title_mapped").append(`<option value="${header}">${header}</option>`);
+                            }
+
+                            if (header.toLowerCase().includes("department")) {
+                                $("#department_mapped").append(`<option value="${header}" selected>${header}</option>`);
+                            } else {
+                                $("#department_mapped").append(`<option value="${header}">${header}</option>`);
+                            }
+
+                            if (header.toLowerCase().includes("manager")) {
+                                $("#manager_mapped").append(`<option value="${header}" selected>${header}</option>`);
+                            } else {
+                                $("#manager_mapped").append(`<option value="${header}">${header}</option>`);
+                            }
+
+                            if (header.toLowerCase().includes("type")) {
+                                $("#emp_type_mapped").append(`<option value="${header}" selected>${header}</option>`);
+                            } else {
+                                $("#emp_type_mapped").append(`<option value="${header}">${header}</option>`);
                             }
 
                             if (header.toLowerCase().includes("status")) {
@@ -82,11 +106,17 @@ $(document).ready(function() {
                             } else {
                                 $("#status_mapped").append(`<option value="${header}">${header}</option>`);
                             }
-
-                            if (header.toLowerCase().includes("date_granted")) {
-                                $("#date_granted_mapped").append(`<option value="${header}" selected>${header}</option>`);
+                            
+                            if (header.toLowerCase().includes("hired")) {
+                                $("#date_hired_mapped").append(`<option value="${header}" selected>${header}</option>`);
                             } else {
-                                $("#date_granted_mapped").append(`<option value="${header}">${header}</option>`);
+                                $("#date_hired_mapped").append(`<option value="${header}">${header}</option>`);
+                            }
+
+                            if (header.toLowerCase().includes("rehire")) {
+                                $("#date_rehired_mapped").append(`<option value="${header}" selected>${header}</option>`);
+                            } else {
+                                $("#date_rehired_mapped").append(`<option value="${header}">${header}</option>`);
                             }
 
                             if (header.toLowerCase().includes("date_revoked")) {
@@ -95,18 +125,13 @@ $(document).ready(function() {
                                 $("#date_revoked_mapped").append(`<option value="${header}">${header}</option>`);
                             }
 
-                            if (header.toLowerCase().includes("last_login")) {
-                                $("#last_login_mapped").append(`<option value="${header}" selected>${header}</option>`);
-                            } else {
-                                $("#last_login_mapped").append(`<option value="${header}">${header}</option>`);
-                            }
                         });
 
 
                         var anySelected = false;
 
                         // Check each specific select element
-                        $("#user_id_mapped, #email_mapped, #first_name_mapped, #last_name_mapped, #roles_mapped, #status_mapped, #date_granted_mapped, #date_revoked_mapped, #last_login_mapped").each(function() {
+                        $("#user_id_mapped, #email_mapped, #first_name_mapped, #last_name_mapped,#job_title_mapped,#department_mapped,#manager_mapped,#emp_type_mapped, #status_mapped,#date_hired_mapped,#date_rehired_mapped, #date_revoked_mapped").each(function() {
                             // Check if the selected value is 'Choose field'
                             if ($(this).val() === 'Choose fields to map') {
                                 anySelected = true;
@@ -123,8 +148,8 @@ $(document).ready(function() {
                             $("#map_not_success").hide();
                         }
 
-                         // Check value of each select element individually and apply styling if value is 'Choose fields to map'
-                         if ($("#user_id_mapped").val() === 'Choose fields to map') {
+                        // Check value of each select element individually and apply styling if value is 'Choose fields to map'
+                        if ($("#user_id_mapped").val() === 'Choose fields to map') {
                             $("#user_id_mapped").css('border', '2px solid lightblue');
                         } else {
                            
@@ -148,8 +173,26 @@ $(document).ready(function() {
                             
                         }
 
-                        if ($("#roles_mapped").val() === 'Choose fields to map') {
-                            $("#roles_mapped").css('border', '2px solid lightblue');
+                        if ($("#job_title_mapped").val() === 'Choose fields to map') {
+                            $("#job_title_mapped").css('border', '2px solid lightblue');
+                        } else {
+                           
+                        }
+
+                        if ($("#department_mapped").val() === 'Choose fields to map') {
+                            $("#department_mapped").css('border', '2px solid lightblue');
+                        } else {
+                           
+                        }
+
+                        if ($("#manager_mapped").val() === 'Choose fields to map') {
+                            $("#manager_mapped").css('border', '2px solid lightblue');
+                        } else {
+                            
+                        }
+
+                        if ($("#emp_type_mapped").val() === 'Choose fields to map') {
+                            $("#emp_type_mapped").css('border', '2px solid lightblue');
                         } else {
                             
                         }
@@ -160,10 +203,16 @@ $(document).ready(function() {
                             
                         }
 
-                        if ($("#date_granted_mapped").val() === 'Choose fields to map') {
-                            $("#date_granted_mapped").css('border', '2px solid lightblue');
+                        if ($("#date_hired_mapped").val() === 'Choose fields to map') {
+                            $("#date_hired_mapped").css('border', '2px solid lightblue');
                         } else {
                             
+                        }
+
+                        if ($("#date_rehired_mapped").val() === 'Choose fields to map') {
+                            $("#date_rehired_mapped").css('border', '2px solid lightblue');
+                        } else {
+                           
                         }
 
                         if ($("#date_revoked_mapped").val() === 'Choose fields to map') {
@@ -171,15 +220,8 @@ $(document).ready(function() {
                         } else {
                             
                         }
-
-                        if ($("#last_login_mapped").val() === 'Choose fields to map') {
-                            $("#last_login_mapped").css('border', '2px solid lightblue');
-                        } else {
-                            
-                        }
                         
                         $("#mapping_div").show();
-
                     }
                 };
                 reader.readAsText(file);

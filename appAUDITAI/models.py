@@ -101,6 +101,36 @@ class COMPANY(models.Model):
         managed = True
         db_table = 'COMPANY'
 
+class ACCESSREQUEST(models.Model):
+    REQUEST_ID = models.CharField(max_length=100, null=True, blank=False)
+    COMPANY_ID = models.ForeignKey(COMPANY, on_delete=models.DO_NOTHING, null=True)
+    APP_NAME = models.CharField(max_length=100, null=True, blank=False)
+    REQUESTOR = models.CharField(max_length=100, null=True, blank=False)
+    ROLES = models.CharField(max_length=1000, null=True, blank=False)
+    BUSINESS_APPROVER = models.CharField(max_length=100, null=True, blank=False)
+    IT_APPROVER = models.CharField(max_length=100, null=True, blank=False)
+    DATE_REQUESTED = models.DateTimeField(null=True)
+    DATE_APPROVED = models.DateTimeField(null=True)
+    STATUS = models.CharField(max_length=100, null=True, blank=False)
+    ASSIGNED_TO = models.CharField(max_length=100, null=True, blank=False)
+    COMMENTS = models.CharField(max_length=1000, null=True, blank=False)
+    REQUEST_TYPE = models.CharField(max_length=100, null=True, blank=False)
+    PRIORITY = models.CharField(max_length=100, null=True, blank=False)
+
+    class Meta:
+        managed = True
+        db_table = 'ACCESS_REQUEST'
+
+class ACCESSREQUESTCOMMENTS(models.Model):
+    REQUEST_ID = models.ForeignKey(ACCESSREQUEST, on_delete=models.CASCADE)
+    CREATOR = models.CharField(max_length=100, null=True, blank=False)
+    COMMENT_DETAILS = models.CharField(max_length=100, null=True, blank=False)
+    DATE_ADDED = models.DateTimeField(null=True)
+
+    class Meta:
+            managed = True
+            db_table = 'ACCESS_REQUEST_COMMENTS'
+
 class MULTIPLE_COMPANY(models.Model):
     MULTIPLE = models.BooleanField(blank=True,null=True)
 
@@ -304,7 +334,7 @@ class HR_JOB_PULL(models.Model):
     FRIDAY = models.BooleanField(default=False)
     SATURDAY = models.BooleanField(default=False)
     SUNDAY = models.BooleanField(default=False)
-    SCHEDULE_TIME = models.TimeField()
+    SCHEDULE_TIME = models.TimeField(null=True,blank=True)
 
      #LOG
     CREATED_BY = models.CharField(max_length=50,blank=True,null=True)

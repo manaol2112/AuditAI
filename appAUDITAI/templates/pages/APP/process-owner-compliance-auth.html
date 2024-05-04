@@ -33,8 +33,11 @@
             {% endif %}
             </div>
 
-            <p style="font-size:14px;">Status:<span style="margin-left:5px;"class="badge bg-success">Compliant</span></p>
-            
+            {% if auth_compliant == 'Yes' %}
+            <p style="font-size:14px;">Overall Status:<span style="margin-left:5px;"class="badge bg-success">Compliant</span></p>
+            {% else %}
+            <p style="font-size:14px;">Overall Status:<span style="margin-left:5px;"class="badge bg-warning">Not Compliant</span></p>
+            {% endif %}
             <!-- <p style="font-size:14px;">Status:<span style="margin-left:5px;"class="badge bg-warning">Not Compliant</span></p> -->
 
             <div style="border-bottom:solid;border-color:lightgray;" style="font-size:13px">
@@ -48,13 +51,13 @@
                 <div class="card-header" style="height:40px;">
                     <div class="row">
                         <div class="col-5">
-                            <p style="font-size:14px;">Policy Requirement</p>
+                            <p style="font-size:14px;">Configured Password</p>
                         </div>
                         <div class="col-4">
                             <p style="font-size:14px;">Compliance Status</p>
                         </div>
                         <div class="col-3">
-                            <p style="font-size:14px;">Comment</p>
+                            <p style="font-size:14px;">Policy Details</p>
                         </div>
                     </div>
                 </div>
@@ -70,25 +73,29 @@
                                 <div class="col-auto">
                                     <input class="form-control sm" id="length" name="length" type="text"
                                         style="font-size:12px;width:250px;" autocomplete="off"
-                                        value="{{ pw_check.LENGTH }}">
+                                        value="{{ pw_configured.LENGTH }}">
                                 </div>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="row g-3 align-items-center">
-                                {% if pw_policy.LENGTH == pw_configured.LENGTH %}
+                                {% if pw_policy.LENGTH <= pw_configured.LENGTH %}
                                 <div class="col-auto">
                                     <span style="font-size:11px;" class="badge bg-success">Passed</span>
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
-
+                            {% if pw_policy.LENGTH <= pw_configured.LENGTH %}
+                            <p style="font-size:12px;">
+                            {% else %}
+                            <p style="font-size:12px;">Minimum length required per policy is <b>{{pw_policy.LENGTH}}</b> characters</p>
+                            {% endif %}
                         </div>
                     </div>
 
@@ -102,26 +109,32 @@
                                 </div>
                                 <div class="col-auto">
                                     <input class="form-control sm" id="age" name="age" type="text"
-                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_check.AGE}}">
+                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_configured.AGE}}">
                                 </div>
                             </div>
 
                         </div>
                         <div class="col-4">
                             <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                {% if pw_policy.AGE == pw_configured.AGE %}
+                                {% if pw_policy.AGE >= pw_configured.AGE %}
                                 <div class="col-auto">
                                     <span style="font-size:12px;" class="badge bg-success">Passed</span>
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
-
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.AGE >= pw_configured.AGE %}
+                            <p style="font-size:12px;">
+                            {% else %}
+                            <p style="font-size:12px;">Maximum password age per policy is <b>{{pw_policy.AGE}}</b> days</p>
+                            {% endif %}
+                            </div>
                         </div>
                     </div>
 
@@ -135,24 +148,31 @@
                                 </div>
                                 <div class="col-auto">
                                     <input class="form-control sm" id="history" name="history" type="text"
-                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_check.HISTORY}}">
+                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_configured.HISTORY}}">
                                 </div>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                {% if pw_policy.HISTORY == pw_configured.HISTORY %}
+                                {% if pw_policy.HISTORY <= pw_configured.HISTORY %}
                                 <div class="col-auto">
                                     <span style="font-size:12px;" class="badge bg-success">Passed</span>
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.HISTORY <= pw_configured.HISTORY %}
+                                <p style="font-size:12px;">
+                                {% else %}
+                                <p style="font-size:12px;">Minimum number of password remembered per policy is <b>{{pw_policy.HISTORY}}</b> password</p>
+                                {% endif %}
+                            </div>
                             
                         </div>
                     </div>
@@ -167,25 +187,33 @@
                                 </div>
                                 <div class="col-auto">
                                     <input class="form-control sm" id="lockout" name="lockout" type="text"
-                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_check.LOCKOUT_ATTEMPT}}">
+                                        style="font-size:12px;width:250px;" autocomplete="off" value="{{ pw_configured.LOCKOUT_ATTEMPT}}">
                                 </div>
                             </div>
                         </div>
                         <div class="col-4">
                             <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                {% if pw_policy.LOCKOUT == pw_configured.LOCKOUT %}
+                                {% if pw_policy.LOCKOUT_ATTEMPT >= pw_configured.LOCKOUT_ATTEMPT %}
                                 <div class="col-auto">
                                     <span style="font-size:12px;" class="badge bg-success">Passed</span>
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
-                            
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.LOCKOUT_ATTEMPT >= pw_configured.LOCKOUT_ATTEMPT %}
+
+                                {% else %}
+                                <div class="col-auto">
+                                    <p style="font-size:12px;">Maximum allowed failed login attempt per policy is <b>{{pw_policy.LOCKOUT_ATTEMPT}}</b> attempts </p>
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
 
@@ -201,26 +229,33 @@
                                 <div class="col-auto">
                                     <input class="form-control sm" id="lockout_duration" name="lockout_duration"
                                         type="text" style="font-size:12px;width:250px;" autocomplete="off"
-                                        value="{{ pw_check.LOCKOUT_DURATION}}">
+                                        value="{{ pw_configured.LOCKOUT_DURATION}}">
                                 </div>
                             </div>
                         </div>
                         <div class="col-4">
-                             <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                {% if pw_policy.LOCKOUT_DURATION == pw_configured.LOCKOUT_DURATION %}
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.LOCKOUT_DURATION <= pw_configured.LOCKOUT_DURATION %}
                                 <div class="col-auto">
                                     <span style="font-size:12px;" class="badge bg-success">Passed</span>
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
-
                         </div>
                         <div class="col-3">
-                            
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.LOCKOUT_DURATION <= pw_configured.LOCKOUT_DURATION %}
+
+                                {% else %}
+                                <div class="col-auto">
+                                    <p style="font-size:12px;">Minimum lock out duration per policy is <b>{{pw_policy.LOCKOUT_DURATION}}</b> minutes </p>
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
 
@@ -235,47 +270,11 @@
                                 <div class="col-auto">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" role="switch"
-                                            name="req_specialchar" id="req_specialchar" {% if pw_check.SPECIAL_CHAR %}
+                                            name="req_specialchar" id="req_specialchar" {% if pw_configured.SPECIAL_CHAR %}
                                             checked="checked" {% endif %}>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-4">
-                            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                {% if pw_policy.LOCKOUT_DURATION == pw_configured.LOCKOUT_DURATION %}
-                                <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-success">Passed</span>
-                                </div>
-                                {% else %}
-                                <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
-                                </div>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-3">
-                            
-                        </div>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-5">
-                            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                <div class="col-auto">
-                                    <label style="font-size:12px; width:250px;" class="col-form-label">Require Special
-                                        Character?
-                                    </label>
-                                </div>
-                                <div class="col-auto">
-                                    <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch"
-                                            name="req_specialchar" id="req_specialchar" {% if pw_check.SPECIAL_CHAR %}
-                                            checked="checked" {% endif %}>
-                                    </div>
-                                </div>
-                            </div>
-
                         </div>
                         <div class="col-4">
                             <div class="row g-3 align-items-center" style="margin-top:3px;">
@@ -285,16 +284,25 @@
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
-                            
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.SPECIAL_CHAR == pw_configured.SPECIAL_CHAR %}
+
+                                {% else %}
+                                <div class="col-auto">
+                                    {% if pw_policy.SPECIAL_CHAR %}
+                                        <p style="font-size:12px;">Policy requires <b>special characters</b> to be enforced</p>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-5">
                             <div class="row g-3 align-items-center" style="margin-top:3px;">
@@ -306,7 +314,7 @@
                                 <div class="col-auto">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" role="switch" id="req_uppercase"
-                                            name="req_uppercase" {% if pw_check.UPPER %} checked="checked" {% endif %}>
+                                            name="req_uppercase" {% if pw_configured.UPPER %} checked="checked" {% endif %}>
                                     </div>
                                 </div>
                             </div>
@@ -319,16 +327,25 @@
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
-                            
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.UPPER == pw_configured.UPPER %}
+
+                                {% else %}
+                                <div class="col-auto">
+                                    {% if pw_policy.UPPER %}
+                                        <p style="font-size:12px;">Policy requires <b>upper case</b> to be enforced</p>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
-
                     <div class="row">
                         <div class="col-5">
                             <div class="row g-3 align-items-center" style="margin-top:3px;">
@@ -339,15 +356,13 @@
                                 </div>
                                 <div class="col-auto">
                                     <div class="form-check form-switch">
-                                        <input class="form-check-input" type="checkbox" role="switch"
-                                            name="req_lowercase" id="req_lowercase" {% if pw_check.LOWER %}
-                                            checked="checked" {% endif %}>
+                                        <input class="form-check-input" type="checkbox" role="switch" id="req_lowercase"
+                                            name="req_lowercase" {% if pw_configured.LOWER %} checked="checked" {% endif %}>
                                     </div>
                                 </div>
                             </div>
-
                         </div>
-                        <div class="col-5">
+                        <div class="col-4">
                             <div class="row g-3 align-items-center" style="margin-top:3px;">
                                 {% if pw_policy.LOWER == pw_configured.LOWER %}
                                 <div class="col-auto">
@@ -355,15 +370,26 @@
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
-                            
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.LOWER == pw_configured.LOWER %}
+
+                                {% else %}
+                                <div class="col-auto">
+                                    {% if pw_policy.LOWER %}
+                                        <p style="font-size:12px;">Policy requires <b>lower case</b> to be enforced</p>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
+
                     <div class="row">
                         <div class="col-5">
                             <div class="row g-3 align-items-center" style="margin-top:3px;">
@@ -374,7 +400,7 @@
                                 <div class="col-auto">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" role="switch" name="req_numeric"
-                                            id="req_numeric" {% if pw_check.NUMBER %} checked="checked" {% endif %}>
+                                            id="req_numeric" {% if pw_configured.NUMBER %} checked="checked" {% endif %}>
                                     </div>
                                 </div>
                             </div>
@@ -388,13 +414,23 @@
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
-                            
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.NUMBER == pw_configured.NUMBER %}
+
+                                {% else %}
+                                <div class="col-auto">
+                                    {% if pw_policy.NUMBER %}
+                                        <p style="font-size:12px;">Policy requires <b>number</b> to be enforced</p>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                     <div class="row">
@@ -407,7 +443,7 @@
                                 <div class="col-auto">
                                     <div class="form-check form-switch">
                                         <input class="form-check-input" type="checkbox" role="switch" name="req_mfa"
-                                            id="req_mfa" {% if pw_check.MFA_ENABLED %} checked="checked" {% endif %}>
+                                            id="req_mfa" {% if pw_configured.MFA_ENABLED %} checked="checked" {% endif %}>
                                     </div>
                                 </div>
                             </div>
@@ -420,13 +456,23 @@
                                 </div>
                                 {% else %}
                                 <div class="col-auto">
-                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Not Compliant</span>
+                                    <span style="font-size:12px;" class="badge bg-warning text-dark">Action Needed</span>
                                 </div>
                                 {% endif %}
                             </div>
                         </div>
                         <div class="col-3">
-                            
+                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                {% if pw_policy.MFA_ENABLED == pw_configured.MFA_ENABLED %}
+
+                                {% else %}
+                                <div class="col-auto">
+                                    {% if pw_policy.MFA_ENABLED %}
+                                        <p style="font-size:12px;">Policy requires <b>MFA</b> to be enforced</p>
+                                    {% endif %}
+                                </div>
+                                {% endif %}
+                            </div>
                         </div>
                     </div>
                 </div>

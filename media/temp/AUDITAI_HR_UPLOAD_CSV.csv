@@ -1,0 +1,31 @@
+﻿COMPANY_ID,USER_ID,EMAIL_ADDRESS,FIRST_NAME,LAST_NAME,JOB_TITLE,DEPARTMENT,MANAGER,HIRE_DATE,EMP_TYPE,REHIRE_DATE,TERMINATION_DATE,STATUS
+123,manaol2112,manaol2112@gmail.com,Robert John,Manaol,IT Audit Manager,ACCOUNTING,ROSA GARCIA,2/1/95,Regular,,2/1/95,INACTIVE
+456,joannmanaol,joannaorsemanaol@gmail.com,Joanna Rose,Garcia,IT Audit Manager,AUDIT,RAUL GARCIA,12/12/89,Regular,12/12/89,2/1/95,INACTIVE
+789,sophiamerce,sophiamerce@gmail.com,Sophia Merce,Manaol,IT Audit Associate,IT,DITAS MANAOL,1/2/24,Contractor,,2/1/24,INACTIVE
+789,johneladriel,johneladriel@gmail.com,Eladriel,Manaol,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/3/24,Regular,,,ACTIVE
+789,user2,user2@gmail.com,User 2,Test,IT Audit Associate,AUDIT,RJ MANAOL,1/4/24,Regular,,2/3/24,INACTIVE
+789,user3,user3@gmail.com,User 3,Test,IT Audit Associate,IT,RJ MANAOL,1/5/24,Regular,,,ACTIVE
+789,user4,user4@gmail.com,User 4,Test,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/6/24,Regular,,2/5/24,INACTIVE
+789,user5,user5@gmail.com,User 5,Test,IT Audit Associate,AUDIT,RJ MANAOL,1/7/24,Regular,,,ACTIVE
+789,user6,user6@gmail.com,User 6,Test,IT Audit Associate,IT,RJ MANAOL,1/8/24,Regular,,,ACTIVE
+789,user7,user7@gmail.com,User 7,Test,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/9/24,Regular,,2/8/24,INACTIVE
+789,user8,user8@gmail.com,User 8,Test,IT Audit Associate,AUDIT,RJ MANAOL,1/10/24,Regular,,,ACTIVE
+789,user9,user9@gmail.com,User 9,Test,IT Audit Associate,IT,RJ MANAOL,1/11/24,Regular,,,ACTIVE
+789,user10,user10@gmail.com,User 10,Test,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/12/24,Regular,,2/11/24,INACTIVE
+789,user11,user11@gmail.com,User 11,Test,IT Audit Associate,AUDIT,RJ MANAOL,1/13/24,Regular,,,ACTIVE
+789,user12,user12@gmail.com,User 12,Test,IT Audit Associate,IT,RJ MANAOL,1/14/24,Regular,,,ACTIVE
+789,user13,user13@gmail.com,User 13,Test,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/15/24,Regular,,2/14/24,INACTIVE
+789,user14,user14@gmail.com,User 14,Test,IT Audit Associate,AUDIT,RJ MANAOL,1/16/24,Regular,,,ACTIVE
+789,user15,user15@gmail.com,User 15,Test,IT Audit Associate,IT,RJ MANAOL,1/17/24,Regular,,,ACTIVE
+789,user16,user16@gmail.com,User 16,Test,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/18/24,Regular,,,ACTIVE
+789,user17,user17@gmail.com,User 17,Test,IT Audit Associate,AUDIT,RJ MANAOL,1/19/24,Regular,,,ACTIVE
+789,user18,user18@gmail.com,User 18,Test,IT Audit Associate,IT,RJ MANAOL,1/20/24,Regular,,2/19/24,INACTIVE
+789,user19,user19@gmail.com,User 19,Test,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/21/24,Regular,,,ACTIVE
+789,user20,user20@gmail.com,User 20,Test,IT Audit Associate,AUDIT,RJ MANAOL,1/22/24,Regular,,,INACTIVE
+789,user21,user21@gmail.com,User 21,Test,IT Audit Associate,IT,RJ MANAOL,1/23/24,Regular,,,INACTIVE
+789,user22,user22@gmail.com,User 22,Test,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/24/24,Regular,,,INACTIVE
+789,user23,user23@gmail.com,User 23,Test,IT Audit Associate,AUDIT,RJ MANAOL,1/25/24,Contractor,,,ACTIVE
+789,user24,user24@gmail.com,User 24,Test,IT Audit Associate,IT,RJ MANAOL,1/26/24,Contractor,,2/25/24,INACTIVE
+789,user25,user25@gmail.com,User 25,Test,IT Audit Associate,ACCOUNTING,RJ MANAOL,1/27/24,Contractor,,,ACTIVE
+130,joannngarcia,joannarose@gmail.com,Joanna Rose,Garcia,IT Senior Consultant,IT AUDIT,NAKUL KUPAL,11/12/24,Regular,,,ACTIVE
+130,sophiamerce_updated,sophiagmanaol@gmail.com,Sophia Merce,Manaol,IT Senior Consultant,IT AUDIT,RJ MANAOL,1/27/24,Regular,,2/26/24,INACTIVE

@@ -1,16 +1,28 @@
-{% extends 'base/base-requestor.html' %} 
-{% load static %} 
+{% extends 'base/base-requestor.html' %}
+{% load static %}
 {% block content %}
 
 <link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<!-- Styles -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
 
 <div class="card" style="height:90vh">
     <div class="card-body">
-        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
             <ol class="breadcrumb" style="font-size:14px;">
-              <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
-              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:access-request-home'%}" style="text-decoration:none;color:#474b4d">Home</i></a></li>
-              <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">My Requests</a></li>
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:access-request-home'%}"
+                        style="text-decoration:none;color:#474b4d">Home</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">My Requests</a></li>
             </ol>
         </nav>
 
@@ -37,47 +49,219 @@
         </div>
         <div class="card" style="margin-top:20px;">
             <div class="card-body">
-                <button type="button" style="margin-bottom:20px;" class="btn btn-primary btn-sm">New Request</button>
+                <button type="button" class="btn btn-primary btn-sm" style="margin-bottom:20px;" data-bs-toggle="modal"
+                    href="#new_access_request">New Request</button>
                 <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
-                style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
-                <thead style="padding-top:12px;text-align:center">
-                    <tr
-                        style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
-                        <th style="text-align:left;">Reference</th>
-                        <th style="text-align:left;">Title</th>
-                        <th style="text-align:left;">Date Created</th>
-                        <th style="text-align:left;">Status</th>
-                        <th style="text-align:left;"></th>
-                    </tr>
-                </thead>
-                <tbody style="font-size:13px">
-                    {% for user in app_users %}
-                    <tr style="vertical-align: middle;">
-                        <td><i class="far fa-user" style="margin-right:5px;color:lightblue"></i>{{ user.USER_ID }}</td>
-                        <td><i class="far fa-envelope" style="margin-right:5px;color:lightblue"></i>
-                            {{user.EMAIL_ADDRESS }}</td>
-                        {% if user.STATUS|lower == 'active' %}
-                        <td><span class="badge bg-success rounded-pill text-bg-success" style="font-size:10px;">
-                                {{user.STATUS }}</span></td>
-                        {% else %}
-                        <td><span class="badge bg-secondary rounded-pill text-bg-secondary" style="font-size:10px;">
-                                {{user.STATUS }}</span></td>
-                        {% endif %}
-                        <td class="text-end">
-                            <a href="{% url 'appAUDITAI:appdetails-view-user-record' comp_id selected_app.id user.USER_ID %}"
-                                data-process-id="{{user.USER_ID}}" class="btn btn-outline-secondary btn-sm" data-toggle="tooltip"
-                                data-placement="top" title="View Record">
-                                <i class="fa-solid fa-arrows-to-dot"></i>
-                            </a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                    <thead style="padding-top:12px;text-align:center">
+                        <tr
+                            style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                            <th style="text-align:left;">Reference</th>
+                            <th style="text-align:left;">Title</th>
+                            <th style="text-align:left;">Date Created</th>
+                            <th style="text-align:left;">Status</th>
+                            <th style="text-align:left;"></th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size:13px">
+                        {% for user in app_users %}
+                        <tr style="vertical-align: middle;">
+                            <td><i class="far fa-user" style="margin-right:5px;color:lightblue"></i>{{ user.USER_ID }}
+                            </td>
+                            <td><i class="far fa-envelope" style="margin-right:5px;color:lightblue"></i>
+                                {{user.EMAIL_ADDRESS }}</td>
+                            {% if user.STATUS|lower == 'active' %}
+                            <td><span class="badge bg-success rounded-pill text-bg-success" style="font-size:10px;">
+                                    {{user.STATUS }}</span></td>
+                            {% else %}
+                            <td><span class="badge bg-secondary rounded-pill text-bg-secondary" style="font-size:10px;">
+                                    {{user.STATUS }}</span></td>
+                            {% endif %}
+                            <td class="text-end">
+                                <a href="{% url 'appAUDITAI:appdetails-view-user-record' comp_id selected_app.id user.USER_ID %}"
+                                    data-process-id="{{user.USER_ID}}" class="btn btn-outline-secondary btn-sm"
+                                    data-toggle="tooltip" data-placement="top" title="View Record">
+                                    <i class="fa-solid fa-arrows-to-dot"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
-        
+
     </div>
 </div>
+
+<div class="modal fade" id="new_access_request" aria-hidden="true" data-bs-backdrop="static"
+    style="height:90vh;margin-top:18px;" aria-labelledby="new_access_request" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable modal-xl">
+        <div class="modal-content">
+            <div class="modal-body">
+                <div class="text-center">
+                    <p style="font-size:20px;">Access Request Form</p>
+                    <p style="font-size:16px;">Fill-out the following fields below to process your access request. </p>
+                </div>
+                <div class="card">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-12">
+                                <form id="access_request_form" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="form_id" value="access_request_form">
+                                    {% csrf_token %}
+
+                                    <p style="font-size:13px;">Request Type:</p>
+
+                                    <select id="request_type" name="request_type" class="form-select" aria-label="Default select example" style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;">
+                                        <option value="own_access">I am requesting approval for my own access</option>
+                                        <option value="supervisor">I am a supervisor/manager requesting access for my team member</option>
+                                        <option value="team_member">I am a team member requesting access for another team member</option>
+                                    </select>
+                                    
+                                    <p id="team_member_label" style="font-size:13px;">Team Member:</p>
+
+                                    <select id="team_member_select" name="team_member_select" style="font-size:12px;" class="form-select" aria-label="Default select example" multiple>
+                                        <option selected></option>
+                                        {% for employee in active_employees %}
+                                            <option value="{{employee.id}}">{{employee.FIRST_NAME}} {{employee.LAST_NAME}} ({{employee.EMAIL_ADDRESS}})</option>
+                                        {% endfor %}
+                                    </select>
+                                    
+                                    <p id="approver_label" style="font-size:13px;">Approver:</p>
+                                    
+                                    <select id="access_approver" name="access_approver" class="form-select" aria-label="Default select example">
+                                        <option selected></option>
+                                        {% for employee in active_employees %}
+                                            <option value="{{employee.id}}">{{employee.FIRST_NAME}} {{employee.LAST_NAME}} ({{employee.EMAIL_ADDRESS}})</option>
+                                        {% endfor %}
+                                    </select>
+
+                                    <p style="font-size:13px;">Application:</p>
+
+                                    <select id="applications_select" name="applications_select" class="form-select"
+                                        aria-label="Default select example"
+                                        style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;">
+                                        <option selected></option>
+                                        <option>SAP</option>
+                                        <option>Salesforce</option>
+                                    </select>
+
+                                    <p style="font-size:13px;">Roles:</p>
+
+                                    <select id="roles_select" name="roles_select" class="form-select"
+                                        aria-label="Default select example"
+                                        style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;">
+                                      
+                                        <option>SAP</option>
+                                        <option>Salesforce</option>
+                                    </select>
+
+                                    <p style="font-size:13px;">Comment:</p>
+
+                                    <select id="job_time" name="job_time" class="form-select"
+                                        aria-label="Default select example"
+                                        style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;">
+                                        <option selected></option>
+                                        <option>High</option>
+                                        <option>Medium</option>
+                                        <option>Low</option>
+                                    </select>
+
+                                    <p style="font-size:13px;">Priority:</p>
+
+                                    <select id="job_time" name="job_time" class="form-select"
+                                        aria-label="Default select example"
+                                        style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;">
+                                        <option selected></option>
+                                        <option>High</option>
+                                        <option>Medium</option>
+                                        <option>Low</option>
+                                    </select>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-target="#new_app_modal5"
+                    data-bs-toggle="modal" data-bs-dismiss="modal">Cancel</button>
+                <button class="btn btn-primary btn-sm" data-bs-target="#new_app_modal3" data-bs-toggle="modal"
+                    data-bs-dismiss="modal">Submit Request</button>
+            </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{% static 'js/ticket.js' %}"></script>
+
+<style>
+    /* Apply font size to Select2 dropdown */
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        font-size: 12px !important;
+    }
+    /* Apply font size to Select2 dropdown options */
+    .select2-results__option {
+        font-size: 12px !important;
+    }
+
+    /* Apply font size to Select2 search input */
+    .select2-search__field {
+        font-size: 12px !important;
+    }
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+    font-size: 12px !important; /* Set the desired font size */
+    }   
+    #team_member_select.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+    font-size: 12px !important; /* Set the desired font size */
+}
+</style>
+
+<script>
+    $( '#team_member_select' ).select2( {
+      theme: "bootstrap-5",
+      width: '100%',
+      placeholder: $( this ).data( 'placeholder' ),
+      allowClear: false,
+      dropdownParent: $( '#team_member_select' ).parent(),
+      multiple:true // Corrected the selector
+
+  } );
+
+  $( '#access_approver' ).select2( {
+      theme: "bootstrap-5",
+      width: '100%',
+      placeholder: $( this ).data( 'placeholder' ),
+      allowClear: false,
+      dropdownParent: $( '#access_approver' ).parent() // Corrected the selector
+  } );
+
+  $( '#applications_select' ).select2( {
+      theme: "bootstrap-5",
+      width: '100%',
+      placeholder: $( this ).data( 'placeholder' ),
+      allowClear: false,
+      dropdownParent: $( '#applications_select' ).parent() // Corrected the selector
+  } );
+
+  $( '#roles_select' ).select2( {
+      theme: "bootstrap-5",
+      width: '100%',
+      placeholder: $( this ).data( 'placeholder' ),
+      allowClear: false,
+      dropdownParent: $( '#roles_select' ).parent() // Corrected the selector
+  } );
+
+  $( '#team_member_select' ).select2( {
+    theme: "bootstrap-5",
+    width: $( this ).data( 'width' ) ? $( this ).data( 'width' ) : $( this ).hasClass( 'w-100' ) ? '100%' : 'style',
+    placeholder: $( this ).data( 'placeholder' ),
+    closeOnSelect: false,
+} );
+  </script>
+  
 
 {% endblock content %}

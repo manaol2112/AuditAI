@@ -30,7 +30,9 @@ path("administration/systemsettings/manage/companies/<int:comp_id>",systemsettin
 path("administration/systemsettings/manage/riskandcontrols/",systemsettings.ManageRiskandControlView.as_view(),name="manage-riskandcontrols"),
 
 #TICKETINGURLS
-path('access-request/home/', accessrequest.AccessRequestHome.as_view(), name='access-request-home'),
+path('access-request/home/', accessrequest.CompanySelect.as_view(), name='access-request-home'),
+path('access-request/company/<int:comp_id>', accessrequest.AccessRequestHome.as_view(), name='access-request-create'),
+path('access-request/get_roles/', accessrequest.get_roles, name='access_request_get_roles'),
 
 
 #SFTPCHECK

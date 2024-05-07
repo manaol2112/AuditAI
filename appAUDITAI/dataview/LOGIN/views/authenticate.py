@@ -64,8 +64,8 @@ class AuthenticateUsers(View):
                             return render(request, template_name, context)
                         elif 'Access Requestor' in group_names:
                             context = {'user':user, 'group_names':group_names}
-                            template_name = 'pages/TICKETS/ticket-home.html'
-                            #return redirect('appAUDITAI:access-request-home', context)
+                            template_name = 'pages/TICKETS/ticket-select-company.html'
+                            #return reverse('appAUDITAI:access-request-home', context)
                             return render(request,template_name, context)
                         else:
                             if user.is_superuser:

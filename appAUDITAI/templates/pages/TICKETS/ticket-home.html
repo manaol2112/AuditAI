@@ -44,9 +44,10 @@
             </div>
         </nav>
 
-        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px">
+        <div style="border-bottom:solid;border-color:lightgray;margin-bottom:20px;" style="font-size:13px">
             <p style="font-size:13px">Manage, create, and view access related requests </p>
         </div>
+
         <div class="card" style="margin-top:20px;">
             <div class="card-body">
                 <button type="button" class="btn btn-primary btn-sm" style="margin-bottom:20px;" data-bs-toggle="modal"
@@ -54,35 +55,30 @@
                 <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
                     style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
                     <thead style="padding-top:12px;text-align:center">
-                        <tr
-                            style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
-                            <th style="text-align:left;">Reference</th>
-                            <th style="text-align:left;">Title</th>
-                            <th style="text-align:left;">Date Created</th>
-                            <th style="text-align:left;">Status</th>
-                            <th style="text-align:left;"></th>
+                        <tr style="font-size:12px; background-color:whitesmoke;">
+                            <th style="text-align:left; width: 20%;">Reference</th>
+                            <th style="text-align:left; width: 20%;">Roles</th>
+                            <th style="text-align:left; width: 20%;">Date Created</th>
+                            <th style="text-align:left; width: 20%;">Assignee</th>
+                            <th style="text-align:left; width: 20%;">Approval Status</th>
                         </tr>
                     </thead>
                     <tbody style="font-size:13px">
-                        {% for user in app_users %}
+                        {% for ticket in my_requests %}
                         <tr style="vertical-align: middle;">
-                            <td><i class="far fa-user" style="margin-right:5px;color:lightblue"></i>{{ user.USER_ID }}
+                            <td>{{ ticket.REQUEST_ID }}
                             </td>
-                            <td><i class="far fa-envelope" style="margin-right:5px;color:lightblue"></i>
-                                {{user.EMAIL_ADDRESS }}</td>
-                            {% if user.STATUS|lower == 'active' %}
-                            <td><span class="badge bg-success rounded-pill text-bg-success" style="font-size:10px;">
-                                    {{user.STATUS }}</span></td>
+                            <td>{{ ticket.ROLES }}
+                            </td>
+                            <td>{{ ticket.DATE_REQUESTED|date:"M d, Y"  }}
+                            </td>
+                            <td>{{ ticket.ASSIGNED_TO }}
+                            </td>
+                            {% if ticket.STATUS == 'Approved' %}
+                            <td><i class="fas fa-check-circle" style="margin-right:5px;color:green"></i>{{ ticket.STATUS }}
                             {% else %}
-                            <td><span class="badge bg-secondary rounded-pill text-bg-secondary" style="font-size:10px;">
-                                    {{user.STATUS }}</span></td>
+                            <td><i class="fas fas fa-spinner" style="margin-right:5px;color:orange"></i>{{ ticket.STATUS }}
                             {% endif %}
-                            <td class="text-end">
-                                <a href="{% url 'appAUDITAI:appdetails-view-user-record' comp_id selected_app.id user.USER_ID %}"
-                                    data-process-id="{{user.USER_ID}}" class="btn btn-outline-secondary btn-sm"
-                                    data-toggle="tooltip" data-placement="top" title="View Record">
-                                    <i class="fa-solid fa-arrows-to-dot"></i>
-                                </a>
                             </td>
                         </tr>
                         {% endfor %}
@@ -93,6 +89,10 @@
 
     </div>
 </div>
+
+<form id="access_request_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="access_request_form">
+    {% csrf_token %}
 
 <div class="modal fade" id="new_access_request" aria-hidden="true" data-bs-backdrop="static"
     style="height:90vh;margin-top:18px;" aria-labelledby="new_access_request" tabindex="-1">
@@ -145,7 +145,7 @@
                                         style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;">
                                         <option value="" selected disabled></option>
                                         {% for app in apps %}
-                                        <option {{app.APP_NAME_id}} >{{app.APP_NAME}}</option>
+                                        <option value="{{app.id}}" >{{app.APP_NAME}}</option>
                                         {% endfor %}
                                     </select>
 
@@ -153,20 +153,20 @@
 
                                     <select id="roles_select" name="roles_select" class="form-select"
                                         aria-label="Default select example"
-                                        style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;">
-                                        <option value="" selected disabled></option>
+                                        style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;" multiple>
+                                        <option value="" disabled></option>
                                         <option>Roles</option>
                                     </select>
 
-                                    <p style="font-size:13px;margin-top:10px;">Comment:</p>
+                                    <p style="font-size:13px;margin-top:10px;">Comment:</p> 
 
                                     <div class="mb-3">
-                                        <textarea class="form-control" id="exampleFormControlTextarea1" rows="3"></textarea>
+                                        <textarea class="form-control" style="font-size:12px;" id="request_comment" name="request_comment" rows="3"></textarea>
                                       </div>
                                     <p style="font-size:13px;margin-top:10px;">Priority:</p>
 
                                     <select id="priority" name="priority" class="form-select"
-                                        aria-label="Default select example"
+                                        
                                         style="max-height:120px;overflow-y: auto;font-size:12px;margin-bottom:20px;">
                                         <option value="" selected disabled></option>
                                         <option>High</option>
@@ -183,13 +183,14 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-target="#new_app_modal5"
                     data-bs-toggle="modal" data-bs-dismiss="modal">Cancel</button>
-                <button class="btn btn-primary btn-sm" data-bs-target="#new_app_modal3" data-bs-toggle="modal"
-                    data-bs-dismiss="modal">Submit Request</button>
+                <button type="submit" class="btn btn-primary btn-sm">Submit Request</button>
             </div>
             </form>
         </div>
     </div>
 </div>
+
+</form>
 
 <style>
     /* Apply font size to Select2 dropdown */
@@ -205,17 +206,27 @@
     .select2-search__field {
         font-size: 12px !important;
     }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+    font-size: 12px !important; /* Change to your desired font size */
+    }
+
     .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
     font-size: 12px !important; /* Set the desired font size */
+    background-color: #e1f7fc; /* Change to your desired color */
+    color: #333; /* Change to your desired text color */
     }   
     #team_member_select.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
     font-size: 12px !important; /* Set the desired font size */
+
+    
 }
 </style>  
 
 <script src="{% static 'js/ticket.js' %}"></script>
 
 <script>
+
       $('#team_member_select').select2({
         theme: "bootstrap-5",
         width: '100%',
@@ -248,7 +259,8 @@
         width: '100%',
         placeholder: $(this).data('placeholder'),
         allowClear: false,
-        dropdownParent: $('#roles_select').parent() // Corrected the selector
+        dropdownParent: $('#roles_select').parent(), // Corrected the selector
+        multiple: true
     });
 
     $('#request_type').select2({

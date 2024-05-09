@@ -1,7 +1,7 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, reverse
 from django.views import View
 from django.contrib.auth.models import User, Group
-from appAUDITAI.models import MULTIPLE_COMPANY
+from appAUDITAI.models import EmailVerification,UserToken
 from django.contrib.auth import authenticate, login, logout
 from django.core.cache import cache
 from django.contrib import messages
@@ -9,6 +9,15 @@ from appAUDITAI.dataview.LOGIN.forms.authenticate_form import LoginForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from appAUDITAI.models import USERROLES,USER_LOCKOUT,PASSWORDCONFIG
 from django.template import TemplateDoesNotExist
+import random
+import string
+from django.utils import timezone
+from django.shortcuts import get_object_or_404
+from django.core.mail import EmailMessage
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import send_mail
+from django.utils.timezone import make_aware
 
 class UserRoleView(LoginRequiredMixin, View):
 
@@ -30,7 +39,62 @@ class UserRoleView(LoginRequiredMixin, View):
     def dispatch(self, request, *args, **kwargs):
         self.user_role = self.get_user_role()
         return super().dispatch(request, *args, **kwargs)
+    
+def generate_verification_code(length=6):
+    characters = string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
+    
+from django.utils import timezone
 
+class MultiFactorAuth(View):
+    template_name = 'login/mfa.html'
+    
+    def get(self, request, token):
+        user_token = get_object_or_404(UserToken, token=token)
+        user = user_token.user
+       
+        context = {
+            'user': user,
+            'token':token
+        }
+
+        return render(request, self.template_name, context)
+    
+    def post(self,request,token):
+        code_provided = request.POST.get('mfa_code')
+        print(code_provided)
+        try:
+            user = UserToken.objects.get(token = token)
+        except UserToken.DoesNotExist:
+            user = None
+            pass
+
+        try:
+            email_verification = EmailVerification.objects.get(user=user.user)
+            if email_verification.code == code_provided:
+                if email_verification.expires_at >= timezone.now():
+                    user = email_verification.user
+                    login(request, user)
+                    return redirect('appAUDITAI:authenticate-user')
+                else:
+                    # Handle case where code is expired
+                    messages.error(request, 'The code you provided is not valid')
+            else:
+                # Handle case where provided code doesn't match
+                 messages.error(request, 'The code you provided is not valid')
+        except EmailVerification.DoesNotExist:
+            # Handle case where EmailVerification object doesn't exist for the user
+            email_verification = None
+            pass
+
+        context = {
+            'user': user,
+            'token':token
+        }
+
+        return render(request,self.template_name,context)
+    
+        
 class AuthenticateUsers(View):
 
     model = User
@@ -111,7 +175,42 @@ class AuthenticateUsers(View):
                 except USER_LOCKOUT.DoesNotExist:
                     # Create UserLockout record if it doesn't exist
                     USER_LOCKOUT.objects.create(user=User.objects.get(username=username))
-                login(request, user)
+                #login(request, user)
+                try:
+                    token = UserToken.objects.get(user=user)
+                except UserToken.DoesNotExist:
+                    token = UserToken.objects.create(user=user)
+
+                verification_code = generate_verification_code()
+                expiration_time = timezone.now() + timezone.timedelta(minutes=10)
+
+                try:
+                    user_exist = EmailVerification.objects.get(user=user)
+                    user_exist.code = verification_code
+                    user_exist.expires_at = expiration_time
+                    user_exist.save()
+                except EmailVerification.DoesNotExist:
+                    # Create EmailVerification instance
+                    email_verification, created = EmailVerification.objects.get_or_create(
+                        user=user,
+                        code=verification_code,
+                        expires_at=expiration_time
+    )
+            # Send email with verification code
+        
+                subject = 'AUDITAI Verification Code'
+                        # Email body
+                message = render_to_string('email/mfa.html', {'verification_code': verification_code})
+                        # Send email verification
+                send_mail(subject, message, 'auditai-support@audit-ai.net', [user.email])
+
+                token_url = reverse('appAUDITAI:require-mfa', kwargs={'token': token.token})
+                redirect_url = f"{token_url}?token={token}" 
+                context = {
+                    'token':token.token,
+                     'verification_code': verification_code,
+                }
+                return redirect(redirect_url , context)
                 
             else:
                 # User is not active

@@ -1,51 +1,66 @@
-$(document).ready(function () {
-    // Initialize Select2 for both dropdowns
-    $('#team_member_select').select2();
-    $('#access_approver').select2();
+// Triggering change event using jQuery
+//$('#applications_select').val('newValue').trigger('change');
 
-    // Hide both Select2 dropdowns
-    $('#team_member_select').next(".select2-container").hide();
+$(document).ready(function() {
+
     $('#access_approver').next(".select2-container").hide();
+    $('#approver_label').hide()
+    $('#team_member_select').next(".select2-container").hide();
+    $('#team_member_label').hide()
+});
 
-    // Listen for change in request type
-    $('#request_type').change(function () {
-        var selectedValue = $(this).val();
-
-        // Hide all Select2 dropdowns
-        $('.select2-container').hide();
-
-        // Show relevant dropdown based on selection
-        if (selectedValue == 'supervisor' || selectedValue == 'team_member') {
-            $('#team_member_select').next(".select2-container").show();
-        }
-        if (selectedValue == 'own_access') {
-            $('#access_approver').next(".select2-container").show();
+// Attaching an event listener for the change event
+$('#applications_select').on('change', function() {
+    var selectedAppId = $(this).val();
+    $.ajax({
+        url: '/access-request/get_roles/',  // URL to your Django view
+        method: 'GET',
+        data: {
+            'app_id': selectedAppId
+        },
+        success: function(data) {
+            // Populate roles_select dropdown with retrieved roles
+            $('#roles_select').empty().append($('<option>', {
+                value: '',
+                text: '',
+                disable: true,
+            }));
+            $.each(data.roles, function(index, role) {
+                $('#roles_select').append($('<option>', {
+                    value: role.ROLE_NAME,
+                    text: role.ROLE_NAME
+                }));
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error('Error fetching roles:', error);
         }
     });
 });
 
-$(document).ready(function(){
+$('#request_type').on('change', function() {
 
-    $('#applications_select').on("select2:select", function(e) { 
-        console.log($(this).val());
-        alert('hahaha')
-    });
+    var selectedValue = $(this).val();
+    if (selectedValue === "supervisor") {
+        $('#team_member_select').next(".select2-container").show();
+        $('#team_member_label').show();
+        $('#access_approver').next(".select2-container").hide();
+        $('#approver_label').hide();
 
-    $('#applications_select').change(function(){
-        var selectedApp = $(this).val();
-        $.ajax({
-            type: 'GET',
-            url: '/get_roles/',
-            data: {
-                'app_name': selectedApp
-            },
-            success: function(data){
-                $('#roles_select').empty();
-                $('#roles_select').append('<option value="" selected disabled></option>');
-                $.each(data, function(key, value){
-                    $('#roles_select').append('<option value="'+ value +'">'+ value +'</option>');
-                });
-            }
-        });
-    });
+    } else if (selectedValue === "own_access") {
+        $('#team_member_select').next(".select2-container").hide();
+        $('#team_member_label').hide();
+        $('#access_approver').next(".select2-container").show();
+        $('#approver_label').show();
+
+
+    } else if (selectedValue === "team_member") {
+        $('#team_member_select').next(".select2-container").show();
+        $('#team_member_label').show();
+        $('#access_approver').next(".select2-container").hide();
+        $('#approver_label').hide();
+
+    }
 });
+
+  

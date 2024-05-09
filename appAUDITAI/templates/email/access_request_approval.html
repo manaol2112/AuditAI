@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Access Request Approval</title>
+</head>
+<body>
+    <p>Hello,</p>
+    <p>An access request has been created and requires your approval.</p>
+    <p>Details of the access request:</p>
+    <ul>
+        <li><strong>Request ID:</strong> {{ access_request.REQUEST_ID }}</li>
+        <li><strong>Requestor:</strong> {{ access_request.REQUESTOR }}</li>
+        <li><strong>Application Name:</strong> {{ access_request.APP_NAME }}</li>
+        <li><strong>Comments:</strong> {{ access_request.COMMENTS }}</li>
+        <li><strong>Priority:</strong> {{ access_request.PRIORITY }}</li>
+        <li><strong>Roles:</strong> {{ access_request.ROLES }}</li>
+        <li><strong>Date Requested:</strong> {{ access_request.DATE_REQUESTED }}</li>
+    </ul>
+    <p>Please review the request and take appropriate action.</p>
+    <p>To approve this request, click the button below:</p>
+    <a href="{{verification_url}}"><button style="padding: 10px 20px; background-color: #4CAF50; color: white; border: none; border-radius: 5px;">Approve Access Request</button></a>
+    <p>If you have any questions, please contact the requester at {{ access_request.REQUESTOR }}.</p>
+    <p>Thank you,</p>
+    <p>AuditAI Team</p>
+</body>
+</html>

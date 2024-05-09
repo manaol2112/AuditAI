@@ -10,19 +10,19 @@ class UserAccessMixin(PermissionRequiredMixin):
             return redirect_to_login(self.request.get_full_path(),self.get_login_url(), self.get_redirect_field_name())
         
         if not self.has_permission():
-            user_dashboard_url = reverse('appAUDITAI:authenticate-user')  # Replace 'user_profile' with the actual name of your user profile URL pattern
+            user_dashboard_url = reverse('appAUDITAI:authenticate-user') 
             return redirect('appAUDITAI:authenticate-user')
         return super(UserAccessMixin, self).dispatch(request, *args, **kwargs)
     
 class AuditorPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
-    login_url = 'appAUDITAI:authenticate-user'  #Replace with your actual login URL
+    login_url = 'appAUDITAI:authenticate-user' 
 
     def test_func(self):
         user = self.request.user
         return user.groups.filter(name='Auditor').exists()
 
     def handle_no_permission(self):
-        user_dashboard_url = reverse('appAUDITAI:authenticate-user')  
+        user_dashboard_url = reverse('appAUDITAI:no_permission')  
         return redirect(user_dashboard_url)
     
 class ProcessOwnerPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
@@ -33,10 +33,9 @@ class ProcessOwnerPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
         return user.groups.filter(name='Process Owner').exists()
 
     def handle_no_permission(self):
-        user_dashboard_url = reverse('appAUDITAI:authenticate-user') 
+        user_dashboard_url = reverse('appAUDITAI:no_permission')  
         return redirect(user_dashboard_url)
     
-
 class AdminPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
     login_url = 'appAUDITAI:authenticate-user' 
 
@@ -45,5 +44,5 @@ class AdminPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
         return user.groups.filter(name='Administrator').exists()
 
     def handle_no_permission(self):
-        user_dashboard_url = reverse('appAUDITAI:authenticate-user') 
+        user_dashboard_url = reverse('appAUDITAI:no_permission')  
         return redirect(user_dashboard_url)

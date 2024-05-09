@@ -1,0 +1,137 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/dragndrop.css' %}" />
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+
+
+<div class="card">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:applist-company-select' %}" style="text-decoration:none;color:#474b4d" >{{company_name.COMPANY_NAME}}</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:applist-process-owner' comp_id %}" style="text-decoration:none;color:#474b4d" >Applications</a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:appdetails-process-owner' comp_id app_id %}" style="text-decoration:none;color:#474b4d" >{{selected_app.APP_NAME}}</a></li>
+              <li class="breadcrumb-item active" style="text-decoration: underline;" aria-current="page">Provisioning</li>
+            </ol>
+        </nav>
+        <div style="margin-top:20px;">
+            {% if selected_app.APP_TYPE == 'Application' %}
+            <span class="fab fa-app-store-ios" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+            {% elif selected_app.APP_TYPE == 'Network' %}
+            <span class="fab fa-hive" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+            {% elif selected_app.APP_TYPE == 'Database' %}
+            <span class="fas fa-database" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+            {% elif selected_app.APP_TYPE == 'Operating System' %}
+            <span class="fab fa-centos" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+            {% elif selected_app.APP_TYPE == 'Server' %}
+            <span class="fas fa-server" style="font-size: 20px;color:#8bd5f7;margin-right:8px;"></span>
+            <p style="font-size:25px; display: inline-block;color:#474b4d">{{ selected_app.APP_NAME }}</p>
+            {% endif %}
+            </div>
+
+            {% if auth_compliant == 'Yes' %}
+            <p style="font-size:14px;">Overall Status:<span style="margin-left:5px;"class="badge bg-success">Compliant</span></p>
+            {% else %}
+            <p style="font-size:14px;">Overall Status:<span style="margin-left:5px;"class="badge bg-warning">Not Compliant</span></p>
+            {% endif %}
+            <!-- <p style="font-size:14px;">Status:<span style="margin-left:5px;"class="badge bg-warning">Not Compliant</span></p> -->
+
+            <div style="border-bottom:solid;border-color:lightgray;" style="font-size:13px">
+                <p style="font-size:13px;"></p>
+            </div>
+
+            <p style="font-size:20px;margin-top:20px">Access Provisioning</p>
+            <p style="font-size:14px;">Compliance status of {{selected_app.APP_NAME}} in access provisioning.</p>
+
+            <div class="card">
+                <div class="card-body">
+                    <nav id="dashboardnav" style="margin-top:10px;">
+                        <div class="nav nav-tabs" id="nav-tab-dashboard" role="tablist">
+            
+                            <a class="nav-link active" id="nav-compliance-tab" data-bs-toggle="tab" href="#nav-compliance" role="tab"
+                            aria-controls="nav-compliance" aria-selected="true"><span class="fa fa-user"
+                                style="margin-right:5px;"></span> No Approval <span style="margin-left:5px;color:blue" class="badge bg-light">{{no_approval_count}}</span></a>
+                            <a class="nav-link" id="nav-users-tab" data-bs-toggle="tab" href="#nav-users" role="tab"
+                                aria-controls="nav-users" aria-selected="true"><span class="fa fa-user"
+                                    style="margin-right:5px;"></span> Late Approval <span style="margin-left:5px;color:blue" class="badge bg-light">{{no_approval_count}}</span></a>
+                            <a class="nav-link" id="nav-audits-tab" data-bs-toggle="tab" href="#nav-audits" role="tab"
+                                aria-controls="nav-audits" aria-selected="false"><span class="fas fa-bookmark"
+                                    style="margin-right:5px;"></span> Compliant</a>
+                            <a class="nav-link" id="nav-workpapers-tab" data-bs-toggle="tab" href="#nav-workpapers" role="tab"
+                                aria-controls="nav-workpapers" aria-selected="false"><span class="fa-solid fa-address-card"
+                                    style="margin-right:5px;"></span>New Users</a>
+                            <a class="nav-link" id="nav-issues-tab" data-bs-toggle="tab" href="#nav-issues" role="tab"
+                                aria-controls="nav-issues" aria-selected="false"><span class="fas fa-cog"
+                                    style="margin-right:5px;"></span>Termination</a>
+                            <a class="nav-link" id="nav-requests-tab" data-bs-toggle="tab" href="#nav-requests" role="tab"
+                                aria-controls="nav-requests" aria-selected="false"><span
+                                    class="fa fa-tasks fa-fw me-1"></span>Admins</a>
+                        </div>
+                    </nav>
+                    <div class="tab-content" id="nav-tabContent" style="min-height:90vh;">
+                        <div class="tab-pane fade show active" id="nav-compliance" role="tabpanel" aria-labelledby="nav-compliance-tab">
+                            <div class="card">
+                                <div class="card-body">
+
+                                    <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap">
+                                    <thead style="padding-top:12px;text-align:center">
+                                        <tr
+                                            style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                            <th  style="text-align:left;width:20%">Application Name</th>
+                                            <th  style="text-align:left;width:20%">User ID </th>
+                                            <th  style="text-align:left;width:20%">Email</th>
+                                            <th style="text-align:left;width:20%;">Roles Added</th>
+                                            <th style="text-align:left;width:20%;">Date Granted</th>
+                                            <th style="text-align:left;width:20%;">Comment</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody style="font-size:13px">
+                                        {% for user in no_approval_list %}
+                                        <tr style="vertical-align: middle;">
+                                            <td style="width:15%">{{ user.APP_NAME }}</td>
+                                            <td style="width:15%">{{ user.USER_ID }}</td>
+                                            <td style="width:15%">{{ user.EMAIL_ADDRESS }}</td>
+                                            <td style="width:20%">{{ user.ROLE_NAME }}</td>
+                                            <td style="width:15%">{{ user.DATE_GRANTED |date:"M d, Y"  }}</td>
+                                            <td style="width:20%"><i style="color:orange;margin-right:5px;"class="fas fa-exclamation-triangle"></i> No Approval Found</td>
+                                        </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                                </div>
+                            </div>
+                           
+                        </div>
+                        <div class="tab-pane fade" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    Late Approval
+                                </div>
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="nav-audits" role="tabpanel" aria-labelledby="nav-users-tab">
+                            <div class="card">
+                                <div class="card-body">
+                                    Compliant
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+        
+                </div>
+            </div>
+
+           
+    </div>
+    
+</div>
+
+{% endblock content %}

@@ -4,7 +4,9 @@ from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
 from appAUDITAI.dataview.ADMIN.views.systemsettings import ManageUsersandRolesView,verification_error_view, email_verification_view,verification_success_view
+from appAUDITAI.dataview.ADMIN.views.utils import error_404
 
+handler404 = 'appAUDITAI.dataview.ADMIN.views.utils.error_404'
 
 urlpatterns = [
     path('admin/', admin.site.urls),

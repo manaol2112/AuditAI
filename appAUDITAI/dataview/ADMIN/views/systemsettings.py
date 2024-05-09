@@ -470,6 +470,8 @@ class ManageUsersandRolesDetailsView(View):
                         selected_groups = request.POST.getlist('role_list')
                         groups = Group.objects.filter(id__in=selected_groups)
                         selected_user.groups.set(groups)
+    
+                        UserToken.objects.create(user=selected_user)
 
                         # Assign Companies
                         selected_companies = request.POST.getlist('company_list')

@@ -1,6 +1,17 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password, check_password
+import uuid 
+
+
+class EmailVerification(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    code = models.CharField(max_length=10)  # Or adjust the length as needed
+    expires_at = models.DateTimeField()
+
+class UserToken(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    token = models.UUIDField(default=uuid.uuid4, editable=False)
 
 # SAP S/4HANA AND ECC MODELS ARE STORED IN THIS GROUP
 
@@ -100,6 +111,7 @@ class COMPANY(models.Model):
     class Meta:
         managed = True
         db_table = 'COMPANY'
+        
 
 class ACCESSREQUEST(models.Model):
     REQUEST_ID = models.CharField(max_length=100, null=True, blank=False)
@@ -116,6 +128,11 @@ class ACCESSREQUEST(models.Model):
     COMMENTS = models.CharField(max_length=1000, null=True, blank=False)
     REQUEST_TYPE = models.CharField(max_length=100, null=True, blank=False)
     PRIORITY = models.CharField(max_length=100, null=True, blank=False)
+    CREATOR = models.CharField(max_length=100, null=True, blank=False)
+    APPROVAL_TOKEN = models.UUIDField(default=uuid.uuid4, editable=False)
+
+    APPROVED_BY = models.CharField(max_length=100, null=True, blank=False)
+    LAST_MODIFIED = models.DateTimeField(null=True)
 
     class Meta:
         managed = True

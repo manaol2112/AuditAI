@@ -1,7 +1,7 @@
 
 from appAUDITAI.dataview.LOGIN.views import authenticate
 from appAUDITAI.dataview.HR.views import hrmanagement
-from appAUDITAI.dataview.ADMIN.views import companymanagement, usermanagement, systemsettings
+from appAUDITAI.dataview.ADMIN.views import companymanagement, usermanagement, systemsettings,utils
 from appAUDITAI.dataview.APP.views import applications_view,policies_view
 from appAUDITAI.dataview.DASHBOARD.views import dashboard
 from appAUDITAI.dataview.CLIENTS.views import clientactions
@@ -33,11 +33,10 @@ path("administration/systemsettings/manage/riskandcontrols/",systemsettings.Mana
 path('access-request/home/', accessrequest.CompanySelect.as_view(), name='access-request-home'),
 path('access-request/company/<int:comp_id>', accessrequest.AccessRequestHome.as_view(), name='access-request-create'),
 path('access-request/get_roles/', accessrequest.get_roles, name='access_request_get_roles'),
-
+path('access-request/approve-access-request/<str:approval_token>', accessrequest.approve_access_request, name='approve_access_request'),
 
 #SFTPCHECK
 path('test_sftp_connection/', applications_view.test_sftp_connection, name='test_sftp'),
-
 
 #--------------URL FOR AUDITORS--------------------------------# 
 #CLIENTS
@@ -65,7 +64,6 @@ path("dashboard/company/list/",applications_view.AppListByCompany.as_view(),name
 path("dashboard/company/applications/<int:comp_id>/",applications_view.ApplistByProcessOwner.as_view(),name="applist-process-owner"),
 path("dashboard/my-applications/details/<int:comp_id>/<int:app_id>/",applications_view.AppdetailsByProcessOwner.as_view(),name="appdetails-process-owner"),
 path("dashboard/my-applications/details/setup/<int:comp_id>/<int:app_id>",applications_view.SetupNewAppView.as_view(),name="setup-new-app"),
-path("dashboard/my-applications/details/compliance/<int:comp_id>/<int:app_id>",applications_view.AppCompliance.as_view(),name="app-compliance"),
 path("dashboard/my-applications/details/<int:comp_id>/<int:app_id>/<str:username>/",applications_view.AppUserRecordView.as_view(),name="appdetails-view-user-record"),
 path("dashboard/my-applications/details/app-new-users-list/<int:comp_id>/<int:app_id>/",applications_view.AppNewUserListView.as_view(),name="appdetails-new-user-list"),
 path("dashboard/my-applications/details/app-new-users-list/<int:comp_id>/<int:app_id>/<int:user_id>",applications_view.AppNewUserApprovalView.as_view(),name="appdetails-new-user-approval"),
@@ -76,7 +74,8 @@ path("dashboard/my-applications/details/generic-accounts-list/<int:comp_id>/<int
 path("dashboard/my-applications/delete/<int:id>/",applications_view.DeletePWAttachment.as_view(),name="delete-pw-attachment"),
 
 
-
+path("dashboard/my-applications/details/compliance/authentication/<int:comp_id>/<int:app_id>",applications_view.AppComplianceAuth.as_view(),name="app-compliance"),
+path("dashboard/my-applications/details/compliance/provisioning/<int:comp_id>/<int:app_id>",applications_view.AppComplianceProv.as_view(),name="app-complianc-prov"),
 
 #AJAX CALL TO POPULATE THE JOB TITLE OF THE APPROVERS
 path('get_approver1_job_title/<int:id>/', applications_view.AppNewUserGetJobApprovalView.as_view(),name="get_approver1_name"),
@@ -84,9 +83,9 @@ path('get_approver2_job_title/<int:id>/', applications_view.AppNewUserGetJobAppr
 
 #LOG-IN
 path("",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
-path("authenticate-user/",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
 path("login/",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
 path("logout/",authenticate.LogoutUser.as_view(),name="logout-user"),
+path("multi-factor-authentication/<uuid:token>", authenticate.MultiFactorAuth.as_view(),name="require-mfa"),
 
 #COMPANY SETUP
 path("system-setting/",companymanagement.SetupCompany.as_view(),name="system-setting"),
@@ -115,5 +114,12 @@ path("policies/manage/provisioning/", policies_view.PoliciesProvisionView.as_vie
 path("policies/manage/termination/", policies_view.PoliciesTerminationView.as_view(), name="policies-termination"),
 path("policies/manage/accessreview/", policies_view.PoliciesUserAccessReviewView.as_view(), name="policies-useraccessreview"),
 path("policies/manage/adminaccounts/", policies_view.PoliciesAdminView.as_view(), name="policies-adminaccounts"),
+
+#ERROR_PAGE
+
+#404
+path("error/page-not-found/",utils.error_404,name="error_404"),
+path("error/needed-permission-not-found/",utils.no_permission.as_view(),name="no_permission")
+
 ]
 

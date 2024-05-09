@@ -2,8 +2,67 @@ from appAUDITAI.dataview.MISC.imports import *
 from django.http import JsonResponse
 from paramiko import SSHClient, AuthenticationException, SSHException
 from django.core.files.storage import default_storage
+from collections import Counter
 
-class AppCompliance(ProcessOwnerPermissionMixin,View):
+
+class AppComplianceProv(ProcessOwnerPermissionMixin, View):
+    template_name = 'pages/APP/process-owner-compliance-prov.html'
+
+    def get(self, request, comp_id, app_id):
+        try:
+            company_name = COMPANY.objects.get(id = comp_id)
+        except COMPANY.DoesNotExist:
+            company_name = None
+
+        try:
+            selected_app = APP_LIST.objects.get(id = app_id)
+        except COMPANY.DoesNotExist:
+            selected_app = None
+
+        current_year = timezone.now().year
+
+        try:
+            new_roles = APP_RECORD.objects.filter(APP_NAME = selected_app, DATE_GRANTED__year = current_year )
+        except APP_RECORD.DoesNotExist:
+            new_roles = None
+
+        try:
+            no_approval_list = []
+            late_approval_list = []
+            for role in new_roles:
+                approval = ACCESSREQUEST.objects.filter(REQUESTOR = role.EMAIL_ADDRESS, ROLES = role.ROLE_NAME)
+                if not approval.exists():
+                    no_approval_list.append(role)  # Append role to the list if no approval exists
+                else:
+                    for approve in approval:
+                        if approve.DATE_APPROVED is not None and role.DATE_APPROVED is not None:
+                            if approve.DATE_APPROVED >= role.DATE_APPROVED:
+                                late_approval_list.append(role)
+                        # Handle the case where one or both DATE_APPROVED values are None
+                        else:
+                            # Add handling logic here if needed
+                            pass
+        except AttributeError:
+        # Handle the case where new_roles is None or has no attribute DATE_APPROVED
+            pass
+
+        no_approval_list = sorted(no_approval_list, key=lambda role: role.DATE_GRANTED, reverse = True)
+        no_approval_count = len(no_approval_list)
+        print(late_approval_list)
+
+        context = {
+            'comp_id':comp_id,
+            'app_id':app_id,
+            'company_name':company_name,
+            'selected_app':selected_app,
+            'no_approval_list':no_approval_list,
+            'no_approval_count':no_approval_count
+        }
+        return render(request,self.template_name, context)
+
+        
+
+class AppComplianceAuth(ProcessOwnerPermissionMixin,View):
     template_name = 'pages/APP/process-owner-compliance-auth.html'
 
     def get(self,request, comp_id, app_id):

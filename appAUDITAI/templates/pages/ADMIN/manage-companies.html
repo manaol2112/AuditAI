@@ -50,7 +50,7 @@
         <div class="card-container"
             style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;border-bottom:solid;border-color:lightgray">
             {% for company in companies %}
-            <a href="{% url 'appAUDITAI:manage-companies-detais' company.id %} " style="text-decoration: none;color:#474b4d">
+            <a href="{% url 'appAUDITAI:manage-companies-details' company.id %} " style="text-decoration: none;color:#474b4d">
                 <div class="card"
                     style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
                     onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">

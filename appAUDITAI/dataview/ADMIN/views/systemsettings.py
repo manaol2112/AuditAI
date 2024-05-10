@@ -1,6 +1,6 @@
 from appAUDITAI.dataview.MISC.imports import *
 
-class SystemSettingsView(View):
+class SystemSettingsView(AdminPermissionMixin, View):
     
     template_name = 'pages/ADMIN/system-settings.html'
 
@@ -9,7 +9,7 @@ class SystemSettingsView(View):
         context = {'group_exist': group_exist}
         return render(request, self.template_name, context)
     
-class ManageHRRecordView(View):
+class ManageHRRecordView(AdminPermissionMixin, View):
     template_name = 'pages/ADMIN/manage-hr-record.html'
 
     def get(self,request):
@@ -24,7 +24,7 @@ class ManageHRRecordView(View):
 
         return render(request,self.template_name,context)
     
-class ManageHRRecordDetailsView(View):
+class ManageHRRecordDetailsView(AdminPermissionMixin, View):
     template_name = 'pages/ADMIN/manage-hr-record-details.html'
 
     def get(self,request,comp_id):
@@ -169,7 +169,7 @@ class ManageHRRecordDetailsView(View):
 
                             if selected_company:
                                 try:
-                                    hr_record, created = HR_RECORD.objects.get_or_create(COMPANY_ID = selected_company, USER_ID = user_id_value)
+                                    hr_record, created = HR_RECORD.objects.get_or_create(COMPANY_ID = selected_company.id, USER_ID = user_id_value)
                                     hr_record.EMAIL_ADDRESS = email_value
                                     hr_record.FIRST_NAME = first_name_value
                                     hr_record.LAST_NAME = last_name_value
@@ -302,7 +302,7 @@ class ManageHRRecordDetailsView(View):
         except:
             pass
 
-class ManageRolesListView(View):
+class ManageRolesListView(AdminPermissionMixin, View):
     template_name = 'pages/ADMIN/manage-roles-view.html'
     def get(self,request):
         try:
@@ -317,7 +317,7 @@ class ManageRolesListView(View):
         return render(request, self.template_name,context)
     
 
-class ManageRolesView(View):
+class ManageRolesView(AdminPermissionMixin, View):
     
     template_name = 'pages/ADMIN/manage-roles.html'
 
@@ -404,7 +404,7 @@ class ManageRolesView(View):
 
         return redirect('appAUDITAI:manage-roles-view')
 
-class ManageUsersandRolesDetailsView(View):
+class ManageUsersandRolesDetailsView(AdminPermissionMixin, View):
     template_name = 'pages/ADMIN/manage-user-roles-details.html'
     
     def get(self, request,user_id):
@@ -470,7 +470,7 @@ class ManageUsersandRolesDetailsView(View):
                         selected_groups = request.POST.getlist('role_list')
                         groups = Group.objects.filter(id__in=selected_groups)
                         selected_user.groups.set(groups)
-    
+
                         UserToken.objects.create(user=selected_user)
 
                         # Assign Companies
@@ -493,7 +493,7 @@ class ManageUsersandRolesDetailsView(View):
         context = self.common_data(request,user_id)
         return render(request, self.template_name, context)
 
-class ManageUsersandRolesView(View):
+class ManageUsersandRolesView(AdminPermissionMixin, View):
 
     template_name = 'pages/ADMIN/manage-user-roles.html'
     
@@ -557,9 +557,10 @@ class ManageUsersandRolesView(View):
                 user_roles.COMPANY_ID.set(companies)
 
             context = self.common_data(request)
-            return render(request, self.template_name, context)
+            
         except:
             pass
+        return render(request, self.template_name, context)
         
 def email_verification_view(request, uidb64, token):
     try:
@@ -636,7 +637,7 @@ def verification_success_view(request, uidb64, token):
         # Handle the case where user or token is invalid
         pass
 
-class ManageSecurityView(View):
+class ManageSecurityView(AdminPermissionMixin, View):
 
     template_name = 'pages/ADMIN/manage-security.html'
 
@@ -697,7 +698,7 @@ class ManagePasswordView(View):
         context = self.common_data(request)
         return render(request, self.template_name, context)
     
-class ManageCompaniesView(View):
+class ManageCompaniesView(AdminPermissionMixin, View):
 
     template_name = 'pages/ADMIN/manage-companies.html'
     
@@ -733,7 +734,7 @@ class ManageCompaniesView(View):
             context['error_message'] = error_message  # Include error_message in context
             return render(request, self.template_name, context)
         
-class ManageCompaniesDetailsView(View):
+class ManageCompaniesDetailsView(AdminPermissionMixin, View):
 
     template_name = 'pages/ADMIN/manage-companies-details.html'
     
@@ -790,7 +791,7 @@ class ManageCompaniesDetailsView(View):
         # Ensure that common_data() method is defined and returns the necessary data
     
         
-class ManageIntegrationsView(View):
+class ManageIntegrationsView(AdminPermissionMixin, View):
 
     template_name = 'pages/ADMIN/manage-integrations.html'
 
@@ -801,7 +802,7 @@ class ManageIntegrationsView(View):
         return render(request, self.template_name, context)
 
     
-class ManageRiskandControlView(View):
+class ManageRiskandControlView(AdminPermissionMixin, View):
 
     template_name = 'pages/ADMIN/manage-riskandcontrols.html'
 

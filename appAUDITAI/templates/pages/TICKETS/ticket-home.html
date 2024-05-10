@@ -3,6 +3,7 @@
 {% block content %}
 
 <link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/dragndrop.css' %}" />
 <!-- Styles -->
 
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
@@ -56,18 +57,23 @@
                     style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
                     <thead style="padding-top:12px;text-align:center">
                         <tr style="font-size:12px; background-color:whitesmoke;">
-                            <th style="text-align:left; width: 20%;">Reference</th>
-                            <th style="text-align:left; width: 20%;">Roles</th>
-                            <th style="text-align:left; width: 20%;">Date Created</th>
-                            <th style="text-align:left; width: 20%;">Assignee</th>
-                            <th style="text-align:left; width: 20%;">Approval Status</th>
+                            <th style="text-align:left; width: 10%;">Reference</th>
+                            <th style="text-align:left; width: 10%;">Application Name</th>
+                            <th style="text-align:left; width: 15%;">Roles</th>
+                            <th style="text-align:left; width: 10%;">Date Created</th>
+                            <th style="text-align:left; width: 15%;">Assignee</th>
+                            <th style="text-align:left; width: 15%;">Approval Status</th>
+                            <th style="text-align:left; width: 15%;">Approver</th>
+                            <th style="text-align:left; width: 15%;">Date Approved</th>
                         </tr>
                     </thead>
                     <tbody style="font-size:13px">
                         {% for ticket in my_requests %}
                         <tr style="vertical-align: middle;">
-                            <td>{{ ticket.REQUEST_ID }}
+                            <td><a style="color:#3b3d3d" href="{% url 'appAUDITAI:access-request-details' ticket.id %}">{{ ticket.REQUEST_ID }}</a>
                             </td>
+                            <td>{{ ticket.APP_NAME }}
+                            </td> 
                             <td>{{ ticket.ROLES }}
                             </td>
                             <td>{{ ticket.DATE_REQUESTED|date:"M d, Y"  }}
@@ -80,6 +86,21 @@
                             <td><i class="fas fas fa-spinner" style="margin-right:5px;color:orange"></i>{{ ticket.STATUS }}
                             {% endif %}
                             </td>
+                            {% if ticket.BUSINESS_APPROVER %}
+                            <td>{{ ticket.BUSINESS_APPROVER }}
+                            </td>
+                            {% else %}
+                            <td>-
+                            </td>
+                            {% endif %}
+                            
+                            {% if ticket.DATE_APPROVED %}
+                            <td>{{ ticket.DATE_APPROVED|date:"M d, Y"  }}
+                            </td>
+                            {% else %}
+                            <td>-
+                            </td>
+                            {% endif %}
                         </tr>
                         {% endfor %}
                     </tbody>

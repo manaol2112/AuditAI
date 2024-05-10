@@ -1,0 +1,146 @@
+﻿ID,Email,First Name,Last Name,Role,Status,Date Granted,Date Removed,Last Login
+manaol2112,manaol2112@gmail.com,Robert John,Manaol,Administrator,Active,10/1/24,,11/8/24
+joannngarcia,joannarose@gmail.com,Joanna Rose,Manaol,AP MANAGER,Inactive,5/1/24,5/13/24,11/8/24
+sophiamerce_updated,sophiagmanaol@gmail.com,Sophia Merce Test,Manaol,Administrator,Inactive,11/1/24,11/13/24,11/24/24
+sophiamerce_updated,sophiagmanaol@gmail.com,Sophia Merce Test,Manaol,AP Accountant,Inactive,11/1/24,11/13/24,11/24/24
+test1234,test1234@gmail.com,Robert John,Manaol,Administrator,Active,11/1/24,,10/31/24
+eladriel123,eladriel123@gmail.com,John Eladriel,Manaol,AP Supervisor,Inactive,11/18/24,11/30/24,12/24/24
+eladriel123,eladriel123@gmail.com,John Eladriel,Manaol,Associate,Inactive,11/18/24,11/30/24,12/24/24
+test12345,test12345@gmail.com,Test User 1,Test,Associate,Active,12/31/22,,10/31/24
+test12346,test12346@gmail.com,Test User 2,Test,Associate,Active,1/1/24,,10/31/24
+test12347,test12347@gmail.com,Test User 3,Test,Associate,Active,1/2/24,,10/31/24
+test12348,test12348@gmail.com,Test User 4,Test,Associate,Active,1/3/24,,10/31/24
+test12349,test12349@gmail.com,Test User 5,Test,Associate,Active,1/4/24,,10/31/24
+test12350,test12350@gmail.com,Test User 6,Test,Associate,Active,1/5/24,,10/31/24
+test12351,test12351@gmail.com,Test User 7,Test,Associate,Active,1/6/24,,10/31/24
+test12352,test12352@gmail.com,Test User 8,Test,Associate,Inactive,1/7/24,1/19/24,11/24/24
+test12353,test12353@gmail.com,Test User 9,Test,Associate,Active,1/8/24,,10/31/24
+test12354,test12354@gmail.com,Test User 10,Test,Associate,Active,1/9/24,,10/31/24
+test12355,test12355@gmail.com,Test User 11,Test,Associate,Inactive,1/10/24,1/22/24,11/24/24
+test12356,test12356@gmail.com,Test User 12,Test,Associate,Active,1/11/24,,10/31/24
+test12357,test12357@gmail.com,Test User 13,Test,Associate,Active,1/12/24,,10/31/24
+test12358,test12358@gmail.com,Test User 14,Test,Associate,Active,1/13/24,,10/31/24
+test12359,test12359@gmail.com,Test User 15,Test,Associate,Inactive,1/14/24,1/26/24,11/24/24
+test12360,test12360@gmail.com,Test User 16,Test,Associate,Active,1/15/24,,10/31/24
+test12361,test12361@gmail.com,Test User 17,Test,Associate,Active,1/16/24,,10/31/24
+test12362,test12362@gmail.com,Test User 18,Test,Associate,Active,1/17/24,,10/31/24
+test12363,test12363@gmail.com,Test User 19,Test,Associate,Active,1/18/24,,10/31/24
+test12364,test12364@gmail.com,Test User 20,Test,Associate,Active,1/19/24,,10/31/24
+test12365,test12365@gmail.com,Test User 21,Test,Associate,Active,1/20/24,,10/31/24
+test12366,test12366@gmail.com,Test User 22,Test,Associate,Active,1/21/24,,10/31/24
+test12367,test12367@gmail.com,Test User 23,Test,Associate,Active,1/22/24,,10/31/24
+test12368,test12368@gmail.com,Test User 24,Test,Associate,Active,1/23/24,,10/31/24
+test12369,test12369@gmail.com,Test User 25,Test,Associate,Active,1/24/24,,10/31/24
+test12370,test12370@gmail.com,Test User 26,Test,Associate,Inactive,1/25/24,2/6/24,11/24/24
+test12371,test12371@gmail.com,Test User 27,Test,Associate,Active,1/26/24,,10/31/24
+test12372,test12372@gmail.com,Test User 28,Test,Associate,Active,1/27/24,,10/31/24
+test12373,test12373@gmail.com,Test User 29,Test,Associate,Active,1/28/24,,10/31/24
+test12374,test12374@gmail.com,Test User 30,Test,Associate,Active,1/29/24,,10/31/24
+test12375,test12375@gmail.com,Test User 31,Test,Associate,Inactive,1/30/24,2/11/24,11/24/24
+test12376,test12376@gmail.com,Test User 32,Test,Associate,Active,1/31/24,,10/31/24
+test12377,test12377@gmail.com,Test User 33,Test,Associate,Active,2/1/24,,10/31/24
+test12378,test12378@gmail.com,Test User 34,Test,Associate,Active,2/2/24,,10/31/24
+test12379,test12379@gmail.com,Test User 35,Test,Associate,Active,2/3/24,,10/31/24
+test12380,test12380@gmail.com,Test User 36,Test,Associate,Active,2/4/24,,10/31/24
+test12381,test12381@gmail.com,Test User 37,Test,Associate,Active,2/5/24,,10/31/24
+test12382,test12382@gmail.com,Test User 38,Test,Associate,Active,2/6/24,,10/31/24
+test12383,test12383@gmail.com,Test User 39,Test,Associate,Active,2/7/24,,10/31/24
+test12384,test12384@gmail.com,Test User 40,Test,Associate,Active,2/8/24,,10/31/24
+test12385,test12385@gmail.com,Test User 41,Test,Associate,Active,2/9/24,,10/31/24
+test12386,test12386@gmail.com,Test User 42,Test,Associate,Active,2/10/24,,10/31/24
+test12387,test12387@gmail.com,Test User 43,Test,Associate,Active,2/11/24,,10/31/24
+test12388,test12388@gmail.com,Test User 44,Test,Associate,Inactive,2/12/24,2/24/24,11/24/24
+test12389,test12389@gmail.com,Test User 45,Test,Associate,Active,2/13/24,,10/31/24
+test12390,test12390@gmail.com,Test User 46,Test,Associate,Active,2/14/24,,10/31/24
+test12391,test12391@gmail.com,Test User 47,Test,Associate,Active,2/15/24,,10/31/24
+test12392,test12392@gmail.com,Test User 48,Test,Associate,Inactive,2/16/24,2/28/24,11/24/24
+test12393,test12393@gmail.com,Test User 49,Test,Associate,Active,2/17/24,,10/31/24
+test12394,test12394@gmail.com,Test User 50,Test,Associate,Active,2/18/24,,10/31/24
+test12395,test12395@gmail.com,Test User 51,Test,Associate,Active,2/19/24,,10/31/24
+test12396,test12396@gmail.com,Test User 52,Test,Associate,Active,2/20/24,,10/31/24
+test12397,test12397@gmail.com,Test User 53,Test,Associate,Active,2/21/24,,10/31/24
+test12398,test12398@gmail.com,Test User 54,Test,Associate,Active,2/22/24,,10/31/24
+test12399,test12399@gmail.com,Test User 55,Test,Associate,Active,2/23/24,,10/31/24
+test12400,test12400@gmail.com,Test User 56,Test,Associate,Active,2/24/24,,10/31/24
+test12401,test12401@gmail.com,Test User 57,Test,Associate,Active,2/25/24,,10/31/24
+test12402,test12402@gmail.com,Test User 58,Test,Associate,Active,2/26/24,,10/31/24
+test12403,test12403@gmail.com,Test User 59,Test,Associate,Active,2/27/24,,10/31/24
+test12404,test12404@gmail.com,Test User 60,Test,Associate,Active,2/28/24,,10/31/24
+test12405,test12405@gmail.com,Test User 61,Test,Associate,Active,3/1/24,,10/31/24
+test12406,test12406@gmail.com,Test User 62,Test,Associate,Active,3/2/24,,10/31/24
+test12407,test12407@gmail.com,Test User 63,Test,Associate,Active,3/3/24,,10/31/24
+test12408,test12408@gmail.com,Test User 64,Test,Associate,Inactive,3/4/24,3/16/24,11/24/24
+test12409,test12409@gmail.com,Test User 65,Test,Associate,Active,3/5/24,,10/31/24
+test12410,test12410@gmail.com,Test User 66,Test,Associate,Active,3/6/24,,10/31/24
+test12411,test12411@gmail.com,Test User 67,Test,Associate,Active,3/7/24,,10/31/24
+test12412,test12412@gmail.com,Test User 68,Test,Associate,Inactive,3/8/24,3/20/24,11/24/24
+test12413,test12413@gmail.com,Test User 69,Test,Associate,Active,3/9/24,,10/31/24
+test12414,test12414@gmail.com,Test User 70,Test,Associate,Active,3/10/24,,10/31/24
+test12415,test12415@gmail.com,Test User 71,Test,Associate,Active,3/11/24,,10/31/24
+test12416,test12416@gmail.com,Test User 72,Test,Associate,Active,3/12/24,,10/31/24
+test12417,test12417@gmail.com,Test User 73,Test,Associate,Active,3/13/24,,10/31/24
+test12418,test12418@gmail.com,Test User 74,Test,Associate,Active,3/14/24,,10/31/24
+test12419,test12419@gmail.com,Test User 75,Test,Associate,Active,3/15/24,,10/31/24
+test12420,test12420@gmail.com,Test User 76,Test,Associate,Active,3/16/24,,10/31/24
+test12421,test12421@gmail.com,Test User 77,Test,Associate,Active,3/17/24,,10/31/24
+test12422,test12422@gmail.com,Test User 78,Test,Associate,Active,3/18/24,,10/31/24
+test12423,test12423@gmail.com,Test User 79,Test,Associate,Inactive,3/19/24,3/31/24,11/24/24
+test12424,test12424@gmail.com,Test User 80,Test,Associate,Active,3/20/24,,10/31/24
+test12425,test12425@gmail.com,Test User 81,Test,Associate,Active,3/21/24,,10/31/24
+test12426,test12426@gmail.com,Test User 82,Test,Associate,Active,3/22/24,,10/31/24
+test12427,test12427@gmail.com,Test User 83,Test,Associate,Active,3/23/24,,10/31/24
+test12428,test12428@gmail.com,Test User 84,Test,Associate,Inactive,3/24/24,4/5/24,11/24/24
+test12429,test12429@gmail.com,Test User 85,Test,Associate,Active,3/25/24,,10/31/24
+test12430,test12430@gmail.com,Test User 86,Test,Associate,Active,3/26/24,,10/31/24
+test12431,test12431@gmail.com,Test User 87,Test,Associate,Active,3/27/24,,10/31/24
+test12432,test12432@gmail.com,Test User 88,Test,Associate,Active,3/28/24,,10/31/24
+test12433,test12433@gmail.com,Test User 89,Test,Associate,Active,3/29/24,,10/31/24
+test12434,test12434@gmail.com,Test User 90,Test,Associate,Active,3/30/24,,10/31/24
+test12435,test12435@gmail.com,Test User 91,Test,Associate,Active,3/31/24,,10/31/24
+test12436,test12436@gmail.com,Test User 92,Test,Associate,Active,4/1/24,,10/31/24
+test12437,test12437@gmail.com,Test User 93,Test,Associate,Active,4/2/24,,10/31/24
+test12438,test12438@gmail.com,Test User 94,Test,Associate,Active,4/3/24,,10/31/24
+test12439,test12439@gmail.com,Test User 95,Test,Associate,Active,4/4/24,,10/31/24
+test12440,test12440@gmail.com,Test User 96,Test,Associate,Active,4/5/24,,10/31/24
+test12441,test12441@gmail.com,Test User 97,Test,Associate,Active,4/6/24,,10/31/24
+test12442,test12442@gmail.com,Test User 98,Test,Associate,Inactive,4/7/24,4/19/24,11/24/24
+test12443,test12443@gmail.com,Test User 99,Test,Associate,Active,4/8/24,,10/31/24
+test12444,test12444@gmail.com,Test User 100,Test,Associate,Active,4/9/24,,10/31/24
+test12445,test12445@gmail.com,Test User 101,Test,Associate,Active,4/10/24,,10/31/24
+test12446,test12446@gmail.com,Test User 102,Test,Associate,Inactive,4/11/24,4/23/24,11/24/24
+test12447,test12447@gmail.com,Test User 103,Test,Associate,Active,4/12/24,,10/31/24
+test12448,test12448@gmail.com,Test User 104,Test,Associate,Active,4/13/24,,10/31/24
+test12449,test12449@gmail.com,Test User 105,Test,Associate,Active,4/14/24,,10/31/24
+test12450,test12450@gmail.com,Test User 106,Test,Associate,Active,4/15/24,,10/31/24
+test12451,test12451@gmail.com,Test User 107,Test,Associate,Active,4/16/24,,10/31/24
+test12452,test12452@gmail.com,Test User 108,Test,Associate,Active,4/17/24,,10/31/24
+test12453,test12453@gmail.com,Test User 109,Test,Associate,Active,4/18/24,,10/31/24
+test12454,test12454@gmail.com,Test User 110,Test,Associate,Active,4/19/24,,10/31/24
+test12455,test12455@gmail.com,Test User 111,Test,Associate,Active,4/20/24,,10/31/24
+test12456,test12456@gmail.com,Test User 112,Test,Associate,Active,4/21/24,,10/31/24
+test12457,test12457@gmail.com,Test User 113,Test,Associate,Active,4/22/24,,10/31/24
+test12458,test12458@gmail.com,Test User 114,Test,Associate,Active,4/23/24,,10/31/24
+test12459,test12459@gmail.com,Test User 115,Test,Associate,Active,4/24/24,,10/31/24
+test12460,test12460@gmail.com,Test User 116,Test,Associate,Active,4/25/24,,10/31/24
+test12461,test12461@gmail.com,Test User 117,Test,Associate,Inactive,4/26/24,5/8/24,11/24/24
+test12462,test12462@gmail.com,Test User 118,Test,Associate,Active,4/27/24,,10/31/24
+test12463,test12463@gmail.com,Test User 119,Test,Associate,Active,4/28/24,,10/31/24
+test12464,test12464@gmail.com,Test User 120,Test,Associate,Active,4/29/24,,10/31/24
+test12465,test12465@gmail.com,Test User 121,Test,Associate,Inactive,4/30/24,5/12/24,11/24/24
+test12466,test12466@gmail.com,Test User 122,Test,Associate,Active,5/1/24,,10/31/24
+test12467,test12467@gmail.com,Test User 123,Test,Associate,Active,5/2/24,,10/31/24
+test12468,test12468@gmail.com,Test User 124,Test,Associate,Active,5/3/24,,10/31/24
+test12469,test12469@gmail.com,Test User 125,Test,Associate,Active,5/4/24,,10/31/24
+test12470,test12470@gmail.com,Test User 126,Test,Associate,Active,5/5/24,,10/31/24
+osang,osang@gmail.com,RoseAnn,Balmes,Associate,Active,12/5/24,,10/31/24
+user2,user2@gmail.com,USER2,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user3,user3@gmail.com,USER3,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user4,user4@gmail.com,USER4,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user5,user5@gmail.com,USER5,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user6,user6@gmail.com,USER6,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user7,user7@gmail.com,USER7,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user8,user8@gmail.com,USER8,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user9,user9@gmail.com,USER9,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user10,user10@gmail.com,USER10,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+user11,user11@gmail.com,USER11,TEST,Associate,Inactive,1/1/24,1/13/24,10/31/24
+test_test_test,test_test@gmail.com,test_test,TEST,Associate,Active,1/1/24,,10/31/24

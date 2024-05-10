@@ -95,6 +95,7 @@ class PASSWORDCONFIG(models.Model):
 
 #COMPANY
 class COMPANY(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.CharField(max_length=100,blank=True,null=True)
     COMPANY_NAME = models.CharField(max_length=1000,blank=True,null=True)
     SELECTED = models.BooleanField(blank=True,null=True)
@@ -111,9 +112,20 @@ class COMPANY(models.Model):
     class Meta:
         managed = True
         db_table = 'COMPANY'
-        
+
+class RequestIDCounter(models.Model):
+    counter = models.IntegerField(default=0)
+
+    @classmethod
+    def get_next_id(cls):
+        counter_obj, created = cls.objects.get_or_create(pk=1)
+        if not created:
+            counter_obj.counter += 1
+            counter_obj.save()
+        return counter_obj.counter
 
 class ACCESSREQUEST(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     REQUEST_ID = models.CharField(max_length=100, null=True, blank=False)
     COMPANY_ID = models.ForeignKey(COMPANY, on_delete=models.DO_NOTHING, null=True)
     APP_NAME = models.CharField(max_length=100, null=True, blank=False)
@@ -138,7 +150,14 @@ class ACCESSREQUEST(models.Model):
         managed = True
         db_table = 'ACCESS_REQUEST'
 
+    def save(self, *args, **kwargs):
+        if not self.REQUEST_ID:
+            self.REQUEST_ID = f'REQ#000{RequestIDCounter.get_next_id()}'
+        super().save(*args, **kwargs)
+
+
 class ACCESSREQUESTCOMMENTS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     REQUEST_ID = models.ForeignKey(ACCESSREQUEST, on_delete=models.CASCADE)
     CREATOR = models.CharField(max_length=100, null=True, blank=False)
     COMMENT_DETAILS = models.CharField(max_length=100, null=True, blank=False)
@@ -160,6 +179,7 @@ class MULTIPLE_COMPANY(models.Model):
 
 # Create your models here.
 class USERROLES(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ManyToManyField(COMPANY,blank=True,null=True)
     USERNAME = models.ForeignKey(User,on_delete=models.CASCADE)
 
@@ -179,6 +199,7 @@ class USERROLES(models.Model):
 #HR SYSTEM MODELS ARE IN THIS GROUP
 
 class HR_RECORD(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.CharField(max_length=1000,blank=True,null=True)
     USER_ID = models.CharField(max_length=50,blank=True,null=True)
     EMAIL_ADDRESS = models.CharField(max_length=50,blank=True,null=True)
@@ -207,6 +228,7 @@ class HR_RECORD(models.Model):
         db_table = 'HR_RECORD'
 
 class APP_USERS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     USER_ID = models.CharField(max_length=100,blank=True,null=True)
     FIRST_NAME = models.CharField(max_length=100,blank=True,null=True)
     LAST_NAME = models.CharField(max_length=100,blank=True,null=True)
@@ -217,6 +239,7 @@ class APP_USERS(models.Model):
 
 class APP_LIST(models.Model):
     #APPLICATION LIST
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     APP_NAME = models.CharField(max_length=100,blank=True,null=True)
     APP_TYPE = models.CharField(max_length=100,blank=True,null=True)
@@ -249,6 +272,7 @@ class APP_LIST(models.Model):
         db_table = 'APP_LIST'
 
 class APP_USER_SFTP(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST, on_delete=models.CASCADE,max_length=100,null=True,blank=True)
     HOST_NAME = models.CharField(max_length=1000,blank=True,null=True)
     SFTP_USERNAME = models.CharField(max_length=128,blank=True)
@@ -272,6 +296,7 @@ class APP_USER_SFTP(models.Model):
         db_table = 'SFTP_USER'
 
 class APP_JOB_PULL(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST, on_delete=models.CASCADE,max_length=100,blank=True)
     JOB_NAME = models.CharField(max_length=1000,blank=True,null=True)
     MONDAY = models.BooleanField(default=False,null=True)
@@ -293,6 +318,7 @@ class APP_JOB_PULL(models.Model):
         db_table = 'USER_JOB_SCHEDULE'
 
 class APP_JOB_USER_LOG(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST, on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     JOB_NAME = models.ForeignKey(APP_JOB_PULL,on_delete=models.DO_NOTHING,blank=True)
     JOB_FILE_NAME = models.CharField(max_length=1000,null=True,blank=True)
@@ -306,6 +332,7 @@ class APP_JOB_USER_LOG(models.Model):
         db_table = 'APP_JOB_USER_LOG'
 
 class APP_JOB_USER_LOG_PROCESS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST, on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     USER_ID = models.CharField(max_length=128, null=True, blank=True)
     JOB_DATE = models.DateTimeField(null=True,blank=False)
@@ -319,6 +346,7 @@ class APP_JOB_USER_LOG_PROCESS(models.Model):
 
 
 class HR_LIST_SFTP(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,blank=True,null=True)
     HOST_NAME = models.CharField(max_length=1000,blank=True,null=True)
     SFTP_USERNAME = models.CharField(max_length=128,blank=True)
@@ -342,6 +370,7 @@ class HR_LIST_SFTP(models.Model):
         db_table = 'SFTP_HR'
 
 class HR_JOB_PULL(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,blank=True,null=True)
     JOB_NAME = models.CharField(max_length=1000,blank=True,null=True)
     MONDAY = models.BooleanField(default=False)
@@ -364,6 +393,7 @@ class HR_JOB_PULL(models.Model):
         db_table = 'HR_JOB_SCHEDULE'
 
 class HR_JOB_USER_LOG(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     JOB_NAME = models.ForeignKey(APP_JOB_PULL,on_delete=models.DO_NOTHING,blank=True)
     JOB_DATE = models.DateTimeField
     JOB_COMPLETE = models.BooleanField(default=False)
@@ -375,6 +405,7 @@ class HR_JOB_USER_LOG(models.Model):
 
 class APP_RECORD(models.Model):
     #GENERAL USER INFORMATION
+    TOKEN = models.UUIDField(default=uuid.uuid4, editable=False, unique=True)
     APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     APP_TYPE = models.CharField(max_length=50,blank=True,null=True)
     USER_ID =  models.CharField(max_length=50,blank=True,null=True)
@@ -439,6 +470,7 @@ class APP_RECORD(models.Model):
         db_table = 'APP_RECORD'
 
 class CSV_UPLOAD_FIELDS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     FIELD_NAME = models.CharField(max_length=128,blank=True,null=True)
     DATE = models.DateTimeField(null=True, blank=True)
@@ -454,6 +486,7 @@ class CSV_UPLOAD_FIELDS(models.Model):
         db_table = 'CSV_UPLOAD_FIELDS'
 
 class CSV_MAPPING_TABLE(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     USER_ID = models.CharField(max_length=128,blank=True,null=True)
     FIRST_NAME = models.CharField(max_length=128,blank=True,null=True)
@@ -476,6 +509,7 @@ class CSV_MAPPING_TABLE(models.Model):
 
 
 class ADMIN_ROLES_FILTER(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     ROLE_NAME = models.CharField(max_length=50,blank=True,null=True)
     SETUP_COMPLETE = models.BooleanField(default=False,null=True)
@@ -492,6 +526,7 @@ class ADMIN_ROLES_FILTER(models.Model):
 
 
 class SYSTEM_ACCOUNTS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     USER_ID = models.ForeignKey(APP_RECORD,on_delete=models.CASCADE,max_length=100, blank=True,null=True)
     IS_SYSTEM_ACCOUNT = models.BooleanField(blank=True, null=True)
@@ -503,6 +538,7 @@ class SYSTEM_ACCOUNTS(models.Model):
     MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
 
 class INTEGRATION_ACCOUNTS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     USER_ID = models.ForeignKey(APP_RECORD,on_delete=models.CASCADE,max_length=100, blank=True,null=True)
     IS_INTEGRATION_ACCOUNT = models.BooleanField(blank=True, null=True)
@@ -514,6 +550,7 @@ class INTEGRATION_ACCOUNTS(models.Model):
     MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
 
 class APP_USER_UPLOAD(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     file_name = models.FileField(upload_to='app_users/')
     APP_NAME = models.ForeignKey(APP_RECORD,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     activated = models.BooleanField(default=False)
@@ -531,6 +568,7 @@ class APP_USER_UPLOAD(models.Model):
         db_table = 'USER_UPLOAD_ATTACHMENTS'
 
 class APP_NEW_USER_APPROVAL(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     file_name = models.FileField(upload_to='new_users_approval/')
     USER_ID = models.ForeignKey(APP_RECORD,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     activated = models.BooleanField(default=False)
@@ -566,6 +604,7 @@ class PWCONFIGATTACHMENTS(models.Model):
     
 
 class CONTROLS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE)
     CONTROL_ID = models.CharField(max_length=50,blank=True,null=True)
     CONTROL_NAME = models.CharField(max_length=50,blank=True,null=True)
@@ -586,6 +625,7 @@ class CONTROLS(models.Model):
         db_table = 'CONTROLS'
     
 class POLICIES(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     POLICY_NAME = models.CharField(max_length=50,blank=True,null=True)
     POLICY_DESCRIPTION = models.CharField(max_length=1000,blank=True,null=True)
     CONTROL_ID = models.ManyToManyField(CONTROLS)
@@ -608,6 +648,7 @@ class POLICIES(models.Model):
 #MODELS FOR THE POLICIES ARE SAVED IN HERE
 
 class PASSWORDPOLICY(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ManyToManyField(COMPANY,blank=True,null=True)
     COMPLEXITY_ENABLED = models.BooleanField(default=False) 
     LENGTH = models.IntegerField(blank=True, null=True)
@@ -635,6 +676,7 @@ class Meta:
 
 
 class PROVISIONINGPOLICY(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST, on_delete=models.CASCADE, null=True, blank=True)
     REQ_APPROVAL = models.BooleanField(null=True,blank=False)
     REQ_APPROVAL_RATIONALE = models.CharField(max_length=1000,null=True,blank=True)
@@ -649,7 +691,7 @@ class PROVISIONINGPOLICY(models.Model):
     MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True) 
 
 class TERMINATIONPOLICY(models.Model):
-
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST, on_delete=models.CASCADE, null=True, blank=True)
     DAYS_TO_TERMINATE = models.IntegerField(blank=True, null= True)
     WHO_NOTIFY_HR = models.BooleanField(null=True,blank=True)
@@ -670,6 +712,7 @@ class Meta:
         db_table = 'TERMINATIONPOLICY'
     
 class PASSWORD(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST, on_delete=models.CASCADE, blank=True, null=True)
     CONTROL_ID = models.ForeignKey(CONTROLS, on_delete=models.CASCADE, blank=True, null=True)
     COMPLEXITY_ENABLED = models.BooleanField(default=False) 
@@ -699,6 +742,7 @@ class Meta:
         db_table = 'PASSWORD'
 
 class TERMINATION(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     CONTROL_ID = models.ForeignKey(CONTROLS,on_delete=models.DO_NOTHING)
     REQUIRED_DAYS = models.IntegerField(null=True)
 
@@ -716,6 +760,7 @@ class TERMINATION(models.Model):
         db_table = 'TERMINATION'
     
 class PROVISIONING(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     CONTROL_ID = models.ForeignKey(CONTROLS,on_delete=models.DO_NOTHING)
     REQUIRED_APPROVERS = models.CharField(max_length=50,blank=True,null=True)
 

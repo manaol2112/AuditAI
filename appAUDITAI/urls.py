@@ -25,13 +25,14 @@ path("administration/systemsettings/manage/companies/",systemsettings.ManageComp
 path("administration/systemsettings/manage/roles/<int:role_id>",systemsettings.ManageRolesView.as_view(),name="manage-roles"),
 path("administration/systemsettings/manage/roles/",systemsettings.ManageRolesListView.as_view(),name="manage-roles-view"),
 path("administration/systemsettings/manage/hrrecord/",systemsettings.ManageHRRecordView.as_view(),name="manage-hr-record"),
-path("administration/systemsettings/manage/hrrecord/<int:comp_id>",systemsettings.ManageHRRecordDetailsView.as_view(),name="manage-hr-record-details"),
-path("administration/systemsettings/manage/companies/<int:comp_id>",systemsettings.ManageCompaniesDetailsView.as_view(),name="manage-companies-detais"),
+path("administration/systemsettings/manage/hrrecord/<uuid:comp_id>",systemsettings.ManageHRRecordDetailsView.as_view(),name="manage-hr-record-details"),
+path("administration/systemsettings/manage/companies/<uuid:comp_id>",systemsettings.ManageCompaniesDetailsView.as_view(),name="manage-companies-details"),
 path("administration/systemsettings/manage/riskandcontrols/",systemsettings.ManageRiskandControlView.as_view(),name="manage-riskandcontrols"),
 
 #TICKETINGURLS
 path('access-request/home/', accessrequest.CompanySelect.as_view(), name='access-request-home'),
-path('access-request/company/<int:comp_id>', accessrequest.AccessRequestHome.as_view(), name='access-request-create'),
+path('access-request/details/<uuid:request_id>', accessrequest.AccessRequestDetails.as_view(), name='access-request-details'),
+path('access-request/company/<uuid:comp_id>', accessrequest.AccessRequestHome.as_view(), name='access-request-create'),
 path('access-request/get_roles/', accessrequest.get_roles, name='access_request_get_roles'),
 path('access-request/approve-access-request/<str:approval_token>', accessrequest.approve_access_request, name='approve_access_request'),
 
@@ -49,11 +50,11 @@ path("myclients/actions/audit/authentication/pwconfigviewer/<int:id>",auditview.
 
 #TERMINATION
 path("myclients/actions/audit/termination/<int:id>",auditview.Audit_Termination.as_view(),name="audit-termination"),
-path("myclients/actions/audit/termination/details/<int:comp_id>/<int:app_id>",auditview.Audit_Termination_Details.as_view(),name="audit-termination-details"),
+path("myclients/actions/audit/termination/details/<uuid:comp_id>/<uuid:app_id>",auditview.Audit_Termination_Details.as_view(),name="audit-termination-details"),
 
 #PROVISIONING
 path("myclients/actions/audit/provisioning/<int:id>",auditview.Audit_Provisioning.as_view(),name="audit-provisioning"),
-path("myclients/actions/audit/provisioning/details/<int:comp_id>/<int:app_id>",auditview.Audit_Provisioning_Details.as_view(),name="audit-provisioning-details"),
+path("myclients/actions/audit/provisioning/details/<uuid:comp_id>/<uuid:app_id>",auditview.Audit_Provisioning_Details.as_view(),name="audit-provisioning-details"),
 
 #ADMINISTRATIVE ACCESS
 path("myclients/actions/audit/privileged access/<int:id>",auditview.Audit_PrivilegedAccounts.as_view(),name="audit-privileged-accounts"),
@@ -61,21 +62,21 @@ path("myclients/actions/audit/privileged access/<int:id>",auditview.Audit_Privil
 
 #APPLICATION LIST
 path("dashboard/company/list/",applications_view.AppListByCompany.as_view(),name="applist-company-select"),
-path("dashboard/company/applications/<int:comp_id>/",applications_view.ApplistByProcessOwner.as_view(),name="applist-process-owner"),
-path("dashboard/my-applications/details/<int:comp_id>/<int:app_id>/",applications_view.AppdetailsByProcessOwner.as_view(),name="appdetails-process-owner"),
-path("dashboard/my-applications/details/setup/<int:comp_id>/<int:app_id>",applications_view.SetupNewAppView.as_view(),name="setup-new-app"),
-path("dashboard/my-applications/details/<int:comp_id>/<int:app_id>/<str:username>/",applications_view.AppUserRecordView.as_view(),name="appdetails-view-user-record"),
-path("dashboard/my-applications/details/app-new-users-list/<int:comp_id>/<int:app_id>/",applications_view.AppNewUserListView.as_view(),name="appdetails-new-user-list"),
-path("dashboard/my-applications/details/app-new-users-list/<int:comp_id>/<int:app_id>/<int:user_id>",applications_view.AppNewUserApprovalView.as_view(),name="appdetails-new-user-approval"),
-path("dashboard/my-applications/details/app-termination-list/<int:comp_id>/<int:app_id>/",applications_view.AppTerminationListView.as_view(),name="appdetails-termination-list"),
-path("dashboard/my-applications/details/app-hr-mapping-list/<int:comp_id>/<int:app_id>/",applications_view.AppHRMappingListView.as_view(),name="appdetails-hr-mapping-list"),
-path("dashboard/my-applications/details/administrative-accounts-list/<int:comp_id>/<int:app_id>/",applications_view.AdminAccountListView.as_view(),name="appdetails-admin-list"),
-path("dashboard/my-applications/details/generic-accounts-list/<int:comp_id>/<int:app_id>/",applications_view.GenericAccountListView.as_view(),name="appdetails-generic-list"),
+path("dashboard/company/applications/<uuid:comp_id>/",applications_view.ApplistByProcessOwner.as_view(),name="applist-process-owner"),
+path("dashboard/my-applications/details/<uuid:comp_id>/<uuid:app_id>/",applications_view.AppdetailsByProcessOwner.as_view(),name="appdetails-process-owner"),
+path("dashboard/my-applications/details/setup/<uuid:comp_id>/<uuid:app_id>",applications_view.SetupNewAppView.as_view(),name="setup-new-app"),
+path("dashboard/my-applications/details/<uuid:comp_id>/<uuid:app_id>/<str:username>/",applications_view.AppUserRecordView.as_view(),name="appdetails-view-user-record"),
+path("dashboard/my-applications/details/app-new-users-list/<uuid:comp_id>/<uuid:app_id>/",applications_view.AppNewUserListView.as_view(),name="appdetails-new-user-list"),
+path("dashboard/my-applications/details/app-new-users-list/<uuid:comp_id>/<uuid:app_id>/<int:user_id>",applications_view.AppNewUserApprovalView.as_view(),name="appdetails-new-user-approval"),
+path("dashboard/my-applications/details/app-termination-list/<uuid:comp_id>/<uuid:app_id>/",applications_view.AppTerminationListView.as_view(),name="appdetails-termination-list"),
+path("dashboard/my-applications/details/app-hr-mapping-list/<uuid:comp_id>/<uuid:app_id>/",applications_view.AppHRMappingListView.as_view(),name="appdetails-hr-mapping-list"),
+path("dashboard/my-applications/details/administrative-accounts-list/<uuid:comp_id>/<uuid:app_id>/",applications_view.AdminAccountListView.as_view(),name="appdetails-admin-list"),
+path("dashboard/my-applications/details/generic-accounts-list/<uuid:comp_id>/<uuid:app_id>/",applications_view.GenericAccountListView.as_view(),name="appdetails-generic-list"),
 path("dashboard/my-applications/delete/<int:id>/",applications_view.DeletePWAttachment.as_view(),name="delete-pw-attachment"),
 
 
-path("dashboard/my-applications/details/compliance/authentication/<int:comp_id>/<int:app_id>",applications_view.AppComplianceAuth.as_view(),name="app-compliance"),
-path("dashboard/my-applications/details/compliance/provisioning/<int:comp_id>/<int:app_id>",applications_view.AppComplianceProv.as_view(),name="app-complianc-prov"),
+path("dashboard/my-applications/details/compliance/authentication/<uuid:comp_id>/<uuid:app_id>",applications_view.AppComplianceAuth.as_view(),name="app-compliance"),
+path("dashboard/my-applications/details/compliance/provisioning/<uuid:comp_id>/<uuid:app_id>",applications_view.AppComplianceProv.as_view(),name="app-complianc-prov"),
 
 #AJAX CALL TO POPULATE THE JOB TITLE OF THE APPROVERS
 path('get_approver1_job_title/<int:id>/', applications_view.AppNewUserGetJobApprovalView.as_view(),name="get_approver1_name"),
@@ -83,7 +84,6 @@ path('get_approver2_job_title/<int:id>/', applications_view.AppNewUserGetJobAppr
 
 #LOG-IN
 path("",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
-path("login/",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
 path("logout/",authenticate.LogoutUser.as_view(),name="logout-user"),
 path("multi-factor-authentication/<uuid:token>", authenticate.MultiFactorAuth.as_view(),name="require-mfa"),
 

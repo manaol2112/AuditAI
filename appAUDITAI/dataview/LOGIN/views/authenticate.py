@@ -96,14 +96,10 @@ class MultiFactorAuth(View):
     
         
 class AuthenticateUsers(View):
-
     model = User
     template_name = 'login/login.html'
-    dashboard_name = 'pages/DASHBOARD/client-select.html'
-
     def get(self, request):
         user = request.user
-
         if request.user.is_authenticated:
             user = request.user
             if user: 
@@ -113,29 +109,28 @@ class AuthenticateUsers(View):
                         if 'Administrator' in group_names:
                             context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/admin-dashboard.html'
-                            return render(request, template_name, context)
                         elif 'Auditor' in group_names:
                             context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/auditor-dashboard.html'
-                            return render(request, template_name, context)
                         elif 'Process Owner' in group_names:
                             context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/processowner-dashboard.html'
-                            return render(request, template_name, context)
                         elif 'Compliance' in group_names:
                             context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/compliance-dashboard.html'
-                            return render(request, template_name, context)
                         elif 'Access Requestor' in group_names:
-                            context = {'user':user, 'group_names':group_names}
+                            user_roles = USERROLES.objects.get(USERNAME=user)
+                            companies = user_roles.COMPANY_ID.all()
+                            context = {'user':user, 'group_names':group_names, 'companies':companies}
                             template_name = 'pages/TICKETS/ticket-select-company.html'
-                            #return reverse('appAUDITAI:access-request-home', context)
-                            return render(request,template_name, context)
                         else:
                             if user.is_superuser:
                                 context = {'user':user, 'group_names':group_names}
-                                template_name = 'pages/DASHBOARD/admin-dashboard.html'
-                                return render(request, template_name, context)
+                                #template_name = 'pages/DASHBOARD/admin-dashboard.html'
+                                return redirect('appAUDITAI:access-request-home', context)
+                            else:
+                                return redirect('appAUDITAI:authenticate-user')
+                       
                     except TemplateDoesNotExist as e:
                         return redirect('appAUDITAI:authenticate-user')
                     except Exception as e:
@@ -144,13 +139,15 @@ class AuthenticateUsers(View):
                     if user.is_superuser:
                         context = {'user':user, 'group_names':group_names}
                         template_name = 'pages/DASHBOARD/admin-dashboard.html'
-                        return render(request, template_name, context)      
+                        return render(request, template_name, context)
             else:
                 user = None
                 return redirect('appAUDITAI:authenticate-user')
+            
+            return render(request, template_name, context)
         else:
             context = {'user': user}
-            return render(request, self.template_name,context)
+            return render(request,self.template_name,context)
 
     def post(self, request):
         username = request.POST.get('username')
@@ -175,42 +172,46 @@ class AuthenticateUsers(View):
                 except USER_LOCKOUT.DoesNotExist:
                     # Create UserLockout record if it doesn't exist
                     USER_LOCKOUT.objects.create(user=User.objects.get(username=username))
-                #login(request, user)
                 try:
                     token = UserToken.objects.get(user=user)
                 except UserToken.DoesNotExist:
                     token = UserToken.objects.create(user=user)
 
-                verification_code = generate_verification_code()
-                expiration_time = timezone.now() + timezone.timedelta(minutes=10)
+                login(request, user)
+               
+    # TEMPORARILY DISABLING MULTIFACTOR AUTH
+    #             
 
-                try:
-                    user_exist = EmailVerification.objects.get(user=user)
-                    user_exist.code = verification_code
-                    user_exist.expires_at = expiration_time
-                    user_exist.save()
-                except EmailVerification.DoesNotExist:
-                    # Create EmailVerification instance
-                    email_verification, created = EmailVerification.objects.get_or_create(
-                        user=user,
-                        code=verification_code,
-                        expires_at=expiration_time
-    )
-            # Send email with verification code
+    #             verification_code = generate_verification_code()
+    #             expiration_time = timezone.now() + timezone.timedelta(minutes=10)
+
+    #             try:
+    #                 user_exist = EmailVerification.objects.get(user=user)
+    #                 user_exist.code = verification_code
+    #                 user_exist.expires_at = expiration_time
+    #                 user_exist.save()
+    #             except EmailVerification.DoesNotExist:
+    #                 # Create EmailVerification instance
+    #                 email_verification, created = EmailVerification.objects.get_or_create(
+    #                     user=user,
+    #                     code=verification_code,
+    #                     expires_at=expiration_time
+    # )
+    #         # Send email with verification code
         
-                subject = 'AUDITAI Verification Code'
-                        # Email body
-                message = render_to_string('email/mfa.html', {'verification_code': verification_code})
-                        # Send email verification
-                send_mail(subject, message, 'auditai-support@audit-ai.net', [user.email])
+    #             subject = 'AUDITAI Verification Code'
+    #                     # Email body
+    #             message = render_to_string('email/mfa.html', {'verification_code': verification_code})
+    #                     # Send email verification
+    #             send_mail(subject, message, 'auditai-support@audit-ai.net', [user.email])
 
-                token_url = reverse('appAUDITAI:require-mfa', kwargs={'token': token.token})
-                redirect_url = f"{token_url}?token={token}" 
-                context = {
-                    'token':token.token,
-                     'verification_code': verification_code,
-                }
-                return redirect(redirect_url , context)
+    #             token_url = reverse('appAUDITAI:require-mfa', kwargs={'token': token.token})
+    #             redirect_url = f"{token_url}?token={token}" 
+    #             context = {
+    #                 'token':token.token,
+    #                  'verification_code': verification_code,
+    #             }
+    #             return redirect(redirect_url , context)
                 
             else:
                 # User is not active

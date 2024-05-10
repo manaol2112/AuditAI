@@ -1,0 +1,382 @@
+{% extends 'base/base-requestor.html' %}
+{% load static %}
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/dragndrop.css' %}" />
+
+<!-- Styles -->
+
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/css/select2.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/select2-bootstrap-5-theme@1.3.0/dist/select2-bootstrap-5-theme.min.css" />
+
+<!-- Scripts -->
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.5.0/dist/jquery.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.0.13/dist/js/select2.full.min.js"></script>
+
+
+<div class="card">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:access-request-home'%}"
+                        style="text-decoration:none;color:#474b4d">Home</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:access-request-create' access_request.COMPANY_ID_id %}"
+                            style="text-decoration:none;color:#474b4d">My Requests</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">{{access_request.REQUEST_ID}}</a></li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fas fa-solid fa-user"
+                            style="margin-right: 10px;color:#474b4d"></span>Access Request Dashboard</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Requests..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray;margin-bottom:20px;" style="font-size:13px">
+            <p style="font-size:16px;">Request details for {{access_request.REQUEST_ID}}</p>
+        </div>
+
+        <div class="card" style="margin-top:20px;background-color:#f2fcff">
+            <div class="card-body">
+              
+                <div class="row">
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Request ID
+                                    :</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_id" name="req_id" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.REQUEST_ID}}" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Status
+                                    :</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_status" name="req_status" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.STATUS}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Application
+                                    :</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_app" name="req_app" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.APP_NAME}}" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Date Approved
+                                    :</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_date_approved" name="req_date_approved" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.DATE_APPROVED|date:"M d, Y" }}" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Company
+                                    :</label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_company" name="req_company" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.COMPANY_ID}}" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Date Requested:
+                                    </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_date_requested" name="req_date_requested" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.DATE_REQUESTED|date:"M d, Y" }}" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Requested by:
+                                    </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_requestor" name="req_requestor" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.REQUESTOR}}" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Approved by:
+                                    </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_approver" name="req_approver" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.BUSINESS_APPROVER }}" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row" style="margin-top:10px;">
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Role Requested:
+                                    </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_requestor" name="req_requestor" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.ROLES}}" >
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="row g-6 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px;width:100px;"
+                                    class="col-form-label">Priority:
+                                    </label>
+                            </div>
+                            <div class="col-auto">
+                                <input class="form-control sm" id="req_approver" name="req_approver" type="text"
+                                    style="font-size:12px;width:250px;" autocomplete="off" value="{{ access_request.PRIORITY }}" >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card" style="margin-top:20px;">
+            <div class="card-body">
+                <nav id="dashboardnav" style="margin-top:10px;">
+                    <div class="nav nav-tabs" id="nav-tab-dashboard" role="tablist">
+
+                        <a class="nav-link active" id="nav-compliance-tab" data-bs-toggle="tab" href="#nav-compliance"
+                            role="tab" aria-controls="nav-compliance" aria-selected="true"><span class="fa fa-user"
+                                style="margin-right:5px;"></span> Comments <span style="margin-left:5px;color:blue"
+                                class="badge bg-light">{{no_approval_count}}</span></a>
+                        <a class="nav-link" id="nav-users-tab" data-bs-toggle="tab" href="#nav-users" role="tab"
+                            aria-controls="nav-users" aria-selected="true"><span class="fa fa-user"
+                                style="margin-right:5px;"></span> History <span style="margin-left:5px;color:blue"
+                                class="badge bg-light">{{no_approval_count}}</span></a>
+                       
+                    </div>
+                </nav>
+                <div class="tab-content" id="nav-tabContent">
+                    <div class="tab-pane fade show active" id="nav-compliance" role="tabpanel"
+                        aria-labelledby="nav-compliance-tab">
+                        <div class="card">
+                            <div class="card-body" style="max-height: 400px;overflow-y: auto;">
+                                {% if access_request.COMMENTS %}
+                                <div class="card" style="background-color:#f7f9fa">
+                                    <div class="card-body">
+                                        <p style="font-size:12px;"><b><i class="fas fa-comment-alt" style="margin-right:5px;color:green"></i>{{access_request.CREATOR}}</b> comment on
+                                            {{access_request.DATE_REQUESTED|date:"M d, Y"}}</p>
+                                        <p style="font-size:12px;">{{access_request.COMMENTS}}</p>
+                                    </div>
+                                </div>
+                                {% else %}
+                                {% endif %}
+
+                                {% for comments in access_request_comments %}
+                                    {% if comments.COMMENT_DETAILS %}
+                                        <div class="card" style="background-color:#f7f9fa;margin-top:10px;">
+                                            <div class="card-body">
+                                                <p style="font-size:12px;"><b><i class="fas fa-comment-alt" style="margin-right:5px;color:green"></i>{{ comments.CREATOR }}</b> comment on {{ comments.DATE_ADDED|date:"M d, Y" }}</p>
+                                                <p style="font-size:12px;">{{ comments.COMMENT_DETAILS }}</p>
+                                            </div>
+                                        </div>
+                                    {% endif %}
+                                {% endfor %}
+
+                                <form id="comment_form" method="post" enctype="multipart/form-data">
+                                    <input type="hidden" name="form_id" value="comment_form">
+                                    {% csrf_token %}
+                                    <div class="card" style="margin-top:10px;background-color:#f7f9fa">
+                                        <div class="card-body">
+                                            <div class="mb-3">
+                                                <textarea class="form-control" style="font-size:12px;" id="request_comment" placeholder="Add a comment..." name="request_comment"
+                                                    rows="3" required></textarea>
+                                            </div>
+                                            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                                                <button type="submit" class="btn btn-secondary btn-sm" type="button">Add Comment</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </form>
+
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="tab-pane fade" id="nav-users" role="tabpanel" aria-labelledby="nav-users-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                Late Approval
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+        
+
+    </div>
+</div>
+
+<style>
+    /* Apply font size to Select2 dropdown */
+    .select2-container .select2-selection--single .select2-selection__rendered {
+        font-size: 12px !important;
+    }
+    /* Apply font size to Select2 dropdown options */
+    .select2-results__option {
+        font-size: 12px !important;
+    }
+
+    /* Apply font size to Select2 search input */
+    .select2-search__field {
+        font-size: 12px !important;
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+    font-size: 12px !important; /* Change to your desired font size */
+    }
+
+    .select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice {
+    font-size: 12px !important; /* Set the desired font size */
+    background-color: #e1f7fc; /* Change to your desired color */
+    color: #333; /* Change to your desired text color */
+    }   
+    #team_member_select.select2-container--bootstrap-5 .select2-selection--multiple .select2-selection__choice__remove {
+    font-size: 12px !important; /* Set the desired font size */
+
+    
+}
+</style>  
+
+<script src="{% static 'js/ticket.js' %}"></script>
+
+<script>
+
+      $('#team_member_select').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: false,
+        dropdownParent: $('#team_member_select').parent(),
+        multiple: true // Corrected the selector
+
+    });
+
+    $('#access_approver').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: false,
+        dropdownParent: $('#access_approver').parent(), // Corrected the selector
+        multiple: true // Corrected the selector
+    });
+
+    $('#applications_select').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: false,
+        dropdownParent: $('#applications_select').parent() // Corrected the selector
+    });
+
+    $('#roles_select').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: false,
+        dropdownParent: $('#roles_select').parent(), // Corrected the selector
+        multiple: true
+    });
+
+    $('#request_type').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: false,
+        dropdownParent: $('#request_type').parent() // Corrected the selector
+    });
+
+
+    $('#priority').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: false,
+        dropdownParent: $('#priority').parent() // Corrected the selector
+    });
+
+    $('#company_name').select2({
+        theme: "bootstrap-5",
+        width: '100%',
+        placeholder: $(this).data('placeholder'),
+        allowClear: false,
+        dropdownParent: $('#company_name').parent() // Corrected the selector
+    });
+
+</script>
+
+{% endblock content %}

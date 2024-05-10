@@ -75,16 +75,19 @@ class AppComplianceAuth(ProcessOwnerPermissionMixin,View):
             selected_app = APP_LIST.objects.get(id = app_id)
         except COMPANY.DoesNotExist:
             selected_app = None
+            pass
 
         try:
             pw_configured = PASSWORD.objects.get(APP_NAME = selected_app)
         except PASSWORD.DoesNotExist:
             pw_configured = None
+            pass
 
         try: 
-            pw_policy = PASSWORDPOLICY.objects.get(id = comp_id)
+            pw_policy = PASSWORDPOLICY.objects.get(COMPANY_ID = comp_id)
         except PASSWORDPOLICY.DoesNotExist:
             pw_policy = None
+            pass
 
         if pw_policy.LENGTH <= pw_configured.LENGTH and pw_policy.AGE >= pw_configured.AGE and pw_policy.HISTORY <= pw_configured.HISTORY and pw_policy.LOCKOUT_ATTEMPT >= pw_configured.LOCKOUT_ATTEMPT and pw_policy.LOCKOUT_DURATION <= pw_configured.LOCKOUT_DURATION and pw_policy.SPECIAL_CHAR == pw_configured.SPECIAL_CHAR and pw_policy.UPPER and pw_configured.UPPER and pw_policy.LOWER == pw_configured.LOWER and pw_policy.NUMBER == pw_configured.NUMBER and pw_policy.MFA_ENABLED == pw_configured.MFA_ENABLED:
             auth_compliant = 'Yes'
@@ -116,7 +119,6 @@ class AppListByCompany(ProcessOwnerPermissionMixin,View):
                     'company_ids':company_ids
                 }
         return render(request, self.template_name, context)
-
 
 class ApplistByProcessOwner(ProcessOwnerPermissionMixin, View):
     template_name = 'pages/APP/processowner-applist.html'
@@ -329,7 +331,7 @@ class SetupNewAppView(ProcessOwnerPermissionMixin,View):
                      selected_app = APP_LIST.objects.get(id=app_id)
                      selected_app.SETUP_COMPLETE =  True
                      selected_app.save()
-                     return redirect('')
+                     return redirect('appAUDITAI:applist-process-owner', comp_id)
                 else:
                     print('You are not able to finish this yet')
         

@@ -5,23 +5,77 @@ from django.template.loader import render_to_string
 import uuid
 from django.http import HttpResponseNotFound
 
-class CompanySelect(View):
+class CompanySelect(AccessRequestor, View):
 
     template_name = 'pages/TICKETS/ticket-select-company.html'
 
-    def get(self, request):
-        user = request.user
-        user_roles = USERROLES.objects.get(USERNAME=user)
-        companies = user_roles.COMPANY_ID.all()
+    def get(self, request, user):
+        try:
+            user_roles = USERROLES.objects.get(USERNAME=user)
+            companies = user_roles.COMPANY_ID.all()
+        except USERROLES.DoesNotExist:
+            return redirect('error/404.html')  # Redirect to the error page for user roles not found
+        except ObjectDoesNotExist:
+            return redirect('error/404.html')  # Redirect to the error page for companies not found
 
-        context = {'user':user, 
-                   'companies':companies
-                  }
+        context = {
+            'user': user,
+            'companies': companies
+        }
         
-        return render(request, self.template_name,context)
+        return render(request, self.template_name, context)
+    
+class AccessRequestDetails(AccessRequestor, View):
+    template_name = 'pages/TICKETS/ticket-details.html'
+
+    def get(self, request, request_id):
+        access_request = get_object_or_404(ACCESSREQUEST, id=request_id)
+        try:
+            access_request_comments = ACCESSREQUESTCOMMENTS.objects.filter(REQUEST_ID=request_id).order_by('DATE_ADDED')
+            for x in access_request_comments:
+                print(x.COMMENT_DETAILS)
+
+        except ACCESSREQUESTCOMMENTS.DoesNotExist:
+            access_request_comments = None
+            pass
+
+        context = {
+            'access_request': access_request,
+            'access_request_comments':access_request_comments
+        }
+        return render(request, self.template_name, context)
+    
+    def post(self, request, request_id):
+        # Get the current user
+        user = request.user
+        
+        # Get the comment details from the POST data
+        comment_details = request.POST.get('request_comment')
+
+        # Get the access request object
+        access_request = get_object_or_404(ACCESSREQUEST, id=request_id)
+
+        # Create the comment object
+        comment = ACCESSREQUESTCOMMENTS(
+            REQUEST_ID=access_request,
+            CREATOR=user.email,  # Assuming email is a field in your User model
+            COMMENT_DETAILS=comment_details,
+            DATE_ADDED=timezone.now()
+        )
+        comment.save()
+
+        # Get all comments related to the access request
+        access_request_comments = ACCESSREQUESTCOMMENTS.objects.filter(REQUEST_ID=access_request).order_by('DATE_ADDED')
+
+        context = {
+            'access_request': access_request,
+            'access_request_comments': access_request_comments
+        }
+        return render(request, self.template_name, context)
 
 
-class AccessRequestHome(View):
+
+class AccessRequestHome(AccessRequestor, View):
 
     template_name = 'pages/TICKETS/ticket-home.html'
 
@@ -34,7 +88,8 @@ class AccessRequestHome(View):
         user = request.user
         if user:
             group_names = user.groups.values_list('name', flat=True)
-            user_email = User.objects.get(id = user.id)
+            user_email = User.objects.get(username = user.username)
+
         try:
             selected_company = COMPANY.objects.get(id = comp_id)
         except COMPANY.DoesNotExist:
@@ -48,7 +103,7 @@ class AccessRequestHome(View):
             pass
         
         try:
-            active_employees = HR_RECORD.objects.filter(STATUS='ACTIVE', COMPANY_ID = selected_company).exclude(EMAIL_ADDRESS=user_email)
+            active_employees = HR_RECORD.objects.filter(STATUS='ACTIVE', COMPANY_ID = selected_company.id).exclude(EMAIL_ADDRESS=user_email.email)
         except HR_RECORD.DoesNotExist:
             active_employees = None
             pass
@@ -63,18 +118,15 @@ class AccessRequestHome(View):
             print(str(e))
             pass
 
+        my_requests = None
         try:
-            my_requests = ACCESSREQUEST.objects.filter(CREATOR = requestor_email.EMAIL_ADDRESS, COMPANY_ID = comp_id)
-            if my_requests:
-                print(my_requests)
-            else:
-                print('no email found')
-
+            my_requests = ACCESSREQUEST.objects.filter(CREATOR=requestor_email.EMAIL_ADDRESS, COMPANY_ID=comp_id).order_by('-DATE_REQUESTED')
         except ACCESSREQUEST.DoesNotExist:
             my_requests =  None
             pass
         except Exception as e:
             print(str(e))
+            pass
         
         context = {'user':user, 
                    'group_names':group_names,
@@ -97,18 +149,21 @@ class AccessRequestHome(View):
             priority = request.POST.get('priority')
 
             try:
-                last_access_request = ACCESSREQUEST.objects.order_by('-id').first()
-            except ACCESSREQUEST.DoesNotExist:
-                last_access_request = 1
-                pass
+                last_access_request = RequestIDCounter.objects.first()
+                if last_access_request is None:
+                    # Create a counter if it doesn't exist
+                    last_access_request = RequestIDCounter.objects.create(counter=0)
             except Exception as e:
                 str(e)
+                last_access_request = None  # Handle other exceptions if needed
 
             if last_access_request:
-                last_id = last_access_request.id
-                new_request_id = f'TASK#{last_id}'
+                last_id = last_access_request.counter
+                new_request_id = f'REQ#000{RequestIDCounter.get_next_id()}'
             else:
-                new_request_id = 'TASK#'  # If there are no existing access requests, start with 1
+                new_request_id = f'REQ#000{RequestIDCounter.get_next_id()}'
+
+            print(new_request_id)
 
             company = COMPANY.objects.get(id = comp_id)
             app_name = APP_LIST.objects.get(id = applications)
@@ -138,6 +193,8 @@ class AccessRequestHome(View):
                 if created:  # If the object was created
                     access_request.save()  # Save the access request object
 
+                return redirect('appAUDITAI:access-request-create',company.id)
+
         elif request_type == 'own_access':
             approvers = request.POST.getlist('access_approver')
             applications = request.POST.get('applications_select')
@@ -146,18 +203,21 @@ class AccessRequestHome(View):
             priority = request.POST.get('priority')
 
             try:
-                last_access_request = ACCESSREQUEST.objects.order_by('-id').first()
-            except ACCESSREQUEST.DoesNotExist:
-                last_access_request = 1
-                pass
+                last_access_request = RequestIDCounter.objects.first()
+                if last_access_request is None:
+                    # Create a counter if it doesn't exist
+                    last_access_request = RequestIDCounter.objects.create(counter=0)
             except Exception as e:
                 str(e)
+                last_access_request = None  # Handle other exceptions if needed
 
             if last_access_request:
-                last_id = last_access_request.id
-                new_request_id = f'TASK#{last_id}'
+                last_id = last_access_request.counter
+                new_request_id =  f'REQ#000{RequestIDCounter.get_next_id()}'
             else:
-                new_request_id = 'TASK#1'  # If there are no existing access requests, start with 1
+                new_request_id = f'REQ#000{RequestIDCounter.get_next_id()}'
+
+            print(new_request_id)
             
             user = request.user
             requestor = HR_RECORD.objects.get(EMAIL_ADDRESS = user.email)
@@ -195,6 +255,8 @@ class AccessRequestHome(View):
                     from_email = 'support@audit-ai.com'  # Your email
                     to_email = approver_email.EMAIL_ADDRESS  # Approver's email
                     send_mail(subject, message, from_email, [to_email], fail_silently=False)
+
+                    return redirect('appAUDITAI:access-request-create',company.id)
         else:
             pass
 
@@ -205,12 +267,12 @@ def approve_access_request(request, approval_token):
     try:
         access_request = ACCESSREQUEST.objects.get(APPROVAL_TOKEN=approval_token)
         access_request.STATUS = "Approved"
+        access_request.DATE_APPROVED = timezone.now()
         access_request.save()
-        return redirect('appAUDITAI:error_404')
-
+        return render(request,'email/approval_success.html')
+        
     except ACCESSREQUEST.DoesNotExist:
         return HttpResponseNotFound("Access request not found or invalid token.")
-
 
 def get_roles(request):
 

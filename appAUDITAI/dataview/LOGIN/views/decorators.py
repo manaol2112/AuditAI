@@ -41,7 +41,18 @@ class AdminPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         user = self.request.user
-        return user.groups.filter(name='Administrator').exists()
+        return user.groups.filter(name='Administrator').exists() or user.is_superuser
+
+    def handle_no_permission(self):
+        user_dashboard_url = reverse('appAUDITAI:no_permission')  
+        return redirect(user_dashboard_url)
+    
+class AccessRequestor(LoginRequiredMixin, UserPassesTestMixin):
+    login_url = 'appAUDITAI:authenticate-user' 
+
+    def test_func(self):
+        user = self.request.user
+        return user.groups.filter(name='Access Requestor').exists()
 
     def handle_no_permission(self):
         user_dashboard_url = reverse('appAUDITAI:no_permission')  

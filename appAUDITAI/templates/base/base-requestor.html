@@ -2,6 +2,27 @@
 
 {% load static %}
 
+{%block nav_bar%}
+    <div class="container-fluid">
+        <a style="font-size:14px;" class="navbar-brand">Client Logo</a>
+        <form class="d-flex">
+            <div class="dropdown">
+                <div class="rounded-circle dropdown-toggle d-flex align-items-center justify-content-center"
+                    style="width: 40px; height: 40px; background-color: #6c757d; cursor: pointer;" role="button"
+                    id="dropdownMenuButton" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <span class="text-white">RM</span>
+                </div>
+                <div class="dropdown-menu dropdown-menu-left" style="right:auto;left:0 !important" aria-labelledby="dropdownMenuButton">
+                    <a class="dropdown-item" href="#">View Profile</a>
+                    <a class="dropdown-item" href="#">Logout</a>
+                    <a class="dropdown-item" href="#">Switch Roles</a>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock nav_bar %}
+
+
 <!-- Side Nav -->
 {% block side_nav_items %}
 <a href="{% url 'appAUDITAI:access-request-home' %}" data-toggle="tooltip" title="Home"><span class="fas fa-house-user"></span></a>

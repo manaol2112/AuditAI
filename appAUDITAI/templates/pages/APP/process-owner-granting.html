@@ -1,0 +1,115 @@
+{% extends 'base/base-processowner.html' %}
+{% load static %}
+{% block content %}
+
+
+<link rel="stylesheet" href="{% static 'css/dragndrop.css' %}" />
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+
+<div class="card">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:manage-access-request'%}"
+                        style="text-decoration:none;color:#474b4d">Home</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">My Requests</a></li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fas fa-solid fa-user"
+                            style="margin-right: 10px;color:#474b4d"></span>Access Management Dashboard</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Requests..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                </form>
+            </div>
+        </nav>
+        <div style="border-bottom:solid;border-color:lightgray;margin-bottom:20px;" style="font-size:13px">
+            <p style="font-size:13px">Manage, process, and view access related requests </p>
+        </div>
+
+        <nav id="dashboardnav" style="margin-top:10px;">
+            <div class="nav nav-tabs" id="nav-tab-dashboard" role="tablist">
+
+                <a class="nav-link active" id="nav-compliance-tab" data-bs-toggle="tab" href="#nav-requests" role="tab"
+                aria-controls="nav-compliance" aria-selected="true"><span class="fa-solid fa-user-plus"
+                    style="margin-right:5px;"></span> Access Requests</a>
+                <a class="nav-link" id="nav-termination-tab" data-bs-toggle="tab" href="#nav-termination" role="tab"
+                    aria-controls="nav-termination" aria-selected="true"><span class="fa fa-user-xmark"
+                        style="margin-right:5px;"></span> Terminations</a>
+                <a class="nav-link" id="nav-movement-tab" data-bs-toggle="tab" href="#nav-movement" role="tab"
+                    aria-controls="nav-movement" aria-selected="false"><span class="fa-solid fa-user-group"
+                        style="margin-right:5px;"></span> Movements</a>
+              
+            </div>
+        </nav>
+
+        <div class="tab-content" id="nav-tabContent" style="min-height:90vh;">
+            <div class="tab-pane fade show active" id="nav-requests" role="tabpanel" aria-labelledby="nav-compliance-tab">
+                <div class="card">
+                    <div class=card-body>
+                        <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+                        style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                        <thead style="padding-top:12px;text-align:center">
+                            <tr style="font-size:12px; background-color:whitesmoke;">
+                                <th style="text-align:left; width: 15%;">Reference</th>
+                                <th style="text-align:left; width: 15%;">Application Name</th>
+                                <th style="text-align:left; width: 15%;">Requestor</th>
+                                <th style="text-align:left; width: 15%;">Roles</th>
+                                <th style="text-align:left; width: 15%;">Approver</th>
+                                <th style="text-align:left; width: 15%;">Date Approved</th>
+                                <th style="text-align:left; width: 15%;">Application Owner</th>
+                                <th style="text-align:left; width: 15%;"></th>
+                            </tr>
+                        </thead>
+                        <tbody style="font-size:13px">
+                            {% for ticket in approved_request_list %}
+                            <tr style="vertical-align: middle;">
+                                <td>
+                                    {{ ticket.REQUEST_ID }}
+                                </td>
+                                <td>{{ ticket.APP_NAME }}
+                                </td> 
+                                <td>{{ ticket.REQUESTOR }}
+                                </td>
+                                <td>{{ ticket.ROLES }}
+                                </td>
+                                <td>{{ ticket.BUSINESS_APPROVER }}
+                                </td>
+                                <td>{{ ticket.DATE_APPROVED|date:"M d, Y"  }}
+                                </td>
+                                <td>{{ ticket.ASSIGNED_TO }}
+                                </td>
+                                <td><div class="d-grid gap-2 d-md-block">
+                                    <a href="{% url 'appAUDITAI:manage-access-request-details' ticket.id %}"><button class="btn btn-light btn-sm" type="button" style="font-size:12px;"><i class="fas fa-external-link-square-alt" style="color:green;margin-right:5px"></i>View Request Details</button></a>
+                                  </div></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade" id="nav-termination" role="tabpanel" aria-labelledby="nav-termination-tab">
+                users
+            </div>
+            <div class="tab-pane fade" id="nav-movement" role="tabpanel" aria-labelledby="nav-movement-tab">
+                audits
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -91,7 +91,7 @@ class PASSWORDCONFIG(models.Model):
         managed = True
         db_table = 'SYS_PWCONFIG'
 
-#[PLACEHOLDER]ORACLE AND ORACLE FUSION ARE STORED IN THIS GROUP
+
 
 #COMPANY
 class COMPANY(models.Model):
@@ -113,6 +113,24 @@ class COMPANY(models.Model):
         managed = True
         db_table = 'COMPANY'
 
+    #AUDITPROJECT
+class AUDITLIST(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    FILE_NAME = models.CharField(max_length=100,blank=True,null=True)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,blank=True,null=True)
+    PERIOD_END_DATE = models.DateField(blank=True, null=True)
+    STATUS = models.CharField(max_length=50,blank=True,null=True)
+
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True, null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'AUDIT_LIST'
+
 class RequestIDCounter(models.Model):
     counter = models.IntegerField(default=0)
 
@@ -125,7 +143,7 @@ class RequestIDCounter(models.Model):
         return counter_obj.counter
 
 class ACCESSREQUEST(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+  
     REQUEST_ID = models.CharField(max_length=100, null=True, blank=False)
     COMPANY_ID = models.ForeignKey(COMPANY, on_delete=models.DO_NOTHING, null=True)
     APP_NAME = models.CharField(max_length=100, null=True, blank=False)
@@ -135,13 +153,17 @@ class ACCESSREQUEST(models.Model):
     IT_APPROVER = models.CharField(max_length=100, null=True, blank=False)
     DATE_REQUESTED = models.DateTimeField(null=True)
     DATE_APPROVED = models.DateTimeField(null=True)
+    DATE_REJECTED = models.DateTimeField(null=True)
     STATUS = models.CharField(max_length=100, null=True, blank=False)
     ASSIGNED_TO = models.CharField(max_length=100, null=True, blank=False)
     COMMENTS = models.CharField(max_length=1000, null=True, blank=False)
+    REJECTION_REASON = models.CharField(max_length=1000, null=True, blank=False)
     REQUEST_TYPE = models.CharField(max_length=100, null=True, blank=False)
     PRIORITY = models.CharField(max_length=100, null=True, blank=False)
     CREATOR = models.CharField(max_length=100, null=True, blank=False)
     APPROVAL_TOKEN = models.UUIDField(default=uuid.uuid4, editable=False)
+    DATE_GRANTED = models.DateTimeField(null=True)
+    GRANTED_BY = models.CharField(max_length=100, null=True, blank=False)
 
     APPROVED_BY = models.CharField(max_length=100, null=True, blank=False)
     LAST_MODIFIED = models.DateTimeField(null=True)

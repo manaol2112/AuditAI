@@ -4,6 +4,82 @@ from paramiko import SSHClient, AuthenticationException, SSHException
 from django.core.files.storage import default_storage
 from collections import Counter
 
+class GrantTicketDetails(ProcessOwnerPermissionMixin, View):
+    template_name = 'pages/APP/process-owner-granting-details.html'
+
+    def get(self, request, request_id):
+        access_request = get_object_or_404(ACCESSREQUEST, id=request_id)
+        
+        try:
+            access_request_comments = ACCESSREQUESTCOMMENTS.objects.filter(REQUEST_ID=request_id).order_by('DATE_ADDED')
+
+        except ACCESSREQUESTCOMMENTS.DoesNotExist:
+            access_request_comments = None
+            pass
+
+        context = {
+            'access_request': access_request,
+            'access_request_comments':access_request_comments
+        }
+        return render(request, self.template_name, context)
+    
+    def post(self, request, request_id):
+        user = request.user
+        form = request.POST.get('form_id')
+
+        if form == 'comment_form':
+            comment_details = request.POST.get('request_comment')
+            access_request = get_object_or_404(ACCESSREQUEST, id=request_id)
+            comment = ACCESSREQUESTCOMMENTS(
+                REQUEST_ID=access_request,
+                CREATOR=user.email, 
+                COMMENT_DETAILS=comment_details,
+                DATE_ADDED=timezone.now()
+            )
+            comment.save()
+
+        access_request_comments = ACCESSREQUESTCOMMENTS.objects.filter(REQUEST_ID=access_request).order_by('DATE_ADDED')
+
+        context = {
+            'access_request': access_request,
+            'access_request_comments': access_request_comments
+        }
+        return render(request, self.template_name, context)
+
+class AccessGranting(ProcessOwnerPermissionMixin, View):
+    template_name = 'pages/APP/process-owner-granting.html'
+
+    def get(self, request):
+        user = request.user
+        try:
+            access_request = ACCESSREQUEST.objects.filter(ASSIGNED_TO = user.email)
+        except ACCESSREQUEST.DoesNotExist:
+            access_request = None
+            pass
+        except ObjectDoesNotExist:
+            access_request = None
+            pass
+
+        try:
+            approved_request_list = ACCESSREQUEST.objects.filter(
+                ASSIGNED_TO=user.email
+            ).exclude(
+                Q(STATUS='Pending Approval') | Q(STATUS='Rejected')
+            ).order_by('-DATE_REQUESTED')
+
+            approval_count = len(approved_request_list)
+
+        except Exception:
+            pass
+        context = {
+            'user': user,
+            'access_request':access_request,
+            'approved_request_list':approved_request_list
+        }
+        
+        return render(request, self.template_name, context)
+
+
 
 class AppComplianceProv(ProcessOwnerPermissionMixin, View):
     template_name = 'pages/APP/process-owner-compliance-prov.html'
@@ -28,27 +104,33 @@ class AppComplianceProv(ProcessOwnerPermissionMixin, View):
 
         try:
             no_approval_list = []
-            late_approval_list = []
+            late_approval_set = set()  # Using a set to store unique late approvals
             for role in new_roles:
-                approval = ACCESSREQUEST.objects.filter(REQUESTOR = role.EMAIL_ADDRESS, ROLES = role.ROLE_NAME)
+                approval = ACCESSREQUEST.objects.filter(REQUESTOR=role.EMAIL_ADDRESS, ROLES=role.ROLE_NAME)
                 if not approval.exists():
                     no_approval_list.append(role)  # Append role to the list if no approval exists
                 else:
                     for approve in approval:
-                        if approve.DATE_APPROVED is not None and role.DATE_APPROVED is not None:
-                            if approve.DATE_APPROVED >= role.DATE_APPROVED:
-                                late_approval_list.append(role)
+                        if approve.DATE_APPROVED is not None and role.DATE_GRANTED is not None:
+                            if approve.DATE_APPROVED > role.DATE_GRANTED:
+                                late_approval_set.add(role)
+                                
+                                
+                                
+                                
+                                 # Add role to the set if it's a unique late approval
                         # Handle the case where one or both DATE_APPROVED values are None
                         else:
                             # Add handling logic here if needed
                             pass
         except AttributeError:
-        # Handle the case where new_roles is None or has no attribute DATE_APPROVED
+            # Handle the case where new_roles is None or has no attribute DATE_APPROVED
             pass
 
-        no_approval_list = sorted(no_approval_list, key=lambda role: role.DATE_GRANTED, reverse = True)
+        no_approval_list = sorted(no_approval_list, key=lambda role: role.DATE_GRANTED, reverse=True)
         no_approval_count = len(no_approval_list)
-        print(late_approval_list)
+        late_approval_count = len(late_approval_set)  # Count of unique late approvals
+
 
         context = {
             'comp_id':comp_id,
@@ -56,7 +138,9 @@ class AppComplianceProv(ProcessOwnerPermissionMixin, View):
             'company_name':company_name,
             'selected_app':selected_app,
             'no_approval_list':no_approval_list,
-            'no_approval_count':no_approval_count
+            'no_approval_count':no_approval_count,
+            'late_approval_list':late_approval_set,
+            'late_approval_count':late_approval_count
         }
         return render(request,self.template_name, context)
 

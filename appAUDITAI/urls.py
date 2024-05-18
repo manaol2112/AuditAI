@@ -33,6 +33,7 @@ path("administration/systemsettings/manage/riskandcontrols/",systemsettings.Mana
 path('access-request/home/', accessrequest.CompanySelect.as_view(), name='access-request-home'),
 path('access-request/details/<uuid:request_id>', accessrequest.AccessRequestDetails.as_view(), name='access-request-details'),
 path('access-request/company/<uuid:comp_id>', accessrequest.AccessRequestHome.as_view(), name='access-request-create'),
+path('access-request/company/my-approval-queue/', accessrequest.AccessApprovalHome.as_view(), name='access-request-approval'),
 path('access-request/get_roles/', accessrequest.get_roles, name='access_request_get_roles'),
 path('access-request/approve-access-request/<str:approval_token>', accessrequest.approve_access_request, name='approve_access_request'),
 
@@ -43,8 +44,16 @@ path('test_sftp_connection/', applications_view.test_sftp_connection, name='test
 #CLIENTS
 path("myclients/actions/<int:id>",clientactions.ClientActions.as_view(),name="client-actions"),
 
+
+#AUDIT
+path("myclients/actions/audit/risk-assessment/<uuid:comp_id>/<uuid:audit_id>",auditview.RiskAssessment.as_view(),name="audit-risk-assessment"),
+#AUDIT
+path("myclients/actions/audit/manage-period",auditview.ManageAuditPeriod.as_view(),name="audit-manage-period"),
+path("myclients/actions/audit/select-audit/<uuid:comp_id>",auditview.SelectAuditPeriod.as_view(),name="audit-select-period"),
+path("audit/risk-and-controls/",auditview.RiskAndControls.as_view(),name="risk-and-controls"),
+
 #AUTHENTICATION
-path("myclients/actions/audit/<int:id>",auditview.AuditHome.as_view(),name="audit-home"),
+path("myclients/actions/audit/<uuid:comp_id>",auditview.AuditHome.as_view(),name="audit-home"),
 path("myclients/actions/audit/authentication/<int:id>",auditview.Audit_Authentication.as_view(),name="audit-authentication"),
 path("myclients/actions/audit/authentication/pwconfigviewer/<int:id>",auditview.PWConfigViewer.as_view(),name="pwconfig-viewer"),
 
@@ -74,9 +83,11 @@ path("dashboard/my-applications/details/administrative-accounts-list/<uuid:comp_
 path("dashboard/my-applications/details/generic-accounts-list/<uuid:comp_id>/<uuid:app_id>/",applications_view.GenericAccountListView.as_view(),name="appdetails-generic-list"),
 path("dashboard/my-applications/delete/<int:id>/",applications_view.DeletePWAttachment.as_view(),name="delete-pw-attachment"),
 
-
 path("dashboard/my-applications/details/compliance/authentication/<uuid:comp_id>/<uuid:app_id>",applications_view.AppComplianceAuth.as_view(),name="app-compliance"),
 path("dashboard/my-applications/details/compliance/provisioning/<uuid:comp_id>/<uuid:app_id>",applications_view.AppComplianceProv.as_view(),name="app-complianc-prov"),
+
+path("manage/access-requests/",applications_view.AccessGranting.as_view(),name = "manage-access-request"),
+path("manage/access-requests/<uuid:request_id>",applications_view.GrantTicketDetails.as_view(),name = "manage-access-request-details"),
 
 #AJAX CALL TO POPULATE THE JOB TITLE OF THE APPROVERS
 path('get_approver1_job_title/<int:id>/', applications_view.AppNewUserGetJobApprovalView.as_view(),name="get_approver1_name"),
@@ -119,7 +130,11 @@ path("policies/manage/adminaccounts/", policies_view.PoliciesAdminView.as_view()
 
 #404
 path("error/page-not-found/",utils.error_404,name="error_404"),
-path("error/needed-permission-not-found/",utils.no_permission.as_view(),name="no_permission")
+path("error/needed-permission-not-found/",utils.no_permission.as_view(),name="no_permission"),
+
+
+#AUDIT URLS
+
 
 ]
 

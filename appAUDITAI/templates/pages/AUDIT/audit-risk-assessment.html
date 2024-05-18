@@ -11,7 +11,8 @@
             <ol class="breadcrumb" style="font-size:14px;">
               <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
               <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
-              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:audit-home' comp_id %}" style="text-decoration:none;color:#474b4d">{{ selected_company.COMPANY_NAME }}</i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:audit-select-period' comp_id %}" style="text-decoration:none;color:#474b4d">My Audit</i></a></li>
+              <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Risk Assessment</a></li>
             </ol>
         </nav>
 
@@ -44,24 +45,33 @@
         <div class="card">
             <div class="card-body">
                 <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;justify-content: left;">
-                    <a href="{% url 'appAUDITAI:audit-risk-assessment' comp_id %}" style="text-decoration: none;color:#474b4d">
-                        <div class="card"
-                            style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
-                            onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
-                            <span class="fa-solid fa-list-check" style="font-size: 30px;color:#72BAED"></span>
-                            <p style="font-size: 13px; margin-top: 16px;">Risk Assessment</p>
-                        </div>
-                    </a>
-        
-                    <a href="" style="text-decoration: none;color:#474b4d">
-                        <div class="card"
-                            style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
-                            onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
-                            <span class="fa-solid fa-book" style="font-size: 30px;color:#72BAED"></span>
-                            <p style="font-size: 13px; margin-top: 16px;">Workpapers</p>
-                        </div>
-                    </a>
+                    {% for app_item in apps %}
+                    <a href="{% url 'appAUDITAI:audit-risk-assessment' comp_id app_item.id %}"
+                        style="text-decoration: none; color:#474b4d">
+                        <div class="card app-card" data-appname="{{ app_item.APP_NAME }}"
+                            data-apptype="{{ app_item.APP_TYPE }}"
+                            style=" border-radius: 25px;cursor:pointer;height: 150px; width:160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                            onmouseover="this.style.backgroundColor='#d5ecf7';"
+                            onmouseout="this.style.backgroundColor='#fff';">
 
+                            {% if app_item.APP_TYPE == 'Application' %}
+                            <span class="fab fa-app-store-ios" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% elif app_item.APP_TYPE == 'Network' %}
+                            <span class="fab fa-hive" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% elif app_item.APP_TYPE == 'Database' %}
+                            <span class="fas fa-database" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% elif app_item.APP_TYPE == 'Operating System' %}
+                            <span class="fab fa-centos" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% elif app_item.APP_TYPE == 'Server' %}
+                            <span class="fas fa-server" style="font-size: 40px;color:#8bd5f7"></span>
+                            {% endif %}
+
+                            <p style="font-size: 16px; margin-top: 10px;color:#474b4d">{{ app_item.APP_NAME }}</p>
+                            <p style="font-size: 10px;margin-top:-10px" style="color:lightgray">({{ app_item.APP_TYPE}})</p>
+                                
+                        </div>
+                    </a>
+                    {% endfor %}
                 </div>
             </div>
         </div>

@@ -1,95 +1,59 @@
 {% extends 'base/base-auditor.html' %}
 {% load static %}
-
 {% block content %}
 
-<div class="card" style="height:90vh">
+<div class="card" style="height:100vh">
     <div class="card-body">
-        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;;">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+              <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+              <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Companies</a></li>
+            </ol>
+        </nav>
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
             <div class="container-fluid">
                 <div class="row">
-                    <a style="font-size:18px;">
-                        {% if user.first_name %}
-                        Welcome {{ user.first_name }}!
-                        {% else %}
-                        Welcome {{ user.username }}!
-                        {% endif %}
-                    </a>
+                    <a style="font-size:25px;"><span class="fa-regular fa-star"
+                            style="margin-right: 10px;color:#474b4d"></span>Welcome {{user.first_name}} {{user.last_name}}!</a>
                 </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Company..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+                    
+                </form>
             </div>
         </nav>
-        <div class="container-fluid">
-            <div class="row" style="margin-top:10px;">
-                <div class="text-align">
-                    <button type="button" class="btn btn-secondary carousel" data-bs-target="#controlcarousel"
-                        data-bs-slide-to="0"
-                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                        <i class="fa-solid fa-briefcase" style="margin-right:5px;"></i>My Clients
-                    </button>
-                    <button type="button" class="btn btn-secondary carousel" data-bs-target="#controlcarousel"
-                        data-bs-slide-to="1"
-                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                        <i class="fa-solid fa-envelopes-bulk" style="margin-right:5px;"></i>My Audits
-                    </button>
-                    <button type="button" class="btn btn-secondary carousel" data-bs-target="#controlcarousel"
-                        data-bs-slide-to="2"
-                        style="--bs-btn-padding-y: .25rem; --bs-btn-padding-x: .5rem; --bs-btn-font-size: .75rem;">
-                        <i class="fa-solid fa-list-check" style="margin-right:5px;"></i>My Tasks
-                    </button>
-                </div>
-            </div>
-            <div id="controlcarousel" class="carousel slide carousel-fade" data-bs-interval="false">
-                <div class="carousel-inner">
-                    <div class="carousel-item active">
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="text-center">
-                                    <div class="d-flex justify-content-center" role="search"
-                                        style="margin-bottom:30px;margin-top:10px;">
-                                        <input id="searchClients" class="form-control me-2" type="search"
-                                            onkeyup="filterCompany()" placeholder="Search Clients..." autocomplete="off"
-                                            aria-label="Search" style="height:35px;font-size:13px;">
-                                        <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
-                                            style="height:35px;margin-right:3px;">
-                                            <i class="fas fa-search"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                                <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;">
-                                    {% for company in companies %}
-                                    <a href="{% url 'appAUDITAI:client-actions' company.id %}"
-                                        style="text-decoration: none; color:#474b4d">
-                                        <div class="card app-card" data-appname="{{ company }}"
-                                            style=" border-radius: 25px; cursor: pointer; height: 120px; width: 130px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
-                                            onmouseover="this.style.backgroundColor='#d5ecf7';"
-                                            onmouseout="this.style.backgroundColor='#fff';">
-                                            <p style="font-size:13px;"><span class="fas fa-building" style="margin-right:10px;color:grey;font-size:18px;"></span>{{ company.COMPANY_NAME }}</p>
-                                        </div>
-                                    </a>
-                                    {% endfor %}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="card">
-                            <div class="card-body">
+        
+        <p style="font-size:13px">Select from the audit files below to begin</p>
 
-                            </div>
+        <div class="card">
+            <div class="card-body">
+                <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;">
+                    {% for company in companies %}
+                    <a href="{% url 'appAUDITAI:audit-select-period' company.id %}"
+                        style="text-decoration: none; color:#474b4d">
+                        <div class="card app-card" data-appname="{{ app_item.APP_NAME }}"
+                        data-apptype="{{ app_item.APP_TYPE }}"
+                        style="border-radius: 25px; cursor: pointer; height: 150px; width: 160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                        onmouseover="this.style.backgroundColor='#d5ecf7';"
+                        onmouseout="this.style.backgroundColor='#fff';">
+                        <p style="font-size: 14px; margin-top: 10px; color: #474b4d"><i class="fas fa-building" style="margin-right:10px;color:grey;font-size:18px;"></i>{{ company }}</p>
                         </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="card">
-                            <div class="card-body">
-
-                            </div>
-                        </div>
-                    </div>
+                    </a>
+                    {% endfor %}
                 </div>
+
             </div>
         </div>
 
-        <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
-        <script src="{% static 'js/filters.js' %}"></script>
+    </div>
+</div>
 
-        {% endblock content %}
+{% endblock content %}
+

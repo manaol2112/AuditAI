@@ -9,7 +9,8 @@ class CompanySelect(AccessRequestor, View):
 
     template_name = 'pages/TICKETS/ticket-select-company.html'
 
-    def get(self, request, user):
+    def get(self, request):
+        user = request.user
         try:
             user_roles = USERROLES.objects.get(USERNAME=user)
             companies = user_roles.COMPANY_ID.all()
@@ -17,12 +18,56 @@ class CompanySelect(AccessRequestor, View):
             return redirect('error/404.html')  # Redirect to the error page for user roles not found
         except ObjectDoesNotExist:
             return redirect('error/404.html')  # Redirect to the error page for companies not found
+    
 
         context = {
             'user': user,
-            'companies': companies
+            'companies': companies,
         }
         
+        return render(request, self.template_name, context)
+    
+class AccessApprovalHome(AccessRequestor, View):
+    template_name = 'pages/TICKETS/ticket-approval.html'
+
+    def get(self, request):
+        user = request.user
+        try:
+            my_approval_list = ACCESSREQUEST.objects.filter(
+                BUSINESS_APPROVER=user.email
+            ).exclude(
+                Q(STATUS='APPROVED') | Q(STATUS='REJECTED')
+            ).order_by('-DATE_REQUESTED')
+
+            approval_count = len(my_approval_list)
+
+            request.session['approval_count'] = approval_count
+        except Exception:
+            pass
+
+        context = {
+            'my_approval_list':my_approval_list, 
+            'user':user
+        }
+        return render(request, self.template_name, context)
+    
+class GrantTicket(ProcessOwnerPermissionMixin, View):
+    template_name = 'pages/TICKETS/ticket-details.html'
+
+    def get(self, request, request_id):
+        access_request = get_object_or_404(ACCESSREQUEST, id=request_id)
+        
+        try:
+            access_request_comments = ACCESSREQUESTCOMMENTS.objects.filter(REQUEST_ID=request_id).order_by('DATE_ADDED')
+
+        except ACCESSREQUESTCOMMENTS.DoesNotExist:
+            access_request_comments = None
+            pass
+
+        context = {
+            'access_request': access_request,
+            'access_request_comments':access_request_comments
+        }
         return render(request, self.template_name, context)
     
 class AccessRequestDetails(AccessRequestor, View):
@@ -30,10 +75,9 @@ class AccessRequestDetails(AccessRequestor, View):
 
     def get(self, request, request_id):
         access_request = get_object_or_404(ACCESSREQUEST, id=request_id)
+        
         try:
             access_request_comments = ACCESSREQUESTCOMMENTS.objects.filter(REQUEST_ID=request_id).order_by('DATE_ADDED')
-            for x in access_request_comments:
-                print(x.COMMENT_DETAILS)
 
         except ACCESSREQUESTCOMMENTS.DoesNotExist:
             access_request_comments = None
@@ -46,25 +90,35 @@ class AccessRequestDetails(AccessRequestor, View):
         return render(request, self.template_name, context)
     
     def post(self, request, request_id):
-        # Get the current user
         user = request.user
-        
-        # Get the comment details from the POST data
-        comment_details = request.POST.get('request_comment')
 
-        # Get the access request object
-        access_request = get_object_or_404(ACCESSREQUEST, id=request_id)
+        form = request.POST.get('form_id')
+        rejection_reason = request.POST.get('rejection_reason')
 
-        # Create the comment object
-        comment = ACCESSREQUESTCOMMENTS(
-            REQUEST_ID=access_request,
-            CREATOR=user.email,  # Assuming email is a field in your User model
-            COMMENT_DETAILS=comment_details,
-            DATE_ADDED=timezone.now()
-        )
-        comment.save()
+        if form == 'approval_form':
+            access_request = get_object_or_404(ACCESSREQUEST, id=request_id, BUSINESS_APPROVER = user.email)
+            access_request.STATUS = 'Approved'
+            access_request.DATE_APPROVED = timezone.now()
+            access_request.save()
 
-        # Get all comments related to the access request
+        elif form =='rejection_form':
+            access_request = get_object_or_404(ACCESSREQUEST, id=request_id, BUSINESS_APPROVER = user.email)
+            access_request.STATUS = 'Rejected'
+            access_request.DATE_REJECTED = timezone.now()
+            access_request.REJECTION_REASON = rejection_reason
+            access_request.save()
+
+        elif form == 'comment_form':
+            comment_details = request.POST.get('request_comment')
+            access_request = get_object_or_404(ACCESSREQUEST, id=request_id)
+            comment = ACCESSREQUESTCOMMENTS(
+                REQUEST_ID=access_request,
+                CREATOR=user.email, 
+                COMMENT_DETAILS=comment_details,
+                DATE_ADDED=timezone.now()
+            )
+            comment.save()
+
         access_request_comments = ACCESSREQUESTCOMMENTS.objects.filter(REQUEST_ID=access_request).order_by('DATE_ADDED')
 
         context = {

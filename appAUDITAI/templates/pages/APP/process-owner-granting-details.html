@@ -1,6 +1,7 @@
-{% extends 'base/base-requestor.html' %}
+{% extends 'base/base-processowner.html' %}
 {% load static %}
 {% block content %}
+
 
 <link rel="stylesheet" href="{% static 'css/tables.css' %}" />
 <link rel="stylesheet" href="{% static 'css/dragndrop.css' %}" />
@@ -22,10 +23,10 @@
             aria-label="breadcrumb">
             <ol class="breadcrumb" style="font-size:14px;">
                 <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
-                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:access-request-home' %}"
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:manage-access-request' %}"
                         style="text-decoration:none;color:#474b4d">Home</i></a></li>
-                {% if user.email == access_request.BUSINESS_APPROVER %}
-                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:access-request-approval'  %}"
+                {% if user.email == access_request.ASSIGNED_TO %}
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:manage-access-request'  %}"
                             style="text-decoration:none;color:#474b4d">Access Requests</i></a></li>
                 {% else %}
                 <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:access-request-create' access_request.COMPANY_ID_id %}"
@@ -360,42 +361,11 @@
                         </div>
                     </div>
                 </div>
-
             </div>
         </div>
-        
-
     </div>
 </div>
 
-<!-- Modal -->
-<form id="rejection_form" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="form_id" value="rejection_form">
-    {% csrf_token %}
-<div class="modal fade" id="rejectmodal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-      <div class="modal-content">
-        <div class="modal-header">
-          <p  style="font-size:14px"class="modal-title" id="staticBackdropLabel">Add Rejection Reason</p>
-          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-            <div class="mb-3">
-                <textarea class="form-control" style="font-size:12px;" id="rejection_reason" name="rejection_reason" rows="3" required></textarea>
-              </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-          <button type="submit" class="btn btn-primary btn-sm">Submit</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</form>
-
-
 <script src="{% static 'js/ticket.js' %}"></script>
-
-
 
 {% endblock content %}

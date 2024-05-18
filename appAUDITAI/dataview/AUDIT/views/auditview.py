@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from appAUDITAI.dataview.LOGIN.views.authenticate import UserRoleView
 from appAUDITAI.dataview.LOGIN.views.decorators import UserAccessMixin
-from appAUDITAI.models import APP_LIST, COMPANY, PASSWORD,PASSWORDPOLICY, HR_RECORD, APP_RECORD, TERMINATIONPOLICY
+from appAUDITAI.models import APP_LIST, COMPANY, PASSWORD,PASSWORDPOLICY, HR_RECORD, APP_RECORD, TERMINATIONPOLICY,USERROLES, AUDITLIST
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from django.core.serializers import serialize
@@ -11,17 +11,126 @@ from datetime import date
 from django.db.models import Q
 from django.db.models import F
 from appAUDITAI.dataview.LOGIN.views.decorators import AuditorPermissionMixin
+from datetime import datetime
+
+
+class RiskAndControls(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-risk-and-controls.html'
+
+    def get(self,request):
+        return render(request, self.template_name)
+    
+class RiskAssessment(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-risk-assessment.html'
+
+    def get(self,request,comp_id, audit_id):
+        selected_company = COMPANY.objects.get(id=comp_id)
+        apps = APP_LIST.objects.filter(COMPANY_ID = selected_company)
+        context = {'selected_company': selected_company,
+                   'comp_id':comp_id,
+                   'apps':apps,
+                   'audit_id':audit_id}
+        return render(request, self.template_name,context)
+    
+class SelectAuditPeriod(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-select-period.html'
+    
+    def get(self, request, comp_id):
+        active_user = request.user
+        user_roles = USERROLES.objects.filter(USERNAME=active_user)
+
+        try:
+            audit_list = AUDITLIST.objects.filter(COMPANY_ID = comp_id, STATUS = 'Active')
+        except AUDITLIST.DoesNotExist:
+            audit_list = None
+            pass
+
+        try:
+            archived_audit_list = AUDITLIST.objects.filter(COMPANY_ID = comp_id, STATUS = 'Archived')
+        except AUDITLIST.DoesNotExist:
+            archived_audit_list = None
+            pass
+
+        companies = []
+        for user_role in user_roles:
+            companies.extend(user_role.COMPANY_ID.all())
+        
+        context = {'companies': companies,
+                   'audit_list':audit_list,
+                   'comp_id':comp_id,
+                   'archived_audit_list':archived_audit_list}
+        
+        return render(request, self.template_name, context)
+    
+class ManageAuditPeriod(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-manage-period.html'
+    
+    def get(self, request):
+        active_user = request.user
+        user_roles = USERROLES.objects.filter(USERNAME=active_user)
+
+        try:
+            audit_list = AUDITLIST.objects.all()
+        except AUDITLIST.DoesNotExist:
+            audit_list = None
+            pass
+
+        companies = []
+        for user_role in user_roles:
+            companies.extend(user_role.COMPANY_ID.all())
+        
+        context = {'companies': companies,
+                   'audit_list':audit_list}
+        
+        return render(request, self.template_name, context)
+    
+    def post(self, request):
+        user = request.user
+        company_name = request.POST.get('company_name')
+        audit_name = request.POST.get('audit_file_name')
+        audit_date = request.POST.get('audit_period')
+        audit_status = request.POST.get('audit_status')
+        audit_date = datetime.strptime(audit_date, '%Y-%m-%d')
+        print(audit_date)
+        try:
+            company = COMPANY.objects.get(COMPANY_NAME=company_name)
+        except COMPANY.DoesNotExist:
+            company = None
+        except Exception as e:
+            print(str(e))
+
+        try:
+            audit_exist = AUDITLIST.objects.filter(FILE_NAME=audit_name)
+            if audit_exist.exists():
+                pass
+            else:
+                audit_create, created = AUDITLIST.objects.get_or_create(FILE_NAME=audit_name, COMPANY_ID=company)
+                audit_create.PERIOD_END_DATE = audit_date
+                audit_create.STATUS = audit_status
+                if created:
+                    audit_create.CREATED_BY = user.username
+                    audit_create.CREATED_ON = timezone.now()
+                else:
+                    audit_create.MODIFIED_BY = user.username
+                    audit_create.LAST_MODIFIED = timezone.now()
+                audit_create.save()
+                                    
+        except Exception as e:
+            print(str(e))
+
+        return redirect('appAUDITAI:audit-manage-period')
+
 
 class AuditHome(AuditorPermissionMixin, UserRoleView):
-    def get(self,request,id):
+    def get(self,request,comp_id):
         user_role = self.user_role
-        selected_company = COMPANY.objects.get(id=id)
+        selected_company = COMPANY.objects.get(id=comp_id)
 
         if user_role == 'Auditor':
             template_name = 'pages/AUDIT/audit-home.html'
         else:
             template_name = 'pages/login/login.html'
-        context = {'selected_company': selected_company}
+        context = {'selected_company': selected_company,'comp_id':comp_id}
 
         return render(request,template_name, context)
     

@@ -110,7 +110,9 @@ class AuthenticateUsers(View):
                             context = {'user':user, 'group_names':group_names}
                             template_name = 'pages/DASHBOARD/admin-dashboard.html'
                         elif 'Auditor' in group_names:
-                            context = {'user':user, 'group_names':group_names}
+                            user_roles = USERROLES.objects.get(USERNAME=user)
+                            companies = user_roles.COMPANY_ID.all()
+                            context = {'user':user, 'group_names':group_names, 'companies':companies}
                             template_name = 'pages/DASHBOARD/auditor-dashboard.html'
                         elif 'Process Owner' in group_names:
                             context = {'user':user, 'group_names':group_names}

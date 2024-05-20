@@ -64,7 +64,7 @@
                                       </span>
 
                                     {% else %}
-                                  
+                                    <p>No active audit project found.</p>
 
                                     {% endif %}
                                 </div>
@@ -73,7 +73,7 @@
                     </div>
                 {% else %}
                 <div class="alert alert-light" style="font-size:12px;" role="alert">
-                    <p>No audit project has been created yet. Please create a new project by clicking the + icon at the upper right side of the page.</p>
+                    <p>No audit project has been created yet.</p>
                 </div>
                 {% endif %}
             </div>
@@ -85,7 +85,7 @@
 
         <div class="card">
             <div class="card-body">
-                {% if audit_list %}
+                {% if archived_audit_list %}
                     <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;justify-content: left;">
                         {% for company in archived_audit_list %}
                     
@@ -94,14 +94,15 @@
                                     style="border-radius: 25px; cursor: pointer; height: 170px; width: 250px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
                                     onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
                                     {% if company.STATUS == 'Active'%}
-
+                                    <div class="alert alert-light" style="font-size:12px;" role="alert">
+                                        <p>No archived yet found for this audit.</p>
+                                    </div>
                                     {% else %}
                                     <span class="fa-solid fa-folder-closed" style="font-size: 40px;color:grey"></span>
                                     <p style="font-size: 14px;margin-top:5px;"><b>{{company.COMPANY_ID}}</b></p>
                                     <p style="font-size: 12px;">Period Ending: {{company.PERIOD_END_DATE}}</p>
                                     <span class="badge bg-secondary" style="font-size:10px;">{{company.STATUS}}</span>
                                     
-
                                     {% endif %}
                                 </div>
                             </a>
@@ -109,7 +110,7 @@
                     </div>
                 {% else %}
                 <div class="alert alert-light" style="font-size:12px;" role="alert">
-                    <p>No audit project has been created yet. Please create a new project by clicking the + icon at the upper right side of the page.</p>
+                    <p>No audit archive found.</p>
                 </div>
                 {% endif %}
             </div>

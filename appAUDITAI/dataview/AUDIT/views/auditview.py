@@ -26,11 +26,108 @@ class RiskAssessment(AuditorPermissionMixin,View):
     def get(self,request,comp_id, audit_id):
         selected_company = COMPANY.objects.get(id=comp_id)
         apps = APP_LIST.objects.filter(COMPANY_ID = selected_company)
+        try:
+            audit_name = AUDITLIST.objects.get(id = audit_id)
+        except AUDITLIST.DoesNotExist:
+            audit_name = None
+
         context = {'selected_company': selected_company,
                    'comp_id':comp_id,
                    'apps':apps,
-                   'audit_id':audit_id}
+                   'audit_id':audit_id,
+                   'audit_name':audit_name
+        }
         return render(request, self.template_name,context)
+    
+class AuditPerApp(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-details.html'
+
+    def get(self,request,comp_id,audit_id, app_id):
+        user = request.user
+
+        try:
+            apps = APP_LIST.objects.filter(COMPANY_ID = comp_id)
+        except APP_LIST.DoesNotExist:
+            apps = None
+
+        try:
+            selected_app = APP_LIST.objects.get(id = app_id)
+        except APP_LIST.DoesNotExist:
+            selected_app = None
+
+        try:
+            audit_name = AUDITLIST.objects.get(id = audit_id)
+        except AUDITLIST.DoesNotExist:
+            audit_name = None
+
+        context = {
+            'comp_id':comp_id,
+            'audit_id':audit_id,
+            'app_id':app_id,
+            'selected_app':selected_app,
+            'audit_name':audit_name,
+            'apps':apps
+        }
+        return render(request,self.template_name,context)
+    
+class AuditPlanningDocs(AuditPerApp):
+    template_name = 'pages/AUDIT/audit-planning.html'
+
+    def get(self, request, comp_id, audit_id, app_id):
+        # Call the parent class's get method to retain its functionality and context
+        response = super().get(request, comp_id, audit_id, app_id)
+
+        # Additional logic for AuditPlanningDocs if needed
+
+        return response
+    
+class AuditRiskMapping(AuditPerApp):
+    template_name = 'pages/AUDIT/audit-risk-mapping.html'
+
+    def get(self, request, comp_id, audit_id, app_id):
+        # Call the parent class's get method to retain its functionality and context
+        response = super().get(request, comp_id, audit_id, app_id)
+
+        # Additional logic for AuditPlanningDocs if needed
+
+        return response
+    
+class AuditWorkpapers(AuditPerApp):
+    template_name = 'pages/AUDIT/audit-workpapers.html'
+
+    def get(self, request, comp_id, audit_id, app_id):
+        # Call the parent class's get method to retain its functionality and context
+        response = super().get(request, comp_id, audit_id, app_id)
+
+        # Additional logic for AuditPlanningDocs if needed
+
+        return response
+    
+class AuditDeficiencies(AuditPerApp):
+    template_name = 'pages/AUDIT/audit-deficiencies.html'
+
+    def get(self, request, comp_id, audit_id, app_id):
+        # Call the parent class's get method to retain its functionality and context
+        response = super().get(request, comp_id, audit_id, app_id)
+
+        # Additional logic for AuditPlanningDocs if needed
+
+        return response
+    
+    
+class AuditReports(AuditPerApp):
+    template_name = 'pages/AUDIT/audit-reports.html'
+
+    def get(self, request, comp_id, audit_id, app_id):
+        # Call the parent class's get method to retain its functionality and context
+        response = super().get(request, comp_id, audit_id, app_id)
+
+        # Additional logic for AuditPlanningDocs if needed
+
+        return response
+
+
+
     
 class SelectAuditPeriod(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-select-period.html'
@@ -40,13 +137,13 @@ class SelectAuditPeriod(AuditorPermissionMixin,View):
         user_roles = USERROLES.objects.filter(USERNAME=active_user)
 
         try:
-            audit_list = AUDITLIST.objects.filter(COMPANY_ID = comp_id, STATUS = 'Active')
+            audit_list = AUDITLIST.objects.filter(COMPANY_ID = comp_id, STATUS = 'Active').order_by('CREATED_ON')
         except AUDITLIST.DoesNotExist:
             audit_list = None
             pass
 
         try:
-            archived_audit_list = AUDITLIST.objects.filter(COMPANY_ID = comp_id, STATUS = 'Archived')
+            archived_audit_list = AUDITLIST.objects.filter(COMPANY_ID = comp_id, STATUS = 'Archived').order_by('CREATED_ON')
         except AUDITLIST.DoesNotExist:
             archived_audit_list = None
             pass
@@ -70,7 +167,7 @@ class ManageAuditPeriod(AuditorPermissionMixin,View):
         user_roles = USERROLES.objects.filter(USERNAME=active_user)
 
         try:
-            audit_list = AUDITLIST.objects.all()
+            audit_list = AUDITLIST.objects.all().order_by('CREATED_ON')
         except AUDITLIST.DoesNotExist:
             audit_list = None
             pass

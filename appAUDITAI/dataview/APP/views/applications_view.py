@@ -229,6 +229,7 @@ class ApplistByProcessOwner(ProcessOwnerPermissionMixin, View):
     def post(self, request, comp_id):
 
         app_name = request.POST.get('app_name')
+        app_description = request.POST.get('system_description')
         app_type = request.POST.get('app_type')
         hosting = request.POST.get('hosting')
         risk_rating = request.POST.get('risk_rating')
@@ -242,6 +243,7 @@ class ApplistByProcessOwner(ProcessOwnerPermissionMixin, View):
         new_app, created = APP_LIST.objects.get_or_create(APP_NAME=app_name, COMPANY_ID = company.first())
         new_app.COMPANY_ID = company.first()
         new_app.APP_NAME = app_name
+        new_app.APP_DESCRIPTION = app_description
         new_app.APP_TYPE = app_type
         new_app.HOSTED = hosting
         new_app.RISKRATING = risk_rating

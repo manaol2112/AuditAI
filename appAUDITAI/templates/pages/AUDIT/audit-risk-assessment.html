@@ -12,7 +12,7 @@
               <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
               <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
               <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:audit-select-period' comp_id %}" style="text-decoration:none;color:#474b4d">My Audit</i></a></li>
-              <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Risk Assessment</a></li>
+              <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Applications</a></li>
             </ol>
         </nav>
 
@@ -20,7 +20,7 @@
             <div class="container-fluid">
                 <div class="row">
                     <a style="font-size:25px;"><span class="fa-solid fa-building"
-                            style="margin-right: 10px;color:#474b4d"></span>{{ selected_company.COMPANY_NAME }}</a>
+                            style="margin-right: 10px;color:#474b4d"></span>{{audit_name.COMPANY_ID}} - {{ audit_name.FILE_NAME }} </a>
                 </div>
                 <form class="d-flex" role="search">
                     <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
@@ -46,7 +46,7 @@
             <div class="card-body">
                 <div class="card-container" style="display: flex; gap: 30px;flex-wrap: wrap;justify-content: left;">
                     {% for app_item in apps %}
-                    <a href="{% url 'appAUDITAI:audit-risk-assessment' comp_id app_item.id %}"
+                    <a href="{% url 'appAUDITAI:audit-per-app' comp_id audit_id app_item.id %}"
                         style="text-decoration: none; color:#474b4d">
                         <div class="card app-card" data-appname="{{ app_item.APP_NAME }}"
                             data-apptype="{{ app_item.APP_TYPE }}"

@@ -1,0 +1,95 @@
+/* Variables */
+
+/* Mixins*/
+@mixin transition($transition-property, $transition-time, $method) {
+    transition: $transition-property $transition-time $method;
+}
+
+/* Off Canvas */
+
+@media screen and (min-width: 768px) {
+  .row-offcanvas {
+    position: relative;
+    left: 25%;
+    @include transition(all, .3s, ease-out);
+    &.active {
+       left:-30px; /* 3 columns */
+      .content {
+        width: 100%; /* 12 columns */
+      }
+      .sidebar-offcanvas {
+        left: -25%; /* Hide the sidebar off the screen */
+      }     
+    }
+    .content {
+      width: 75%; /* 9 columns */
+      float: left;
+      @include transition(all, .3s, ease-out);
+    }
+    .sidebar-offcanvas {
+      position: absolute;
+      width: 25%; /* 3 columns */
+      left: -25%; /* 3 columns */
+    }
+  }
+}
+
+@media screen and (max-width: 767px) {
+  .row-offcanvas {
+    left: -10;
+    position: relative;
+    @include transition(all, .3s, ease-out);
+    &.active {
+      right: 50%; /* 6 columns */
+    }
+  }
+  .sidebar-offcanvas {
+    position: absolute;
+    top: 0;
+    width: 50%; /* 6 columns */
+    left: -50%; /* 6 columns */
+  }
+}
+
+.sidebar {
+  background: rgba(51, 122, 183, 0.09);
+  padding: 10px 15px;
+  margin-top:-20px;
+  border-radius: 0 0 0 5px;
+}
+.btn-collapse {
+  position: absolute;
+  padding: 8px 12px;
+  border-radius: 5px 5px 0 0;
+  top: 40px;
+  left: 0;
+  margin-left: -40px;
+  
+  background: rgba(51, 122, 183, 0.09);
+  transform: rotate(-90deg);
+  @include transition(all, .3s, ease-out);
+}
+.row-offcanvas.active .btn-collapse {
+  left: 0;
+  margin-left: -20px;
+  
+  @include transition(all, .3s, ease-out);
+  
+  i {
+    transform: rotate(180deg);
+  }
+}
+
+.nav .nav-item button.active {
+  background-color: transparent;
+  color: var(--bs-primary) !important;
+}
+.nav .nav-item button.active::after {
+  content: "";
+  border-bottom: 4px solid var(--bs-info);
+  width: 100%;
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  border-radius: 5px 5px 0 0;
+}

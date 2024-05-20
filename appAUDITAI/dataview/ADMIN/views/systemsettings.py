@@ -467,15 +467,18 @@ class ManageUsersandRolesDetailsView(AdminPermissionMixin, View):
                         selected_user.save()
 
                         #Assign Group
-                        selected_groups = request.POST.getlist('role_list')
                         groups = Group.objects.filter(id__in=selected_groups)
                         selected_user.groups.set(groups)
 
-                        UserToken.objects.create(user=selected_user)
+                        try:
+                            existing_token = UserToken.objects.get(user=selected_user)
+                            # If the token already exists, do nothing
+                        except ObjectDoesNotExist:
+                            # If the token doesn't exist, create a new one
+                            new_token = UserToken.objects.create(user=selected_user)
 
                         # Assign Companies
                         selected_companies = request.POST.getlist('company_list')
-                        print(selected_companies)
 
                         companies = COMPANY.objects.filter(id__in=selected_companies)
                         # Check if USERROLES object already exists

@@ -264,6 +264,7 @@ class APP_LIST(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,max_length=100,blank=True,null=True)
     APP_NAME = models.CharField(max_length=100,blank=True,null=True)
+    APP_DESCRIPTION = models.CharField(max_length=1000,blank=True,null=True)
     APP_TYPE = models.CharField(max_length=100,blank=True,null=True)
     HOSTED = models.CharField(max_length=50,blank=True,null=True)
     RISKRATING = models.CharField(max_length=50,blank=True,null=True)

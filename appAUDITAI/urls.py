@@ -50,6 +50,12 @@ path("myclients/actions/audit/risk-assessment/<uuid:comp_id>/<uuid:audit_id>",au
 #AUDIT
 path("myclients/actions/audit/manage-period",auditview.ManageAuditPeriod.as_view(),name="audit-manage-period"),
 path("myclients/actions/audit/select-audit/<uuid:comp_id>",auditview.SelectAuditPeriod.as_view(),name="audit-select-period"),
+path("myclients/actions/audit/selected_app/<uuid:comp_id>/<uuid:audit_id>/<uuid:app_id>",auditview.AuditPerApp.as_view(),name="audit-per-app"),
+path("myclients/actions/audit/selected_app/planning-docs/<uuid:comp_id>/<uuid:audit_id>/<uuid:app_id>",auditview.AuditPlanningDocs.as_view(),name="audit-per-app-planning-docs"),
+path("myclients/actions/audit/selected_app/risk-assessment/<uuid:comp_id>/<uuid:audit_id>/<uuid:app_id>",auditview.AuditRiskMapping.as_view(),name="audit-per-app-risk-mapping"),
+path("myclients/actions/audit/selected_app/workpapers/<uuid:comp_id>/<uuid:audit_id>/<uuid:app_id>",auditview.AuditWorkpapers.as_view(),name="audit-per-app-workpapers"),
+path("myclients/actions/audit/selected_app/deficiencies/<uuid:comp_id>/<uuid:audit_id>/<uuid:app_id>",auditview.AuditDeficiencies.as_view(),name="audit-per-app-deficiencies"),
+path("myclients/actions/audit/selected_app/reports/<uuid:comp_id>/<uuid:audit_id>/<uuid:app_id>",auditview.AuditReports.as_view(),name="audit-per-app-reports"),
 path("audit/risk-and-controls/",auditview.RiskAndControls.as_view(),name="risk-and-controls"),
 
 #AUTHENTICATION

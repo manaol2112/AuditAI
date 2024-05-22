@@ -1,3 +1,4 @@
+from appAUDITAI.dataview.MISC.imports import *
 from django.shortcuts import render, redirect
 from django.views import View
 from appAUDITAI.dataview.LOGIN.views.authenticate import UserRoleView
@@ -12,7 +13,6 @@ from django.db.models import Q
 from django.db.models import F
 from appAUDITAI.dataview.LOGIN.views.decorators import AuditorPermissionMixin
 from datetime import datetime
-
 
 class RiskAndControls(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-risk-and-controls.html'
@@ -66,7 +66,7 @@ class AuditPerApp(AuditorPermissionMixin,View):
             'app_id':app_id,
             'selected_app':selected_app,
             'audit_name':audit_name,
-            'apps':apps
+            'apps':apps,
         }
         return render(request,self.template_name,context)
     
@@ -77,9 +77,41 @@ class AuditPlanningDocs(AuditPerApp):
         # Call the parent class's get method to retain its functionality and context
         response = super().get(request, comp_id, audit_id, app_id)
 
-        # Additional logic for AuditPlanningDocs if needed
-
         return response
+
+    def post(self, request, comp_id, audit_id, app_id):
+        form = WORKPAPER_UPLOAD_FORM(request.POST, request.FILES)
+        user = request.user
+        if form.is_valid():
+            workpaper_upload = form.save(commit=False)
+            workpaper_upload.audit_id = audit_id 
+            workpaper_upload.save()
+
+        uploaded_file = form.cleaned_data['file_name'].name
+        if uploaded_file:  
+            file_name = uploaded_file
+
+            planning_doc, created = AUDITFILE.objects.get_or_create(AUDIT_ID=audit_id, FILE_NAME=file_name)
+            planning_doc.STATUS = 'In Preparation'
+            planning_doc.CURRENTLY_WITH = user.email
+            planning_doc.FOLDER_NAME = 'Planning'
+
+            if created:
+                planning_doc.CREATED_BY = user.email
+                planning_doc.CREATED_ON = timezone.now()
+            else:
+                planning_doc.MODIFIED_BY = user.email
+                planning_doc.LAST_MODIFIED = timezone.now()
+            
+            planning_doc.save()
+
+        else:
+            print('No file found')
+            pass
+
+        response = super().get(request, comp_id, audit_id, app_id)
+        return response
+
     
 class AuditRiskMapping(AuditPerApp):
     template_name = 'pages/AUDIT/audit-risk-mapping.html'
@@ -126,9 +158,6 @@ class AuditReports(AuditPerApp):
 
         return response
 
-
-
-    
 class SelectAuditPeriod(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-select-period.html'
     

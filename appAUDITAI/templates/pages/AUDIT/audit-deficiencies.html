@@ -3,6 +3,92 @@
 
 {% block auditcontent %}
 
-<p>Deficiencies</p>
+<nav class="navbar navbar-light bg-light">
+    <div class="container-fluid">
+      <a class="navbar-brand" style="font-size:16px;">Deficiencies</a>
+    <form class="d-flex">
+
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-target="#newAppModal"
+            aria-expanded="false" style="height:35px;margin-right:5px;" title="Add Filter">
+            <i class="fas fa-filter"></i>
+        </button>
+    
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-target="#newAppModal"
+            aria-expanded="false" style="height:35px;" title="Add New Document">
+            <i class="fas fa-plus"></i>
+        </button>
+    
+    </form>
+    </div>
+  </nav>
+
+<ul class="nav nav-pills mb-3 border-bottom border-2" style="margin-top:20px;" id="pills-tab" role="tablist">
+    <li class="nav-item" role="presentation">
+      <button class="nav-link fw-semibold active position-relative" style="color:#474b4d;font-size:14px" id="pills-myqueue-tab" data-bs-toggle="pill" data-bs-target="#pills-myqueue" type="button" role="tab" aria-controls="pills-myqueue" aria-selected="true">In My Queue</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-upcoming-tab" data-bs-toggle="pill" data-bs-target="#pills-upcoming" type="button" role="tab" aria-controls="pills-upcoming" aria-selected="false">Upcoming Review</button>
+    </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-signedoff-tab" data-bs-toggle="pill" data-bs-target="#pills-signedoff" type="button" role="tab" aria-controls="pills-signedoff" aria-selected="false">Signed-off</button>
+    </li>
+</ul>
+
+<div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
+    <div class="tab-pane fade show active" id="pills-myqueue" role="tabpanel" aria-labelledby="pills-myqueue-tab">
+        <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+        style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+        <thead style="padding-top:12px;text-align:center">
+            <tr
+                style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                <th style="text-align:left;">
+                    <input type="checkbox" id="select-all-checkbox">
+                <th style="text-align:left;">File Name</th>
+                <th style="text-align:left;">Status</th>
+                <th style="text-align:left;">Currently With</th>
+                <th style="text-align:left;">Aging</th>
+                <th style="text-align:left;"></i>Open Notes<i class="fa-solid fa-comment-dots" style="color:orange;font-size:14px;margin-left:5px"></i></th>
+                <th style="text-align:left;"></i>Closed Notes <i class="fa-solid fa-comment-dots" style="color:green;margin-left:5px;"></i></th>
+                <th style="text-align:left;">Preparer</th>
+                <th style="text-align:left;">Reviewer</th>
+                <th style="text-align:left;"></th>
+            </tr>
+        </thead>
+        <tbody style="font-size:13px">
+            {% for user in users %}
+            <tr style="vertical-align: middle;">
+                <td>
+                    <input type="checkbox" id="user_checkbox"
+                        name="user_checkbox" value="{{ user.id }}">
+                </td>
+                <td style="width:15%">{{ user.username }}</td>
+                <td style="width:20%">{{ user.email }}</td>
+                <td style="width:20%">{{ user.email }}</td>
+                <td style="width:15%">{{ user.first_name }}</td>
+                <td style="width:15%">{{ user.last_name }}</td>
+                <td style="width:15%">{% if user.is_active %}Active{% else %}Inactive{% endif %}</td>
+                <td style="width:15%">{{ user.last_login|default:"Never" }}</td>
+                <td class="text-end">
+                    <a href="{% url 'appAUDITAI:manage-user-roles-details' user.id %}" data-process-id="{{user.USER_ID}}" class="btn btn-outline-secondary btn-sm"
+                        data-toggle="tooltip" data-placement="top" title="View Record">
+                        <i class="fa-solid fa-arrows-to-dot"></i>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        
+    </div>
+    <div class="tab-pane fade show" id="pills-upcoming" role="tabpanel" aria-labelledby="pills-upcoming-tab">
+        <h2>Home</h2>
+        <p>Please check our more design @ <a target="_blank" href="https://codepen.io/Gaurav-Rana-the-reactor">Upcoming</a></p>
+    </div>
+    <div class="tab-pane fade show" id="pills-signedoff" role="tabpanel" aria-labelledby="pills-signedoff-tab">
+        <h2>Home</h2>
+        <p>Please check our more design @ <a target="_blank" href="https://codepen.io/Gaurav-Rana-the-reactor">Signed-Off</a></p>
+    </div>
+</div>
+
 
 {% endblock auditcontent %}

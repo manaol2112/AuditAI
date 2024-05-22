@@ -8,12 +8,12 @@
       <a class="navbar-brand" style="font-size:16px;">Planning Documents</a>
     <form class="d-flex">
 
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-target="#newAppModal"
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#planning_doc_modal"
             aria-expanded="false" style="height:35px;margin-right:5px;" title="Add Filter">
             <i class="fas fa-filter"></i>
         </button>
     
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-target="#newAppModal"
+        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#planning_doc_modal"
             aria-expanded="false" style="height:35px;" title="Add New Document">
             <i class="fas fa-plus"></i>
         </button>
@@ -34,7 +34,7 @@
     </li>
 </ul>
 
-<div class="tab-content border rounded-3 border-light p-3 text-danger" id="pills-tabContent">
+<div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
     <div class="tab-pane fade show active" id="pills-myqueue" role="tabpanel" aria-labelledby="pills-myqueue-tab">
         <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
         style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
@@ -47,8 +47,8 @@
                 <th style="text-align:left;">Status</th>
                 <th style="text-align:left;">Currently With</th>
                 <th style="text-align:left;">Aging</th>
-                <th style="text-align:left;"><i class="fa-solid fa-comment-dots" style="color:orange;font-size:14px;margin-right:5px"></i>Open Notes</th>
-                <th style="text-align:left;"><i class="fa-solid fa-comment-dots" style="color:green;margin-right:5px;"></i>Closed Notes</th>
+                <th style="text-align:left;"></i>Open Notes<i class="fa-solid fa-comment-dots" style="color:orange;font-size:14px;margin-left:5px"></i></th>
+                <th style="text-align:left;"></i>Closed Notes <i class="fa-solid fa-comment-dots" style="color:green;margin-left:5px;"></i></th>
                 <th style="text-align:left;">Preparer</th>
                 <th style="text-align:left;">Reviewer</th>
                 <th style="text-align:left;"></th>
@@ -89,6 +89,65 @@
         <p>Please check our more design @ <a target="_blank" href="https://codepen.io/Gaurav-Rana-the-reactor">Signed-Off</a></p>
     </div>
 </div>
+
+<form id="planning_doc_upload" action="" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="planning_doc_upload">
+    {% csrf_token %}
+
+    <div class="modal fade modal-xl" id="planning_doc_modal" data-bs-backdrop="static" data-bs-keyboard="false"
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel"> <a style="font-size:16px;"><span
+                            style="margin-right: 10px;"></span><i class="fas fa-upload"
+                            style="margin-right:5px;font-size:16px;"></i>
+                        Planning Documents Upload Form</a></h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <!-- THIS IS THE DRAG AND DROP SECTION -->
+                    <div class="file-drop-area"
+                        style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:250px;">
+                        <div class="card-body" style=" text-align: center;">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
+                            <a style="font-size:16px;color:grey">Drag and
+                                drop the Planning Document here
+                                here</a>
+                        </div>
+                    </div>
+                    
+                    <!-- THIS IS THE MANUAL UPLOAD SECTION -->
+                    <div class="row" style="padding-top:20px; ">
+                        <a style="font-size:15px;color:#000000">Or browse
+                            and
+                            select the file here</a>
+                        <div class="card" style="border:none">
+                            <div class="card-body"
+                                style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
+                                <input type="file" id="fileInput" name="file_name" multiple>
+                                <input type="hidden" id="manual_user_upload" name="manual_user_upload"
+                                    value="{{ selected_app.APP_NAME }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div id="selectedFilesContainer" style="margin-top:20px;font-size:13px;"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Close</button>
+                <button type="submit" class="btn btn-primary btn-sm" data-bs-dismiss="modal">Upload</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+</form>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script src="{% static 'js/dragndrop.js' %}"></script>
+<script src="{% static 'js/workpaper_upload.js' %}"></script>
 
 
 {% endblock auditcontent %}

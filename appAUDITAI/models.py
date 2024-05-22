@@ -1,7 +1,9 @@
 from django.db import models
 from django.contrib.auth.models import User, Group
 from django.contrib.auth.hashers import make_password, check_password
-import uuid 
+import uuid
+import os
+from django.conf import settings
 
 
 class EmailVerification(models.Model):
@@ -114,6 +116,108 @@ class COMPANY(models.Model):
         db_table = 'COMPANY'
 
     #AUDITPROJECT
+
+class AUDITFILE(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    FILE_NAME = models.CharField(max_length=1000,blank=True,null=True)
+    STATUS = models.CharField(max_length=100,blank=True,null=True)
+    CURRENTLY_WITH = models.CharField(max_length=100,blank=True,null=True)
+    FOLDER_NAME = models.CharField(max_length=1000,blank=True,null=True)
+    AUDIT_ID = models.CharField(max_length=100,blank = True, null=True)
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True, null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'AUDITFILE'
+
+
+class PREPARERSIGNOFF(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    FILE_NAME = models.ForeignKey(AUDITFILE, on_delete=models.CASCADE, null= True, blank = True)
+    PREPARER = models.CharField(max_length=100,blank=True,null=True)
+    DATE_SIGNEDOFF = models.DateTimeField(null=True)
+
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True, null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'PREPARERSIGNOFF'
+
+
+class REVIEWSIGNOFF(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    FILE_NAME = models.ForeignKey(AUDITFILE, on_delete=models.CASCADE, null= True, blank = True)
+    REVIEWER = models.CharField(max_length=100,blank=True,null=True)
+    DATE_SIGNEDOFF = models.DateTimeField(null=True)
+
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True, null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'REVIEWSIGNOFF'
+
+
+class AUDITNOTES(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    FILE_NAME = models.ForeignKey(AUDITFILE, on_delete=models.CASCADE, null= True, blank = True)
+    STATUS = models.CharField(max_length=100,blank=True,null=True)
+    TYPE = models.CharField(max_length=100,blank=True,null=True)
+
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True, null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'AUDITNOTES'
+
+class AUDITNOTESREPLY(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    FILE_NAME = models.ForeignKey(AUDITFILE, on_delete=models.CASCADE, null= True, blank = True)
+    OG_NOTE = models.ForeignKey(AUDITNOTES, on_delete= models.CASCADE, null=True, blank=True)
+    STATUS = models.CharField(max_length=100,blank=True,null=True)
+    TYPE = models.CharField(max_length=100,blank=True,null=True)
+    CREATED_BY = models.CharField(max_length=100,blank=True,null=True)
+
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True, null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'AUDITNOTESREPLY'
+
+def workpaper_upload_to(instance, filename):
+    # Assuming instance has an audit_id attribute
+    audit_id = instance.audit_id
+    return f'workpapers/{audit_id}/{filename}'
+
+class WORKPAPER_UPLOAD(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    file_name = models.FileField(upload_to=workpaper_upload_to)
+    upload_date = models.DateTimeField(auto_now_add=True)
+    activated = models.BooleanField(default=False)
+    audit_id = models.UUIDField(null=True, blank=False)
+
+    def __str__(self):
+        return f"File id: {self.id}"
+
 class AUDITLIST(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     FILE_NAME = models.CharField(max_length=100,blank=True,null=True)
@@ -615,6 +719,7 @@ class CSV(models.Model):
 
     def __str__(self):
         return f"File id: {self.id}"
+
     
 class PWCONFIGATTACHMENTS(models.Model):
     APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,null=True)

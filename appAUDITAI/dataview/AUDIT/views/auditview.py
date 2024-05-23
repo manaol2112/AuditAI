@@ -13,6 +13,9 @@ from django.db.models import Q
 from django.db.models import F
 from appAUDITAI.dataview.LOGIN.views.decorators import AuditorPermissionMixin
 from datetime import datetime
+from django.contrib.auth.models import User
+from django.core.exceptions import MultipleObjectsReturned
+from django.core.files.storage import default_storage
 
 class RiskAndControls(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-risk-and-controls.html'
@@ -41,10 +44,10 @@ class RiskAssessment(AuditorPermissionMixin,View):
     
 class AuditPerApp(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-details.html'
+    
 
     def get(self,request,comp_id,audit_id, app_id):
         user = request.user
-
         try:
             apps = APP_LIST.objects.filter(COMPANY_ID = comp_id)
         except APP_LIST.DoesNotExist:
@@ -60,6 +63,42 @@ class AuditPerApp(AuditorPermissionMixin,View):
         except AUDITLIST.DoesNotExist:
             audit_name = None
 
+        try:
+            planning_docs = AUDITFILE.objects.filter(AUDIT_ID = audit_id, CURRENTLY_WITH = user.email, FOLDER_NAME = 'Planning')
+            today = datetime.now().date()
+            for doc in planning_docs:
+                date_sent = doc.DATE_SENT.date()
+                doc.days_difference = (today - date_sent).days
+                
+                open_notes_count = AUDITNOTES.objects.filter(FILE_NAME=doc, STATUS='Open').count()
+                doc.open_notes_count = open_notes_count
+
+                closed_notes_count = AUDITNOTES.objects.filter(FILE_NAME=doc, STATUS='Closed').count()
+                doc.closed_notes_count = closed_notes_count
+
+                try:
+                    user = User.objects.get(email=doc.CURRENTLY_WITH)
+                except MultipleObjectsReturned:
+                    # If multiple users are returned, get the first one
+                    user = User.objects.filter(email=doc.CURRENTLY_WITH).first()
+
+                if user:
+                    intials = user.first_name[0] + user.last_name[0]
+                    doc.initials = intials
+                else:
+                    pass
+
+                try:
+                    file_id = WORKPAPER_UPLOAD.objects.get(id = doc)
+                    doc.file_id = file_id
+                    print('This is the file_id' + str(doc.file_id))
+                except Exception:
+                    file_id = None
+                    print('File_id not found')
+
+        except AUDITFILE.DoesNotExist:
+            docs = None
+
         context = {
             'comp_id':comp_id,
             'audit_id':audit_id,
@@ -67,8 +106,22 @@ class AuditPerApp(AuditorPermissionMixin,View):
             'selected_app':selected_app,
             'audit_name':audit_name,
             'apps':apps,
+            'planning_docs':planning_docs,
+
         }
         return render(request,self.template_name,context)
+    
+def download_file(request, planning_docs):
+    workpaper = get_object_or_404(WORKPAPER_UPLOAD, file_name=planning_docs)
+    file_path = workpaper.file_name.path
+
+    try:
+        with open(file_path, 'rb') as f:
+            response = HttpResponse(f.read(), content_type='application/octet-stream')
+            response['Content-Disposition'] = f'attachment; filename="{workpaper.file_name.name}"'
+            return response
+    except Exception as e:
+        pass
     
 class AuditPlanningDocs(AuditPerApp):
     template_name = 'pages/AUDIT/audit-planning.html'
@@ -88,13 +141,14 @@ class AuditPlanningDocs(AuditPerApp):
             workpaper_upload.save()
 
         uploaded_file = form.cleaned_data['file_name'].name
-        if uploaded_file:  
+        if uploaded_file:
             file_name = uploaded_file
 
-            planning_doc, created = AUDITFILE.objects.get_or_create(AUDIT_ID=audit_id, FILE_NAME=file_name)
+            planning_doc, created = AUDITFILE.objects.get_or_create(AUDIT_ID=audit_id, file_name=file_name)
             planning_doc.STATUS = 'In Preparation'
             planning_doc.CURRENTLY_WITH = user.email
             planning_doc.FOLDER_NAME = 'Planning'
+            planning_doc.DATE_SENT = timezone.now()
 
             if created:
                 planning_doc.CREATED_BY = user.email
@@ -105,13 +159,9 @@ class AuditPlanningDocs(AuditPerApp):
             
             planning_doc.save()
 
-        else:
-            print('No file found')
-            pass
-
+            
         response = super().get(request, comp_id, audit_id, app_id)
         return response
-
     
 class AuditRiskMapping(AuditPerApp):
     template_name = 'pages/AUDIT/audit-risk-mapping.html'

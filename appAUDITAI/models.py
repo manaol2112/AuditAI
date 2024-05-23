@@ -117,13 +117,29 @@ class COMPANY(models.Model):
 
     #AUDITPROJECT
 
+def workpaper_upload_to(instance, filename):
+    # Assuming instance has an audit_id attribute
+    audit_id = instance.audit_id
+    return f'workpapers/{audit_id}/{filename}'
+
+class WORKPAPER_UPLOAD(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    file_name = models.FileField(upload_to=workpaper_upload_to)
+    upload_date = models.DateTimeField(auto_now_add=True)
+    activated = models.BooleanField(default=False)
+    audit_id = models.UUIDField(null=True, blank=False)
+
+    def __str__(self):
+        return f"File id: {self.id}"
+
 class AUDITFILE(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    FILE_NAME = models.CharField(max_length=1000,blank=True,null=True)
+    file_name = models.CharField(max_length=1000,blank=True,null=True)
     STATUS = models.CharField(max_length=100,blank=True,null=True)
     CURRENTLY_WITH = models.CharField(max_length=100,blank=True,null=True)
     FOLDER_NAME = models.CharField(max_length=1000,blank=True,null=True)
     AUDIT_ID = models.CharField(max_length=100,blank = True, null=True)
+    DATE_SENT = models.DateTimeField(null=True,blank=True)
     #LOG
     CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
     CREATED_ON = models.DateField(auto_now_add=True, null=True,blank=True)
@@ -203,20 +219,7 @@ class AUDITNOTESREPLY(models.Model):
         managed = True
         db_table = 'AUDITNOTESREPLY'
 
-def workpaper_upload_to(instance, filename):
-    # Assuming instance has an audit_id attribute
-    audit_id = instance.audit_id
-    return f'workpapers/{audit_id}/{filename}'
 
-class WORKPAPER_UPLOAD(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    file_name = models.FileField(upload_to=workpaper_upload_to)
-    upload_date = models.DateTimeField(auto_now_add=True)
-    activated = models.BooleanField(default=False)
-    audit_id = models.UUIDField(null=True, blank=False)
-
-    def __str__(self):
-        return f"File id: {self.id}"
 
 class AUDITLIST(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

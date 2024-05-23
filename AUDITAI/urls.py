@@ -14,6 +14,7 @@ urlpatterns = [
     path('verify/<str:uidb64>/<str:token>/', email_verification_view, name='email_verification'),
     path('verification-success/<str:uidb64>/<str:token>/', verification_success_view, name='verification_success'), 
     path('verification-error/', verification_error_view, name='verification_error'), 
+    
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

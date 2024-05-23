@@ -35,6 +35,7 @@
 </ul>
 
 <div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
+
     <div class="tab-pane fade show active" id="pills-myqueue" role="tabpanel" aria-labelledby="pills-myqueue-tab">
         <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
         style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
@@ -46,34 +47,52 @@
                 <th style="text-align:left;">File Name</th>
                 <th style="text-align:left;">Status</th>
                 <th style="text-align:left;">Currently With</th>
-                <th style="text-align:left;">Aging</th>
+                <th style="text-align:left;">Aging (days)</th>
                 <th style="text-align:left;"></i>Open Notes<i class="fa-solid fa-comment-dots" style="color:orange;font-size:14px;margin-left:5px"></i></th>
                 <th style="text-align:left;"></i>Closed Notes <i class="fa-solid fa-comment-dots" style="color:green;margin-left:5px;"></i></th>
                 <th style="text-align:left;">Preparer</th>
                 <th style="text-align:left;">Reviewer</th>
-                <th style="text-align:left;"></th>
+                <th></th>
             </tr>
         </thead>
         <tbody style="font-size:13px">
-            {% for user in users %}
+            {% for doc in planning_docs %}
             <tr style="vertical-align: middle;">
                 <td>
                     <input type="checkbox" id="user_checkbox"
                         name="user_checkbox" value="{{ user.id }}">
                 </td>
-                <td style="width:15%">{{ user.username }}</td>
-                <td style="width:20%">{{ user.email }}</td>
-                <td style="width:20%">{{ user.email }}</td>
-                <td style="width:15%">{{ user.first_name }}</td>
-                <td style="width:15%">{{ user.last_name }}</td>
-                <td style="width:15%">{% if user.is_active %}Active{% else %}Inactive{% endif %}</td>
-                <td style="width:15%">{{ user.last_login|default:"Never" }}</td>
-                <td class="text-end">
-                    <a href="{% url 'appAUDITAI:manage-user-roles-details' user.id %}" data-process-id="{{user.USER_ID}}" class="btn btn-outline-secondary btn-sm"
-                        data-toggle="tooltip" data-placement="top" title="View Record">
-                        <i class="fa-solid fa-arrows-to-dot"></i>
-                    </a>
+                <td style="width:15%"><a href="{% url 'appAUDITAI:download_file' doc.id %}">{{ doc.file_name }}</a></td>
+                <td style="width:15%">{{ doc.STATUS }}</td>
+                <td style="width:15%">{{ doc.initials }}</td>
+                <td style="width:15%">
+                {% if doc.days_difference <= 0 %}
+                    0
+                {% else %}
+                    {{ doc.days_difference }}
+                {% endif %}</td>
+                <td style="width:15%">
+                
+                {% if doc.open_notes_count <= 0 %}
+                    -
+                {% else %}
+                    {{ doc.open_notes_count }}
+                {% endif %}</td>
+                
                 </td>
+                <td style="width:15%">
+                
+                    {% if doc.closed_notes_count <= 0 %}
+                        -
+                    {% else %}
+                        {{ doc.closed_notes_count }}
+                    {% endif %}</td>
+                    
+                    </td>
+                <td style="width:15%"></td>
+                <td style="width:15%"></td>
+                <td></td>
+                
             </tr>
             {% endfor %}
         </tbody>

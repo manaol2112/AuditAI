@@ -141,6 +141,7 @@ path("error/needed-permission-not-found/",utils.no_permission.as_view(),name="no
 
 #AUDIT URLS
 
+path('download/<uuid:planning_docs>/', auditview.download_file, name='download_file'),
 
 ]
 

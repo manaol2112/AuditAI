@@ -1,0 +1,143 @@
+{% extends 'base/base-auditor.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/audit.css' %}" />
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+
+<div class="card">
+    <div class="card-body">
+
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}"
+                        style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:risk-and-controls'%}"
+                        style="text-decoration:none;color:#474b4d">Risk and Controls</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Controls</a></li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fa-solid fa-shield-heart"
+                            style="margin-right: 10px;color:#474b4d"></span>Controls</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Audit..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="offcanvas"
+                        data-bs-target="#risk_create_canvas" aria-expanded="false" style="height:35px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px;margin-bottom:20px;">
+            <p style="font-size:13px">Manage, create, and map controls</p>
+        </div>
+
+        <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+        style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+        <thead style="padding-top:12px;text-align:center">
+            <tr
+                style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                <th style="text-align:left;">
+                    <input type="checkbox" id="select-all-checkbox">
+                <th style="text-align:left;">Control ID</th>
+                <th style="text-align:left;">Control Description</th>
+                <th style="text-align:left;">Control Type</th>
+            </tr>
+        </thead>
+        <tbody style="font-size:13px">
+            {% for control in control_list %}
+            <tr style="vertical-align: middle;">
+                <td>
+                    <input type="checkbox" id="user_checkbox"
+                        name="user_checkbox" value="{{ risk.id }}">
+                </td>
+                <td style="width:10%;font-size:12px;" ><a href="">{{ control.CONTROL_ID }}</a></td>
+                <td style="width:60%;font-size:12px;">{{ control.CONTROL_DESCRIPTION }}</td>
+                <td style="width:30%;font-size:12px;">{{ control.CONTROL_TYPE }}</td>
+              
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+    </div>
+</div>
+
+<form id="create_risk_form" action="" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="create_risk_form">
+    {% csrf_token %}
+
+    <div class="offcanvas offcanvas-end" tabindex="-1" id="risk_create_canvas" aria-labelledby="risk_create_canvas" style="margin-top:40px;">
+        <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
+            <h6 class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-plus" style="margin-right:5px;"></i>Create Control</h6>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
+        </div>
+            <div class="offcanvas-body">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;"
+                            class="col-form-label">Control ID:</label>
+                    </div>
+                    <div class="col-auto">
+                        <input class="form-control sm" id="control_id" name="control_id" type="text"
+                        style="font-size:12px;width:250px;" placeholder="Enter Control ID" autocomplete="off" required
+                        value="">
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;"
+                            class="col-form-label">Description:</label>
+                    </div>
+                    <div class="col-auto">
+                        <textarea class="form-control" style="font-size:12px;width:250px;resize:none" id="control_description"  name="control_description"
+                        rows="4" placeholder="Enter Control Description"  required></textarea>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;"
+                            class="col-form-label">Control Type:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" style="font-size:12px;width:250px;" id="control_template" name="control_template" required>
+                            <option selected disabled>Select Control Type</option>
+                            <option value="IT">IT Control</option>
+                            <option value="Business">Business Control</option>
+                            <option value="Other">Other Control</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-top:20px;">
+                    <button type="submit" class="btn btn-primary btn-sm" style="width:80px;" type="button">Save</button>
+                </div>
+            </div>
+    </div>
+
+ 
+</form>
+<script src="{% static 'js/select.js' %}"></script>
+
+{% endblock content %}

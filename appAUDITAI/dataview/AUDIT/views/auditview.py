@@ -16,12 +16,75 @@ from datetime import datetime
 from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.files.storage import default_storage
+from django.http import FileResponse
 
 class RiskAndControls(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-risk-and-controls.html'
 
     def get(self,request):
         return render(request, self.template_name)
+    
+class CreateRisk(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-create-risk.html'
+
+    def get(self,request):
+
+        try:
+            risk_list = RISKLIST.objects.all()
+        except RISKLIST.DoesNotExist:
+            risk_list = None
+
+        context = {'risk_list':risk_list}
+        return render(request, self.template_name,context)
+    
+    def post(self, request):
+
+        risk_id = request.POST.get('risk_id')
+        risk_description = request.POST.get('risk_description')
+        risk_template = request.POST.get('risk_template')
+
+        create_risk,created = RISKLIST.objects.update_or_create(RISK_ID = risk_id)
+        create_risk.RISK_DESCRIPTION = risk_description
+        create_risk.RISK_TYPE = risk_template
+        create_risk.save()
+
+        try:
+            risk_list = RISKLIST.objects.all()
+        except RISKLIST.DoesNotExist:
+            risk_list = None
+
+        context = {'risk_list':risk_list}
+
+        return render(request, self.template_name,context)
+    
+class CreateControl(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-create-control.html'
+
+    def get(self,request):
+
+        try:
+            control_list = CONTROLLIST.objects.all()
+        except CONTROLLIST.DoesNotExist:
+            control_list = None
+        context = {'control_list':control_list}
+
+        return render(request, self.template_name,context)
+    
+    def post(self, request):
+
+        control_id = request.POST.get('control_id')
+        control_description = request.POST.get('control_description')
+        control_template = request.POST.get('control_template')
+
+        create_risk,created = CONTROLLIST.objects.update_or_create(CONTROL_ID = control_id)
+        create_risk.CONTROL_DESCRIPTION = control_description
+        create_risk.CONTROL_TYPE = control_template
+        create_risk.save()
+
+        control_list = CONTROLLIST.objects.all()
+        context = {'control_list':control_list}
+
+        return render(request, self.template_name,context)
     
 class RiskAssessment(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-risk-assessment.html'
@@ -44,7 +107,6 @@ class RiskAssessment(AuditorPermissionMixin,View):
     
 class AuditPerApp(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-details.html'
-    
 
     def get(self,request,comp_id,audit_id, app_id):
         user = request.user
@@ -64,9 +126,56 @@ class AuditPerApp(AuditorPermissionMixin,View):
             audit_name = None
 
         try:
-            planning_docs = AUDITFILE.objects.filter(AUDIT_ID = audit_id, CURRENTLY_WITH = user.email, FOLDER_NAME = 'Planning')
+            risk_general = RISKGENERAL.objects.get(APP_NAME = selected_app)
+        except RISKGENERAL.DoesNotExist:
+            risk_general = None
+
+        try:
+            app = APP_LIST.objects.get(id = app_id)
+            risk_list = RISKLIST.objects.filter(RISK_TYPE = risk_general.RISK_TYPE)
+            risks_with_ratings = []
+            for risk in risk_list:
+                rate = RISKRATING.objects.filter(APP_NAME=app, RISK_ID=risk).first()  # Use .first() to get a single rating
+                risk.rate = rate.RATING if rate else 'N/A'  # Assuming 'RATING' is the field that stores the rating value
+                # Count the number of control mappings for this risk
+                control_mapped_count = RISKMAPPING.objects.filter(APP_NAME=app, RISK_ID=risk).count()
+                risk.control_mapped_count = control_mapped_count
+
+                risks_with_ratings.append(risk)
+
+        except RISKLIST.DoesNotExist:
+            risk_list = None
+
+        try:
+            applicable_risk = RISKRATING.objects.filter(APP_NAME=app_id).exclude(RATING='N/A').order_by('RISK_ID')   
+        except RISKRATING.DoesNotExist:
+            applicable_risk = None
+
+        try:
+            control_list = CONTROLLIST.objects.all()
+        except CONTROLLIST.DoesNotExist:
+            control_list = None
+
+        try:
+            mapped_controls = RISKMAPPING.objects.filter(APP_NAME = app_id)
+        except RISKMAPPING.DoesNotExist:
+            mapped_controls = None
+
+        unmapped_controls = {}
+
+        if control_list is not None and mapped_controls is not None:
+            # Extract control IDs from mapped_controls
+            mapped_control_ids = set(mapped_controls.values_list('CONTROL_ID', flat=True))
+            
+            # Create a dictionary of unmapped controls
+            for control in control_list:
+                if control.id not in mapped_control_ids:
+                    unmapped_controls[control.id] = control
+        
+        try:
+            planning_docs_all = AUDITFILE.objects.filter(AUDIT_ID = audit_id, FOLDER_NAME = 'Planning')
             today = datetime.now().date()
-            for doc in planning_docs:
+            for doc in planning_docs_all:
                 date_sent = doc.DATE_SENT.date()
                 doc.days_difference = (today - date_sent).days
                 
@@ -88,16 +197,82 @@ class AuditPerApp(AuditorPermissionMixin,View):
                 else:
                     pass
 
-                try:
-                    file_id = WORKPAPER_UPLOAD.objects.get(id = doc)
-                    doc.file_id = file_id
-                    print('This is the file_id' + str(doc.file_id))
-                except Exception:
-                    file_id = None
-                    print('File_id not found')
+                workpaper_upload = doc.workpaper_upload
+                if workpaper_upload:
+                    doc.workpaper_upload_id = workpaper_upload.id
+                else:
+                    pass
 
         except AUDITFILE.DoesNotExist:
             docs = None
+
+
+        try:
+            planning_docs_me = planning_docs_all.filter(CURRENTLY_WITH=user.email) if planning_docs_all else None
+            for doc in planning_docs_me:
+                    date_sent = doc.DATE_SENT.date()
+                    doc.days_difference = (today - date_sent).days
+                    
+                    open_notes_count = AUDITNOTES.objects.filter(FILE_NAME=doc, STATUS='Open').count()
+                    doc.open_notes_count = open_notes_count
+
+                    closed_notes_count = AUDITNOTES.objects.filter(FILE_NAME=doc, STATUS='Closed').count()
+                    doc.closed_notes_count = closed_notes_count
+
+                    try:
+                        user = User.objects.get(email=doc.CURRENTLY_WITH)
+                    except MultipleObjectsReturned:
+                        # If multiple users are returned, get the first one
+                        user = User.objects.filter(email=doc.CURRENTLY_WITH).first()
+
+                    if user:
+                        intials = user.first_name[0] + user.last_name[0]
+                        doc.initials = intials
+                    else:
+                        pass
+
+                    workpaper_upload = doc.workpaper_upload
+                    if workpaper_upload:
+                        doc.workpaper_upload_id = workpaper_upload.id
+                    else:
+                        pass
+
+        except Exception as e:
+             docs = None
+             pass
+        try:
+            workpaper_docs_all = AUDITFILE.objects.filter(AUDIT_ID = audit_id, FOLDER_NAME = 'Workpapers')
+            for doc in workpaper_docs_all:
+                if doc.DATE_SENT:
+                    date_sent = doc.DATE_SENT.date()
+                    doc.days_difference = (today - date_sent).days
+                
+                open_notes_count = AUDITNOTES.objects.filter(FILE_NAME=doc, STATUS='Open').count()
+                doc.open_notes_count = open_notes_count
+
+                closed_notes_count = AUDITNOTES.objects.filter(FILE_NAME=doc, STATUS='Closed').count()
+                doc.closed_notes_count = closed_notes_count
+
+                try:
+                    user = User.objects.get(email=doc.CURRENTLY_WITH)
+                except MultipleObjectsReturned:
+                    # If multiple users are returned, get the first one
+                    user = User.objects.filter(email=doc.CURRENTLY_WITH).first()
+                except User.DoesNotExist:
+                    user = None
+                    pass
+
+                if user:
+                    intials = user.first_name[0] + user.last_name[0]
+                    doc.initials = intials
+                else:
+                    pass
+        except AUDITFILE.DoesNotExist:
+            docs = None
+
+        user = request.user
+        workpaper_doc_with_me = workpaper_docs_all.filter(CURRENTLY_WITH=user.email) if workpaper_docs_all else None
+
 
         context = {
             'comp_id':comp_id,
@@ -106,22 +281,33 @@ class AuditPerApp(AuditorPermissionMixin,View):
             'selected_app':selected_app,
             'audit_name':audit_name,
             'apps':apps,
-            'planning_docs':planning_docs,
-
+            'planning_docs_all':planning_docs_all,
+            'planning_docs_me':planning_docs_me,
+            'risk_general':risk_general,
+            'risk_list':risk_list,
+            'applicable_risk':applicable_risk,
+            'control_list':control_list,
+            'mapped_controls':mapped_controls,
+            'unmapped_controls':unmapped_controls,
+            'workpaper_docs_all':workpaper_docs_all,
+            'workpaper_doc_with_me':workpaper_doc_with_me
         }
         return render(request,self.template_name,context)
     
-def download_file(request, planning_docs):
-    workpaper = get_object_or_404(WORKPAPER_UPLOAD, file_name=planning_docs)
+
+def download_file(request, id):
+    workpaper = get_object_or_404(WORKPAPER_UPLOAD, id=id)
     file_path = workpaper.file_name.path
+    file_name = os.path.basename(file_path)  # Get the original file name
 
     try:
-        with open(file_path, 'rb') as f:
-            response = HttpResponse(f.read(), content_type='application/octet-stream')
-            response['Content-Disposition'] = f'attachment; filename="{workpaper.file_name.name}"'
-            return response
+        response = FileResponse(open(file_path, 'rb'), content_type='application/octet-stream')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
+        return response
     except Exception as e:
+        # Handle the exception
         pass
+
     
 class AuditPlanningDocs(AuditPerApp):
     template_name = 'pages/AUDIT/audit-planning.html'
@@ -137,7 +323,7 @@ class AuditPlanningDocs(AuditPerApp):
         user = request.user
         if form.is_valid():
             workpaper_upload = form.save(commit=False)
-            workpaper_upload.audit_id = audit_id 
+            workpaper_upload.audit_id = audit_id
             workpaper_upload.save()
 
         uploaded_file = form.cleaned_data['file_name'].name
@@ -149,6 +335,7 @@ class AuditPlanningDocs(AuditPerApp):
             planning_doc.CURRENTLY_WITH = user.email
             planning_doc.FOLDER_NAME = 'Planning'
             planning_doc.DATE_SENT = timezone.now()
+            planning_doc.workpaper_upload = workpaper_upload
 
             if created:
                 planning_doc.CREATED_BY = user.email
@@ -167,11 +354,87 @@ class AuditRiskMapping(AuditPerApp):
     template_name = 'pages/AUDIT/audit-risk-mapping.html'
 
     def get(self, request, comp_id, audit_id, app_id):
-        # Call the parent class's get method to retain its functionality and context
         response = super().get(request, comp_id, audit_id, app_id)
+        return response
+    
+    def post(self,request, comp_id, audit_id, app_id ):
 
-        # Additional logic for AuditPlanningDocs if needed
+        form_id = request.POST.get('form_id')
 
+        if form_id == 'risk_form_general':
+            risk_rating = request.POST.get('risk_rating_general')
+            risk_rationale = request.POST.get('risk_rationale')
+            risk_template = request.POST.get('risk_template')
+
+            selected_app = APP_LIST.objects.get(id = app_id)
+            risk_name = 'RFA - ' + str(selected_app.APP_NAME)
+            risk_details, created = RISKGENERAL.objects.update_or_create(APP_NAME = selected_app, RISK_NAME = risk_name)
+            risk_details.RISK_RATING = risk_rating
+            risk_details.RISK_RATIONALE = risk_rationale
+            risk_details.RISK_TYPE = risk_template
+            risk_details.save()
+
+        elif form_id == 'risk_rating_form':
+            counter = 1
+            
+            while f'risk_id_{counter}' in request.POST:
+
+                risk_id = request.POST.get(f'risk_id_{counter}')
+                risk_description = request.POST.get(f'risk_description_{counter}')
+                risk_type = request.POST.get(f'risk_type_{counter}')
+                risk_rating = request.POST.get(f'risk_rating_{counter}')
+
+                try:
+                    risk_id = RISKLIST.objects.get(id = risk_id)
+                    app = APP_LIST.objects.get(id = app_id)
+
+                    risk_rate, created = RISKRATING.objects.update_or_create(APP_NAME = app, RISK_ID = risk_id)
+                    risk_rate.RATING = risk_rating
+                    risk_rate.save()
+
+                except RISKRATING.DoesNotExist:
+                    risk_rate = None
+                except RISKLIST.DoesNotExist:
+                    pass
+                except APP_LIST.DoesNotExist:
+                    pass
+                counter += 1
+
+        else:
+            user = request.user
+            risk_id = request.POST.get('risk_id')
+            control_ids = request.POST.getlist('assigned_controls[]')
+            
+            try:
+                app = APP_LIST.objects.get(id = app_id)
+            except APP_LIST.DoesNotExist:
+                app = None
+
+            try:
+                risk = RISKRATING.objects.get(RISK_ID = risk_id, APP_NAME = app)
+            except RISKRATING.DoesNotExist:
+                risk = None
+
+            if control_ids:
+                for control in control_ids:
+                    control_to_map = CONTROLLIST.objects.get(id = control)          
+                    risk_control_mapping,created = RISKMAPPING.objects.update_or_create(CONTROL_ID = control_to_map, RISK_ID = risk.RISK_ID, APP_NAME = app)
+                    risk_control_mapping.save()
+
+                    workpaper_name = RISKMAPPING.objects.filter(CONTROL_ID = control).distinct()
+                    for workpaper in workpaper_name:
+                        workpapers, created = AUDITFILE.objects.update_or_create(AUDIT_ID = audit_id, file_name = workpaper.CONTROL_ID.CONTROL_ID)
+                        workpapers.STATUS = 'Not Started'
+                        workpapers.FOLDER_NAME = 'Workpapers'
+                        if created:
+                            workpapers.CREATED_BY = user.email
+                            workpapers.CREATED_ON = timezone.now()
+                        else:
+                            workpapers.MODIFIED_BY = user.email
+                            workpapers.LAST_MODIFIED = timezone.now()
+                        workpapers.save()
+
+        response = super().get(request, comp_id, audit_id, app_id)
         return response
     
 class AuditWorkpapers(AuditPerApp):
@@ -184,6 +447,40 @@ class AuditWorkpapers(AuditPerApp):
         # Additional logic for AuditPlanningDocs if needed
 
         return response
+    
+class AuditWorkpapersDetails(AuditPerApp):
+    template_name = 'pages/AUDIT/audit-workpaper-details.html'
+
+    def get(self, request, comp_id, audit_id, app_id, control_id):
+        user = request.user
+        try:
+            apps = APP_LIST.objects.filter(COMPANY_ID = comp_id)
+        except APP_LIST.DoesNotExist:
+            apps = None
+
+        try:
+            selected_app = APP_LIST.objects.get(id = app_id)
+        except APP_LIST.DoesNotExist:
+            selected_app = None
+
+        try:
+            control_name = AUDITFILE.objects.get(id = control_id)
+            control_details = CONTROLLIST.objects.get(CONTROL_ID = control_name.file_name)
+            print(control_details.CONTROL_ID)
+        except AUDITFILE.DoesNotExist:
+            control_name = None
+
+        context = {
+            'comp_id':comp_id,
+            'audit_id':audit_id,
+            'app_id':app_id,
+            'control_id':control_id,
+            'apps':apps,
+            'selected_app':selected_app,
+            'control_name':control_name,
+            'control_details':control_details
+        }
+        return render(request, self.template_name, context)
     
 class AuditDeficiencies(AuditPerApp):
     template_name = 'pages/AUDIT/audit-deficiencies.html'
@@ -267,7 +564,6 @@ class ManageAuditPeriod(AuditorPermissionMixin,View):
         audit_date = request.POST.get('audit_period')
         audit_status = request.POST.get('audit_status')
         audit_date = datetime.strptime(audit_date, '%Y-%m-%d')
-        print(audit_date)
         try:
             company = COMPANY.objects.get(COMPANY_NAME=company_name)
         except COMPANY.DoesNotExist:

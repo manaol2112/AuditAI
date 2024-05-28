@@ -63,7 +63,7 @@
   border-radius: 5px 5px 0 0;
   top: 40px;
   left: 0;
-  margin-left: -40px;
+  margin-left: -36px;
   
   background: rgba(51, 122, 183, 0.09);
   transform: rotate(-90deg);
@@ -92,4 +92,22 @@
   left: 0;
   bottom: -1px;
   border-radius: 5px 5px 0 0;
+}
+
+.accordion-button:not(.collapsed),
+.accordion-button:focus {
+  outline: none;
+  border-color: transparent;
+  box-shadow: none;
+  background-color: transparent;
+}
+.accordion-button::after {
+  width: 11px;
+  height: 11px;
+  border-radius: 100%;
+  background-color: var(--bs-primary);
+  background-image: none !important;
+}
+.accordion-button.collapsed::after {
+  background-color: var(--bs-gray-300);
 }

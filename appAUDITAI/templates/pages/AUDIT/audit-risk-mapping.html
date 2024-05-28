@@ -3,92 +3,376 @@
 
 {% block auditcontent %}
 
+<link rel="stylesheet" href="{% static 'css/audit.css' %}" />
+<link rel="stylesheet" href="{% static 'css/dragndrop.css' %}" />
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select.css' %}">
+
 <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" style="font-size:16px;">Risk Assessment</a>
     <form class="d-flex">
-
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-target="#newAppModal"
-            aria-expanded="false" style="height:35px;margin-right:5px;" title="Add Filter">
-            <i class="fas fa-filter"></i>
-        </button>
-    
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-target="#newAppModal"
-            aria-expanded="false" style="height:35px;" title="Add New Document">
-            <i class="fas fa-plus"></i>
-        </button>
-    
     </form>
     </div>
   </nav>
 
-<ul class="nav nav-pills mb-3 border-bottom border-2" style="margin-top:20px;" id="pills-tab" role="tablist">
-    <li class="nav-item" role="presentation">
-      <button class="nav-link fw-semibold active position-relative" style="color:#474b4d;font-size:14px" id="pills-myqueue-tab" data-bs-toggle="pill" data-bs-target="#pills-myqueue" type="button" role="tab" aria-controls="pills-myqueue" aria-selected="true">In My Queue</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-upcoming-tab" data-bs-toggle="pill" data-bs-target="#pills-upcoming" type="button" role="tab" aria-controls="pills-upcoming" aria-selected="false">Upcoming Review</button>
-    </li>
-    <li class="nav-item" role="presentation">
-      <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-signedoff-tab" data-bs-toggle="pill" data-bs-target="#pills-signedoff" type="button" role="tab" aria-controls="pills-signedoff" aria-selected="false">Signed-off</button>
-    </li>
-</ul>
+    <ul class="nav nav-pills mb-3 border-bottom border-2" style="margin-top:20px;" id="pills-tab" role="tablist">
+        <li class="nav-item" role="presentation">
+          <button class="nav-link fw-semibold active position-relative" style="color:#474b4d;font-size:14px" id="pills-general-tab" data-bs-toggle="pill" data-bs-target="#pills-general" type="button" role="tab" aria-controls="pills-general" aria-selected="true">General</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-risks-tab" data-bs-toggle="pill" data-bs-target="#pills-risks" type="button" role="tab" aria-controls="pills-risks" aria-selected="false">Risks</button>
+        </li>
+        <li class="nav-item" role="presentation">
+          <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-controls-tab" data-bs-toggle="pill" data-bs-target="#pills-controls" type="button" role="tab" aria-controls="pills-controls" aria-selected="false">Controls</button>
+        </li>
+    </ul>
 
-<div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
-    <div class="tab-pane fade show active" id="pills-myqueue" role="tabpanel" aria-labelledby="pills-myqueue-tab">
-        <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
-        style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
-        <thead style="padding-top:12px;text-align:center">
-            <tr
-                style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
-                <th style="text-align:left;">
-                    <input type="checkbox" id="select-all-checkbox">
-                <th style="text-align:left;">File Name</th>
-                <th style="text-align:left;">Status</th>
-                <th style="text-align:left;">Currently With</th>
-                <th style="text-align:left;">Aging</th>
-                <th style="text-align:left;"></i>Open Notes<i class="fa-solid fa-comment-dots" style="color:orange;font-size:14px;margin-left:5px"></i></th>
-                <th style="text-align:left;"></i>Closed Notes <i class="fa-solid fa-comment-dots" style="color:green;margin-left:5px;"></i></th>
-                <th style="text-align:left;">Preparer</th>
-                <th style="text-align:left;">Reviewer</th>
-                <th style="text-align:left;"></th>
-            </tr>
-        </thead>
-        <tbody style="font-size:13px">
-            {% for user in users %}
-            <tr style="vertical-align: middle;">
-                <td>
-                    <input type="checkbox" id="user_checkbox"
-                        name="user_checkbox" value="{{ user.id }}">
-                </td>
-                <td style="width:15%">{{ user.username }}</td>
-                <td style="width:20%">{{ user.email }}</td>
-                <td style="width:20%">{{ user.email }}</td>
-                <td style="width:15%">{{ user.first_name }}</td>
-                <td style="width:15%">{{ user.last_name }}</td>
-                <td style="width:15%">{% if user.is_active %}Active{% else %}Inactive{% endif %}</td>
-                <td style="width:15%">{{ user.last_login|default:"Never" }}</td>
-                <td class="text-end">
-                    <a href="{% url 'appAUDITAI:manage-user-roles-details' user.id %}" data-process-id="{{user.USER_ID}}" class="btn btn-outline-secondary btn-sm"
-                        data-toggle="tooltip" data-placement="top" title="View Record">
-                        <i class="fa-solid fa-arrows-to-dot"></i>
-                    </a>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        </table>
+        <div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
+       
+                <div class="tab-pane fade show active" id="pills-general" role="tabpanel" aria-labelledby="pills-general-tab">
+                    <form id="risk_form_general" action="" method="post" enctype="multipart/form-data">
+                        <input type="hidden" name="form_id" value="risk_form_general">
+                        {% csrf_token %}
+                    <div class="row g-3 align-items-center">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 150px;" class="col-form-label">Application Name:</label>
+                        </div>
+                        <div class="col-auto">
+                            <input class="form-control sm" id="selected_app" name="selected_app" type="text"
+                                style="font-size:12px;width:430px;" autocomplete="off" required readonly
+                                value="{{selected_app.APP_NAME}}">
+                        </div>
+                    </div>
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 150px;" class="col-form-label">Overall Risk Rating:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select" style="font-size:12px;width:430px;" id="risk_rating_general"
+                                name="risk_rating_general" aria-label="Default select example">
+                                {% if risk_general.RISK_RATING == 'High' %}
+                                <option selected="risk_general.RISK_RATING">{{risk_general.RISK_RATING}}</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                                {% elif risk_general.RISK_RATING == 'Medium' %}
+                                <option selected="risk_general.RISK_RATING">{{risk_general.RISK_RATING}}</option>
+                                <option value="High">High</option>
+                                <option value="Low">Low</option>
+                                {% elif risk_general.RISK_RATING == 'Low' %}
+                                <option selected="risk_general.RISK_RATING">{{risk_general.RISK_RATING}}</option>
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                {% else %}
+                                <option value="High">High</option>
+                                <option value="Medium">Medium</option>
+                                <option value="Low">Low</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
         
-    </div>
-    <div class="tab-pane fade show" id="pills-upcoming" role="tabpanel" aria-labelledby="pills-upcoming-tab">
-        <h2>Home</h2>
-        <p>Please check our more design @ <a target="_blank" href="https://codepen.io/Gaurav-Rana-the-reactor">Upcoming</a></p>
-    </div>
-    <div class="tab-pane fade show" id="pills-signedoff" role="tabpanel" aria-labelledby="pills-signedoff-tab">
-        <h2>Home</h2>
-        <p>Please check our more design @ <a target="_blank" href="https://codepen.io/Gaurav-Rana-the-reactor">Signed-Off</a></p>
-    </div>
-</div>
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 150px;" class="col-form-label">Risk Rationale:</label>
+                        </div>
+                        <div class="col-auto">
+                            <textarea class="form-control" style="font-size:12px;width:430px;resize:none" id="risk_rationale"
+                                name="risk_rationale" rows="8"
+                                placeholder="Provide a brief summary on how you came up with the Risk Rating"
+                                required>{{risk_general.RISK_RATIONALE}}</textarea>
+                        </div>
+                    </div>
+        
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 150px;" class="col-form-label">Risk Template:</label>
+                        </div>
+                        <div class="col-auto">
+                            <select class="form-select" style="font-size:12px;width:430px;" id="risk_template"
+                                name="risk_template" required>
+                                {% if risk_general.RISK_TYPE == "IT" %}
+                                <option disabled>Select Risk Template</option>
+                                <option selected value="IT">IT Risk</option>
+                                <option value="Business">Business Risk</option>
+                                <option value="Other">Other Risk</option>
+                                {% elif risk_general.RISK_TYPE == "Business" %}
+                                <option disabled>Select Risk Template</option>
+                                <option value="IT">IT Risk</option>
+                                <option selected value="Business">Business Risk</option>
+                                <option value="Other">Other Risk</option>
+                                {% elif risk_general.RISK_TYPE == "Other" %}
+                                <option disabled>Select Risk Template</option>
+                                <option value="IT">IT Risk</option>
+                                <option value="Business">Business Risk</option>
+                                <option selected value="Other">Other Risk</option>
+                                {% else %}
+                                <option selected disabled>Select Risk Template</option>
+                                <option value="IT">IT Risk</option>
+                                <option value="Business">Business Risk</option>
+                                <option value="Other">Other Risk</option>
+                                {% endif %}
+                            </select>
+                        </div>
+                    </div>
+        
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                        <button type="submit" id="submit_risk_form" class="btn btn-primary btn-sm" style="width:80px;"
+                            type="button">Save</button>
+                    </div>
+                </form>
+                </div>
+           
+            <div class="tab-pane fade show " id="pills-risks" role="tabpanel" aria-labelledby="pills-risks-tab">
+                <form id="risk_rating_form" action="" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="form_id" value="risk_rating_form">
+                    {% csrf_token %}
+                {% if risk_general.RISK_TYPE %}
+                <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:10px;">
+                    <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap">
+                    <thead style="padding-top:12px;text-align:center">
+                        <tr
+                            style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                            <th style="text-align:left;">Risk ID</th>
+                            <th style="text-align:left;">Risk Description</th>
+                            <th style="text-align:left;">Risk Template</th>
+                            <th style="text-align:left;">Risk Rating</th>
+                            <th style="text-align:left;">Controls Mapped</th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size:13px">
+                        {% for risk in risk_list %}
+                        <tr style="vertical-align: middle;">
+                            <td style="width:5%;font-size:12px;">
+                                <input type="hidden" name="risk_id_{{ forloop.counter }}" value="{{ risk.id }}">
+                                {{ risk.RISK_ID }}
+                            </td>
+                            <td style="width:40%;font-size:12px;">
+                                <input type="hidden" name="risk_description_{{ forloop.counter }}" value="{{ risk.RISK_DESCRIPTION }}">
+                                {{ risk.RISK_DESCRIPTION }}
+                            </td>
+                            <td style="width:15%;font-size:12px;">
+                                <input type="hidden" name="risk_type_{{ forloop.counter }}" value="{{ risk.RISK_TYPE }}">
+                                {{ risk.RISK_TYPE }}
+                            </td>
+                            <td style="width:30%;font-size:12px;">
+                                <select class="form-select" name="risk_rating_{{ forloop.counter }}" style="font-size:12px;" required>
+                                    
+                                    {%if risk.rate == "N/A" %}
+                                    <option disabled ></option>
+                                    <option selected value="N/A">N/A</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                    {%elif risk.rate == "Low" %}
+                                    <option disabled ></option>
+                                    <option  value="N/A">N/A</option>
+                                    <option selected value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                    {%elif risk.rate == "Medium" %}
+                                    <option disabled ></option>
+                                    <option  value="N/A">N/A</option>
+                                    <option  value="Low">Low</option>
+                                    <option selected value="Medium">Medium</option>
+                                    <option  value="High">High</option>
+                                    {%elif risk.rate == "High" %}
+                                    <option disabled ></option>
+                                    <option  value="N/A">N/A</option>
+                                    <option  value="Low">Low</option>
+                                    <option  value="Medium">Medium</option>
+                                    <option selected  value="High">High</option>
+                                    {% else %}
+                                    <option disabled selected></option>
+                                    <option value="N/A">N/A</option>
+                                    <option value="Low">Low</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="High">High</option>
+                                    {% endif %}
+                                </select>
+                            </td>
+                            <td style="width:10%;font-size:12px;">
+                                {% if risk.control_mapped_count > 0 %}
+                                <i style="color:green;margin-right:5px;" class="fa-solid fa-circle-check"></i>{{risk.control_mapped_count}}
+                                {%else%}
+                                <i style="color:orange;margin-right:5px;" class="fa-solid fa-triangle-exclamation"></i>
+                                {%endif%}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    </table>
+                </div>
+                   
+                {% else %}
+                <div class="alert alert-light" role="alert">
+                    <p style="font-size:12px;">No risk template has been setup for this application yet. Please make sure to
+                        complete the requirements in General tab to proceed.</p>
+                </div>
+                {% endif %}
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button type="submit" id="submit_risk_form" class="btn btn-primary btn-sm" style="width:80px;"
+                        type="button">Save</button>
+                </div>
+                </form>
+            </div>
+          
+            <div class="tab-pane fade show" id="pills-controls" role="tabpanel" aria-labelledby="pills-controls-tab">
+
+                {% if applicable_risk %}
+                <div class="bg-light">
+                    <div class="accordion accordion-flush" id="risk_mapped">
+                        {% for risk_rating in applicable_risk %}
+                        {% with risk=risk_rating.RISK_ID %}
+                            <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                                <h2 class="accordion-header">
+                                    <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                                            type="button" data-bs-toggle="collapse" data-bs-target="#flush-collapse{{ forloop.counter }}"
+                                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                                        
+                                        {{ risk.RISK_ID }}: {{ risk.RISK_DESCRIPTION }} 
+                                     
+                                    </button>
+                                </h2>
+                                <div id="flush-collapse{{ forloop.counter }}" class="accordion-collapse collapse"
+                                    data-bs-parent="#risk_mapped">
+                                    <div class="accordion-body">
+                                        <div class="card-body">
+                                            {% if mapped_controls %}
+                                            <div class="container bg-light"  style="max-width: 100%;overflow-x:auto;padding:10px;">
+                                                <p><b>Mapped Controls:</b></p>
+                                                <table id="mapped_controls_table_{{ forloop.counter }}" name="assigned_control" class="table table-hover table-sm nowrap"
+                                                    style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                                                    <thead style="padding-top:12px;text-align:center">
+                                                        <tr
+                                                            style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                                            <th style="text-align:left;">
+                                                                <input type="checkbox" id="select-all-checkbox-mapped-{{ forloop.counter }}">
+                                                            </th>
+                                                            <th style="text-align:left;">Control ID</th>
+                                                            <th style="text-align:left;">Control Description</th>
+                                                            <th style="text-align:left;">Control Type</th>
+                                                            <th style="text-align:left;">Mapping Status</th>
+                                                            <th></th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody style="font-size:13px">
+                                                        {% for control in mapped_controls %}
+                                                        {% if risk.RISK_ID == control.RISK_ID.RISK_ID %}
+                                                        <tr style="vertical-align: middle;">
+                                                            <td>
+                                                                <input type="checkbox" id="user_checkbox_mapped_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}"
+                                                                    name="assigned_controls[]" value="{{ control.id }}">
+                                                            </td>
+                                                            <td style="width:20%;font-size:12px;">{{ control.CONTROL_ID.CONTROL_ID }}</td>
+                                                            <td style="width:60%;font-size:12px;">{{ control.CONTROL_ID.CONTROL_DESCRIPTION }}</td>
+                                                            <td style="width:10%;font-size:12px;">{{ control.CONTROL_ID.CONTROL_TYPE }}</td>
+                                                            <td style="width:10%;font-size:12px;">
+                                                                <i style="color:green" class="fa-solid fa-circle-check"></i>
+                                                            </td>
+                                                            <td style="width:5%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray" class="fa-solid fa-link-slash"></i></button></td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        {% endfor %}
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            {% endif %}
+                                        </div>
+                                        <div class="container bg-light"  style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                            <p><b>Controls Library</b></p>
+                                            <div class="col-md-12">
+                                                <div class="col-md-12">
+                                                    <div class="input-group has-validation">
+                                                        <span class="input-group-text" id="inputGroupPrepend"><i class="fas fa-search"></i></span>
+                                                        <input type="text" class="form-control control-search" id="filter_assigned_group_{{ forloop.counter }}" data-target="#control_list_table_{{ forloop.counter }}" style="font-size:12px" aria-describedby="inputGroupPrepend" placeholder="Search for controls...">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="card-body" style="max-height:300px;min-height:300px;overflow-y:auto; margin-top:-30px;">
+                                                <form id="map_risk_{{ forloop.counter }}" method="post" enctype="multipart/form-data">
+                                                    <input type="hidden" name="map_controls" value="map_risk_{{ forloop.counter }}">
+                                                    <input type="hidden" name="risk_id" value="{{ risk.id }}">
+                                                    {% csrf_token %}
+                                                    <table id="control_list_table_{{ forloop.counter }}" name="assigned_control" class="table table-hover table-sm nowrap"
+                                                        style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                                                        <thead style="padding-top:12px;text-align:center">
+                                                            <tr
+                                                                style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                                                                <th style="text-align:left;">
+                                                                    <input type="checkbox" id="select-all-checkbox-controls-{{ forloop.counter }}">
+                                                                </th>
+                                                                <th style="text-align:left;">Control ID</th>
+                                                                <th style="text-align:left;">Control Description</th>
+                                                                <th style="text-align:left;">Control Type</th>
+                                                                <th style="text-align:left;">Mapping Status</th>
+                                                                <th></th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody style="font-size:13px">
+                                                            {% for control in control_list %}
+                                                            <tr style="vertical-align: middle;">
+                                                                <td>
+                                                                    <input type="checkbox" id="user_checkbox_controls_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}"
+                                                                        name="assigned_controls[]" value="{{ control.id }}">
+                                                                </td>
+                                                                <td style="width:20%;font-size:12px;">{{ control.CONTROL_ID }}</td>
+                                                                <td style="width:60%;font-size:12px;">{{ control.CONTROL_DESCRIPTION }}</td>
+                                                                <td style="width:10%;font-size:12px;">{{ control.CONTROL_TYPE }}</td>
+                                                                <td style="width:10%;font-size:12px;">
+                                                                </td>
+                                                                <td style="width:5%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray" class="fa-solid fa-link"></i></button></td>
+                                                            </tr>
+                                                            {% endfor %}
+                                                        </tbody>
+                                                    </table>
+                                                    <div class="d-grid gap-2 d-md-flex justify-content-md-start" style="margin-top:20px;">
+                                                        <button type="submit" id="submit_risk_form_{{ forloop.counter }}"
+                                                                class="btn btn-primary btn-sm">Map Controls</button>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        {% endwith %}
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            </div>
+        </div>
+    
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="{% static 'js/select.js' %}"></script>
+ 
+
+<script>
+    new MultiSelectTag('selected_app', {
+        rounded: true,
+        shadow: true,
+        placeholder: 'Select Application',
+        style: 'width: 200px !important' // Add inline style
+    })
+</script>
+
+<script>
+    $(document).ready(function() {
+        $('.control-search').on('keyup', function() {
+            var targetTable = $(this).data('target');
+            var searchTerm = $(this).val().toLowerCase();
+            $(targetTable + ' tbody tr').each(function() {
+                var rowText = $(this).text().toLowerCase();
+                if (rowText.indexOf(searchTerm) === -1) {
+                    $(this).hide();
+                } else {
+                    $(this).show();
+                }
+            });
+        });
+    });
+    </script>
 
 
 {% endblock auditcontent %}

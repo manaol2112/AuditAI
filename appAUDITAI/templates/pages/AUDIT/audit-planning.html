@@ -24,7 +24,10 @@
 
 <ul class="nav nav-pills mb-3 border-bottom border-2" style="margin-top:20px;" id="pills-tab" role="tablist">
     <li class="nav-item" role="presentation">
-      <button class="nav-link fw-semibold active position-relative" style="color:#474b4d;font-size:14px" id="pills-myqueue-tab" data-bs-toggle="pill" data-bs-target="#pills-myqueue" type="button" role="tab" aria-controls="pills-myqueue" aria-selected="true">In My Queue</button>
+        <button class="nav-link fw-semibold active position-relative" style="color:#474b4d;font-size:14px" id="pills-all-tab" data-bs-toggle="pill" data-bs-target="#pills-all" type="button" role="tab" aria-controls="pills-all" aria-selected="true">All</button>
+      </li>
+    <li class="nav-item" role="presentation">
+      <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-myqueue-tab" data-bs-toggle="pill" data-bs-target="#pills-myqueue" type="button" role="tab" aria-controls="pills-myqueue" aria-selected="true">In My Queue</button>
     </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-upcoming-tab" data-bs-toggle="pill" data-bs-target="#pills-upcoming" type="button" role="tab" aria-controls="pills-upcoming" aria-selected="false">Upcoming Review</button>
@@ -36,7 +39,7 @@
 
 <div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
 
-    <div class="tab-pane fade show active" id="pills-myqueue" role="tabpanel" aria-labelledby="pills-myqueue-tab">
+    <div class="tab-pane fade show active " id="pills-all" role="tabpanel" aria-labelledby="pills-all-tab">
         <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
         style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
         <thead style="padding-top:12px;text-align:center">
@@ -52,26 +55,27 @@
                 <th style="text-align:left;"></i>Closed Notes <i class="fa-solid fa-comment-dots" style="color:green;margin-left:5px;"></i></th>
                 <th style="text-align:left;">Preparer</th>
                 <th style="text-align:left;">Reviewer</th>
-                <th></th>
+                <th style="text-align:left;">Send to</th>
+
             </tr>
         </thead>
         <tbody style="font-size:13px">
-            {% for doc in planning_docs %}
+            {% for doc in planning_docs_all %}
             <tr style="vertical-align: middle;">
                 <td>
                     <input type="checkbox" id="user_checkbox"
                         name="user_checkbox" value="{{ user.id }}">
                 </td>
-                <td style="width:15%"><a href="{% url 'appAUDITAI:download_file' doc.id %}">{{ doc.file_name }}</a></td>
-                <td style="width:15%">{{ doc.STATUS }}</td>
-                <td style="width:15%">{{ doc.initials }}</td>
-                <td style="width:15%">
+                <td style="width:30%;font-size:12px;" ><a href="{% url 'appAUDITAI:download_file' doc.workpaper_upload.id %}">{{ doc.file_name }}</a></td>
+                <td style="width:10%;font-size:12px;">{{ doc.STATUS }}</td>
+                <td style="width:10%;font-size:12px;">{{ doc.initials }}</td>
+                <td style="width:10%;font-size:12px;">
                 {% if doc.days_difference <= 0 %}
                     0
                 {% else %}
                     {{ doc.days_difference }}
                 {% endif %}</td>
-                <td style="width:15%">
+                <td style="width:10%">
                 
                 {% if doc.open_notes_count <= 0 %}
                     -
@@ -80,7 +84,7 @@
                 {% endif %}</td>
                 
                 </td>
-                <td style="width:15%">
+                <td style="width:10%">
                 
                     {% if doc.closed_notes_count <= 0 %}
                         -
@@ -89,10 +93,72 @@
                     {% endif %}</td>
                     
                     </td>
-                <td style="width:15%"></td>
-                <td style="width:15%"></td>
-                <td></td>
+                <td style="width:10%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray" class="fa-solid fa-signature"></i></button></td>
+                <td style="width:10%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray;" class="fa-solid fa-signature"></i></button></td>
+                <td style="width:10%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray" class="fa-regular fa-paper-plane"></i></button></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+        
+    </div>
+    <div class="tab-pane fade show " id="pills-myqueue" role="tabpanel" aria-labelledby="pills-myqueue-tab">
+        <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+        style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+        <thead style="padding-top:12px;text-align:center">
+            <tr
+                style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                <th style="text-align:left;">
+                    <input type="checkbox" id="select-all-checkbox">
+                <th style="text-align:left;">File Name</th>
+                <th style="text-align:left;">Status</th>
+                <th style="text-align:left;">Currently With</th>
+                <th style="text-align:left;">Aging (days)</th>
+                <th style="text-align:left;"></i>Open Notes<i class="fa-solid fa-comment-dots" style="color:orange;font-size:14px;margin-left:5px"></i></th>
+                <th style="text-align:left;"></i>Closed Notes <i class="fa-solid fa-comment-dots" style="color:green;margin-left:5px;"></i></th>
+                <th style="text-align:left;">Preparer</th>
+                <th style="text-align:left;">Reviewer</th>
+                <th style="text-align:left;">Send to</th>
+
+            </tr>
+        </thead>
+        <tbody style="font-size:13px">
+            {% for doc in planning_docs_me %}
+            <tr style="vertical-align: middle;">
+                <td>
+                    <input type="checkbox" id="user_checkbox"
+                        name="user_checkbox" value="{{ user.id }}">
+                </td>
+                <td style="width:30%;font-size:12px;" ><a href="{% url 'appAUDITAI:download_file' doc.workpaper_upload.id %}">{{ doc.file_name }}</a></td>
+                <td style="width:10%;font-size:12px;">{{ doc.STATUS }}</td>
+                <td style="width:10%;font-size:12px;">{{ doc.initials }}</td>
+                <td style="width:10%;font-size:12px;">
+                {% if doc.days_difference <= 0 %}
+                    0
+                {% else %}
+                    {{ doc.days_difference }}
+                {% endif %}</td>
+                <td style="width:10%">
                 
+                {% if doc.open_notes_count <= 0 %}
+                    -
+                {% else %}
+                    {{ doc.open_notes_count }}
+                {% endif %}</td>
+                
+                </td>
+                <td style="width:10%">
+                
+                    {% if doc.closed_notes_count <= 0 %}
+                        -
+                    {% else %}
+                        {{ doc.closed_notes_count }}
+                    {% endif %}</td>
+                    
+                    </td>
+                <td style="width:10%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray" class="fa-solid fa-signature"></i></button></td>
+                <td style="width:10%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray;" class="fa-solid fa-signature"></i></button></td>
+                <td style="width:10%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray" class="fa-regular fa-paper-plane"></i></button></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -132,7 +198,7 @@
                         <div class="card-body" style=" text-align: center;">
                             <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
                             <a style="font-size:16px;color:grey">Drag and
-                                drop the Planning Document here
+                                drop the Planning Document
                                 here</a>
                         </div>
                     </div>

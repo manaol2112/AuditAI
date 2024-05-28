@@ -1,0 +1,9 @@
+﻿ID,Email,First Name,Last Name,Role,Status,Date Granted,Date Removed,Last Login
+manaol2112,manaol2112@gmail.com,Robert John,Manaol,Administrator,Active,10/1/24,,11/8/24
+joannngarcia,joannarose@gmail.com,Joanna Rose,Manaol,AP MANAGER,Inactive,5/1/24,5/13/24,11/8/24
+sophiamerce_updated,sophiagmanaol@gmail.com,Sophia Merce Test,Manaol,Administrator,Inactive,11/1/24,11/13/24,11/24/24
+sophiamerce_updated,sophiagmanaol@gmail.com,Sophia Merce Test,Manaol,AP Accountant,Inactive,11/1/24,11/13/24,11/24/24
+test1234,test1234@gmail.com,Robert John,Manaol,Administrator,Active,11/1/24,,10/31/24
+eladriel123,eladriel123@gmail.com,John Eladriel,Manaol,AP Supervisor,Inactive,11/18/24,11/30/24,12/24/24
+eladriel123,eladriel123@gmail.com,John Eladriel,Manaol,Associate,Inactive,11/18/24,11/30/24,12/24/24
+test_test_test,test_test@gmail.com,test_test,TEST,Associate,Active,1/1/24,,10/31/24

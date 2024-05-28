@@ -122,16 +122,6 @@ def workpaper_upload_to(instance, filename):
     audit_id = instance.audit_id
     return f'workpapers/{audit_id}/{filename}'
 
-class WORKPAPER_UPLOAD(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    file_name = models.FileField(upload_to=workpaper_upload_to)
-    upload_date = models.DateTimeField(auto_now_add=True)
-    activated = models.BooleanField(default=False)
-    audit_id = models.UUIDField(null=True, blank=False)
-
-    def __str__(self):
-        return f"File id: {self.id}"
-
 class AUDITFILE(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     file_name = models.CharField(max_length=1000,blank=True,null=True)
@@ -145,10 +135,21 @@ class AUDITFILE(models.Model):
     CREATED_ON = models.DateField(auto_now_add=True, null=True,blank=True)
     LAST_MODIFIED = models.DateTimeField(null=True)
     MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+    workpaper_upload = models.ForeignKey('WORKPAPER_UPLOAD', on_delete=models.SET_NULL, null=True, blank=True)
     
     class Meta:
         managed = True
         db_table = 'AUDITFILE'
+
+class WORKPAPER_UPLOAD(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    file_name = models.FileField(upload_to=workpaper_upload_to)
+    upload_date = models.DateTimeField(auto_now_add=True)
+    activated = models.BooleanField(default=False)
+    audit_id = models.UUIDField(null=True, blank=False)
+   
+    def __str__(self):
+        return f"File id: {self.id}"
 
 
 class PREPARERSIGNOFF(models.Model):
@@ -366,6 +367,8 @@ class APP_USERS(models.Model):
     LOCKED = models.CharField(max_length=100,blank=True,null=True)
 
 
+
+
 class APP_LIST(models.Model):
     #APPLICATION LIST
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -400,6 +403,94 @@ class APP_LIST(models.Model):
     class Meta:
         managed = True
         db_table = 'APP_LIST'
+
+class CONTROLLIST(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
+    CONTROL_ID =  models.CharField(max_length=256,blank=True,null=True)
+    CONTROL_TYPE = models.CharField(max_length=256,blank=True,null=True)
+    CONTROL_DESCRIPTION = models.CharField(max_length=256,blank=True,null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'CONTROLLIST'
+
+class RISKLIST(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
+    RISK_ID =  models.CharField(max_length=256,blank=True,null=True)
+    RISK_TYPE = models.CharField(max_length=256,blank=True,null=True)
+    RISK_DESCRIPTION = models.CharField(max_length=256,blank=True,null=True)
+    
+    class Meta:
+        managed = True
+        db_table = 'RISKLIST'
+
+class RISKGENERAL(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    RISK_NAME = models.CharField(max_length=256,blank=True,null=True)
+    RISK_RATIONALE = models.CharField(max_length=1000,blank=True,null=True)
+    RISK_TYPE = models.CharField(max_length=256,blank=True,null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'RISKGENERAL'
+
+class RISKRATING(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    RISK_ID = models.ForeignKey(RISKLIST,on_delete=models.CASCADE,blank=True,null=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,null=True,blank=True)
+    RATING = models.CharField(max_length=50,null=True,blank=True)
+
+    class Meta:
+        managed = True
+        db_table = 'RISKRATING'
+
+class RISKMAPPING(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CONTROL_ID = models.ForeignKey(CONTROLLIST,on_delete=models.CASCADE, null=True, blank = True)
+    RISK_ID = models.ForeignKey(RISKLIST,on_delete=models.CASCADE,null=True,blank=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,null=True,blank=True)
+
+    class Meta:
+        managed = True
+        db_table = 'RISKCONTROLMATRIX'
+
+class RISKDETAILS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    RISK_NAME = models.ForeignKey(RISKGENERAL,on_delete=models.CASCADE,blank=True,null=True)
+    RISK_DESCRIPTION = models.CharField(max_length=1000,null=True,blank=True)
+    RISK_STATUS = models.CharField(max_length=256,null=True,blank=True)
+    RISK_AREA = models.CharField(max_length=256,null=True,blank=True)
+    RISK_RATING = models.CharField(max_length=256,null=True,blank=True)
+    RISK_RATIONALE = models.CharField(max_length=256,null=True,blank=True)
+
+    class Meta:
+        managed = True
+        db_table = 'RISKDETAILS'
+        
+class CONTROLS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    RISK_NAME = models.ForeignKey(RISKDETAILS,on_delete=models.CASCADE,blank=True,null=True)
+    CONTROL_NAME = models.CharField(max_length=256,blank=True,null=True)
+    CONTROL_DESCRIPTION = models.CharField(max_length=1000,blank=True,null=True)
+    CONTROL_TYPE = models.CharField(max_length=256,null=True,blank=True)
+
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
+
+    def __str__(self):
+            return self.CONTROL_NAME
+    
+    class Meta:
+        managed = True
+        db_table = 'CONTROLS'
 
 class APP_USER_SFTP(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -733,27 +824,6 @@ class PWCONFIGATTACHMENTS(models.Model):
     def __str__(self):
         return f"File id: {self.id}"
     
-
-class CONTROLS(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE)
-    CONTROL_ID = models.CharField(max_length=50,blank=True,null=True)
-    CONTROL_NAME = models.CharField(max_length=50,blank=True,null=True)
-    CONTROL_DESCRIPTION = models.CharField(max_length=50,blank=True,null=True)
-    APP_NAME = models.ManyToManyField(APP_RECORD)
-
-    #LOG
-    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
-    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
-    LAST_MODIFIED = models.DateTimeField(null=True)
-    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
-
-    def __str__(self):
-            return self.CONTROL_NAME
-    
-    class Meta:
-        managed = True
-        db_table = 'CONTROLS'
     
 class POLICIES(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

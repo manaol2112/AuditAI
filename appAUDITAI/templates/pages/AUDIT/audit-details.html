@@ -230,10 +230,23 @@
                                     </div>
                                     <div class="col-auto">
                                         <select class="form-select form-select-sm" style="width:300px;font-size:12px;" aria-label=".form-select-sm example">
-                                            <option selected disabled></option>
-                                            <option value="Low">Low</option>
+                                            {% if risk_general.RISK_RATING == 'High' %}
+                                            <option selected="risk_general.RISK_RATING">{{risk_general.RISK_RATING}}</option>
                                             <option value="Medium">Medium</option>
+                                            <option value="Low">Low</option>
+                                            {% elif risk_general.RISK_RATING == 'Medium' %}
+                                            <option selected="risk_general.RISK_RATING">{{risk_general.RISK_RATING}}</option>
                                             <option value="High">High</option>
+                                            <option value="Low">Low</option>
+                                            {% elif risk_general.RISK_RATING == 'Low' %}
+                                            <option selected="risk_general.RISK_RATING">{{risk_general.RISK_RATING}}</option>
+                                            <option value="High">High</option>
+                                            <option value="Medium">Medium</option>
+                                            {% else %}
+                                            <option value="High">High</option>
+                                            <option value="Medium">Medium</option>
+                                            <option value="Low">Low</option>
+                                            {% endif %}
                                           </select>
                                     </div>
                                 </div>
@@ -244,8 +257,8 @@
                                             class="col-form-label">Rating Considerations:<i class="fa-solid fa-circle-question" style="margin-left:5px;"></i></label>
                                     </div>
                                     <div class="col-auto">
-                                        <textarea class="form-control" style="font-size:12px;width:300px;" id="rate_rationale"  name="rate_rationale"
-                                        rows="5" required></textarea>
+                                        <textarea class="form-control" style="font-size:12px;width:500px;" id="rate_rationale"  name="rate_rationale"
+                                        rows="5" required>{{risk_general.RISK_RATIONALE}}</textarea>
                                     </div>
                                 </div>
                             </div>

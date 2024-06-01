@@ -2,30 +2,21 @@
 {% load static %}
 
 {% block auditcontent %}
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
 <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" style="font-size:16px;"><b>{{control_name.file_name}}</b></a>
     <form class="d-flex">
-
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-target="#newAppModal"
-            aria-expanded="false" style="height:35px;margin-right:5px;" title="Add Filter">
-            <i class="fas fa-filter"></i>
-        </button>
-    
-        <button type="button" class="btn btn-outline-secondary btn-sm" data-bs-toggle="tooltip" data-bs-target="#newAppModal"
-            aria-expanded="false" style="height:35px;" title="Add New Document">
-            <i class="fas fa-plus"></i>
-        </button>
-
+        <button id="submit_button" type="button" class="btn btn-primary btn-sm"><i style="margin-right:5px;" class="far fa-save"></i>Save Changes</button>
     </form>
     </div>
 </nav>
 
 <ul class="nav nav-pills mb-3 border-bottom border-2" style="margin-top:20px;" id="pills-tab" role="tablist">
     <li class="nav-item" role="presentation">
-        <button class="nav-link fw-semibold active position-all" style="color:#474b4d;font-size:14px" id="pills-overview-tab" data-bs-toggle="pill" data-bs-target="#pills-overview" type="button" role="tab" aria-controls="pills-overview" aria-selected="true">Overview</button>
-      </li>
+        <button class="nav-link fw-semibold active position-relative" style="color:#474b4d;font-size:14px" id="pills-overview-tab" data-bs-toggle="pill" data-bs-target="#pills-overview" type="button" role="tab" aria-controls="pills-overview" aria-selected="true">Overview</button>
+    </li>
     <li class="nav-item" role="presentation">
       <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-assessment-tab" data-bs-toggle="pill" data-bs-target="#pills-assessment" type="button" role="tab" aria-controls="pills-assessment" aria-selected="true">Assessment</button>
     </li>
@@ -38,95 +29,282 @@
     <li class="nav-item" role="presentation">
         <button class="nav-link fw-semibold position-relative" style="color:#474b4d;font-size:14px" id="pills-rollforward-tab" data-bs-toggle="pill" data-bs-target="#pills-rollforward" type="button" role="tab" aria-controls="pills-rollforward" aria-selected="false">Roll-forward</button>
       </li>
-    
 </ul>
 
-<div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
-    <div class="tab-pane fade show active" id="pills-overview" role="tabpanel" aria-labelledby="pills-overview-tab">
-        <p style="font-size:14px;"><b>Control Summary:</b></p>
-        <div class="container bg-light" style="padding:10px;">
-            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                <div class="col-auto">
-                    <label style="font-size:12px; width: 150px;" class="col-form-label">Control ID:</label>
+<form id="workpaper_details" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="workpaper_details">
+    <div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
+        <div class="tab-pane fade show active" id="pills-overview" role="tabpanel" aria-labelledby="pills-overview-tab">
+            <p style="font-size:14px;"><b>Control Summary:</b></p>
+            <div class="container bg-light" style="padding:10px;">
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 150px;" class="col-form-label">Control ID:</label>
+                    </div>
+                    <div class="col">
+                        <input class="form-control sm" id="auth_method" name="auth_method" type="text" style="font-size:12px;"
+                            value="{{control_details.CONTROL_ID}}" readonly>
+                    </div>
                 </div>
-                <div class="col">
-                    <input class="form-control sm" id="auth_method" name="auth_method" type="text" style="font-size:12px;"
-                        value="{{control_details.CONTROL_ID}}" readonly>
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 150px;" class="col-form-label">Control Description:</label>
+                    </div>
+                    <div class="col">
+                        <textarea class="form-control" style="font-size:12px;resize:none" id="control_description"
+                            name="control_description" rows="4" required readonly>{{control_details.CONTROL_DESCRIPTION}}</textarea>
+                    </div>
                 </div>
-            </div>
-            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                <div class="col-auto">
-                    <label style="font-size:12px; width: 150px;" class="col-form-label">Control Description:</label>
-                </div>
-                <div class="col">
-                    <textarea class="form-control" style="font-size:12px;resize:none" id="control_description"
-                        name="control_description" rows="3" required readonly>{{control_details.CONTROL_DESCRIPTION}}</textarea>
-                </div>
-            </div>
 
-            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                <div class="col-auto">
-                    <label style="font-size:12px; width: 150px;" class="col-form-label">Type:</label>
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 150px;" class="col-form-label">Type:</label>
+                    </div>
+                    <div class="col" style="font-size:12px;">
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="control_type" id="preventive"
+                                value="option1">
+                            <label class="form-check-label" for="preventive">Preventive</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="control_type" id="detective"
+                                value="option2">
+                            <label class="form-check-label" for="detective">Detective</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="radio" name="control_type" id="monitoring"
+                                value="option3">
+                            <label class="form-check-label" for="monitoring">Monitoring</label>
+                        </div>
+                    </div>
                 </div>
-                <div class="col" style="font-size:12px;">
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="control_type" id="preventive"
-                            value="option1">
-                        <label class="form-check-label" for="preventive">Preventive</label>
+            </div>
+            <p style="font-size:14px;margin-top:30px;"><b>Relevant Risk:</b></p>
+            <div class="container bg-light">
+                <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+                style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                <thead style="padding-top:12px;text-align:center">
+                    <tr
+                        style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                        <th style="text-align:left;">Risk ID</th>
+                        <th style="text-align:left;">Description</th>
+                        <th style="text-align:left;">Risk Rating</th>
+                    </tr>
+                </thead>
+                <tbody style="font-size:13px">
+                    {% for risk in risk_mapped %}
+                    
+                    <tr style="vertical-align: middle;">
+                        <td style="width:30%;font-size:12px;" ><a href="">{{ risk.RISK_ID.RISK_ID }}</a></td>
+                        <td style="width:10%;font-size:12px;">{{ risk.RISK_ID.RISK_DESCRIPTION }}</td>
+
+                        {% if risk.risk_rating.RATING == 'High' %}
+
+                        <td style="width:10%;font-size:12px;"><i style="margin-right:5px;color:red" class="far fa-dot-circle"></i> {{ risk.risk_rating.RATING }}</td>
+
+                        {% elif risk.risk_rating.RATING  == 'Medium' %}
+
+                        <td style="width:10%;font-size:12px;"><i style="margin-right:5px;color:orange" class="far fa-dot-circle"></i> {{ risk.risk_rating.RATING }}</td>
+
+                        {% elif risk.risk_rating.RATING == 'Low' %}
+                    
+                        <td style="width:10%;font-size:12px;"><i style="margin-right:5px;color:green" class="far fa-dot-circle"></i> {{ risk.risk_rating.RATING }}</td>
+
+                        {% endif %}
+                    
+                    </tr>
+                    {% endfor %}
+                </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="pills-assessment" role="tabpanel" aria-labelledby="pills-assessment-tab">
+            <p style="font-size:14px;"><b>Control Risk Rating:</b></p>
+            <div class="container bg-light" style="padding:10px;">
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 150px;" class="col-form-label">Control Rating:</label>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="control_type" id="detective"
-                            value="option2">
-                        <label class="form-check-label" for="detective">Detective</label>
+                    <div class="col">
+                        <select id="control_rating" name="control_rating" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                            <option disabled selected></option>
+                            <option value="High">High</option>
+                            <option value="Medium">Medium</option>
+                            <option value="Low">Low</option>
+                          </select>
                     </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="radio" name="control_type" id="monitoring"
-                            value="option3">
-                        <label class="form-check-label" for="monitoring">Monitoring</label>
+                </div>
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 150px;" class="col-form-label">Rating Rationale:</label>
+                    </div>
+                    <div class="col">
+                        <textarea class="form-control" style="font-size:12px;resize:none" id="control_rating_rationale"
+                            name="control_rating_rationale" rows="4" required></textarea>
                     </div>
                 </div>
             </div>
         </div>
-        <p style="font-size:14px;margin-top:20px;"><b>Risk Addressed:</b></p>
-        <div class="container bg-light">
-            <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
-            style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
-            <thead style="padding-top:12px;text-align:center">
-                <tr
-                    style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
-                  
-                    <th style="text-align:left;">Risk ID</th>
-                    <th style="text-align:left;">Description</th>
-                    <th style="text-align:left;">Risk Rating</th>
-                    
-                </tr>
-            </thead>
-            <tbody style="font-size:13px">
-                {% for doc in workpaper_docs_all %}
-                <tr style="vertical-align: middle;">
-                
-                    <td style="width:30%;font-size:12px;" ><a href="{% url 'appAUDITAI:audit-per-app-workpapers-details' comp_id audit_id app_id doc.id %}">{{ doc.file_name }}</a></td>
-                    <td style="width:10%;font-size:12px;"></td>
-                    <td style="width:10%;font-size:12px;"></td>
-                   
-                </tr>
-                {% endfor %}
-            </tbody>
-            </table>
+        <div class="tab-pane fade show" id="pills-design" role="tabpanel" aria-labelledby="pills-design-tab">
+            <div class="accordion accordion-flush" id="test_of_design">
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 class="accordion-header">
+                        <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#control_summary"
+                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                            Control Summary
+                        </button>
+                    </h2>
+                    <div id="control_summary" class="accordion-collapse collapse" data-bs-parent="#risk_mapped">
+                        <div class="accordion-body">
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <div class="container bg-light" style="padding:10px;">
+                                    <p style="font-size:14px;"><b>Control Description:</b></p>
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col">
+                                            <textarea class="form-control" style="font-size:12px;resize:none" id="control_description"
+                                                name="control_description" rows="4" required
+                                                readonly>{{control_details.CONTROL_ID}}: {{control_details.CONTROL_DESCRIPTION}}</textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 class="accordion-header">
+                        <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#design_evaluation"
+                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                            Design Evaluation
+                        </button>
+                    </h2>
+                    <div id="design_evaluation" class="accordion-collapse collapse" >
+                        <div class="accordion-body">
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%">
+                                    <p style="font-size:14px;"><b>Test Procedures:</b></p>
+
+                                    <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                        <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                          <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                        </symbol>
+                                        <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+                                          <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                                        </symbol>
+                                        <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                          <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                        </symbol>
+                                      </svg>
+
+                                    <div style="font-size:12px;" class="alert alert-info" role="alert">
+                                        <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+                                        Document in the section below how are you planning to evaluate the effectiveness of the control design. 
+                                      </div>
+
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col">
+                                            <div style="background-color:white !important" id="design_procedures"></div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%">
+                                    <p style="font-size:14px;"><b>Test Result:</b></p>
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col">
+
+                                            <div style="background-color:white !important;max-height:500px;overflow-y:auto" id="design_result"></div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%">
+                                    <p style="font-size:14px;"><b>Supporting Evidence:</b></p>
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col">
+                                            <div style="background-color:white !important;max-height:500px;overflow-y:auto" id="design_result"></div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 class="accordion-header">
+                        <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#design_conclude"
+                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                            Conclusion
+                        </button>
+                    </h2>
+                    <div id="design_conclude" class="accordion-collapse collapse" >
+                        <div class="accordion-body">
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%">
+                                    <p style="font-size:14px;"><b>Design Conclusion:</b></p>
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col">
+                                            <div style="background-color:white !important" id="design_conclusion"></div>
+                                        </div>
+                                    </div>
+                                </div> 
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane fade show" id="pills-interim" role="tabpanel" aria-labelledby="pills-interim-tab">
+            Interim
+        </div>
+        <div class="tab-pane fade show" id="pills-rollforward" role="tabpanel" aria-labelledby="pills-rollforward-tab">
+            Roll-forward
         </div>
     </div>
-    <div class="tab-pane fade show" id="pills-assessment" role="tabpanel" aria-labelledby="pills-assessment-tab">
-        Assessment
-    </div>
-    <div class="tab-pane fade show" id="pills-design" role="tabpanel" aria-labelledby="pills-design-tab">
-        Design
-    </div>
-    <div class="tab-pane fade show" id="pills-interim" role="tabpanel" aria-labelledby="pills-interim-tab">
-        Interim
-    </div>
-    <div class="tab-pane fade show" id="pills-rollforward" role="tabpanel" aria-labelledby="pills-rollforward-tab">
-        Roll-forward
-    </div>
-</div>
+</form>
+
+
+    
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+<script>
+    var quillDesignProcedures = new Quill('#design_procedures', {
+        theme: 'snow'  
+    });
+
+    var quillDesignResult = new Quill('#design_result', {
+        theme: 'snow'  
+    });
+
+    var quillDesignResult = new Quill('#design_conclusion', {
+        theme: 'snow'  
+    });
+
+   
+    document.querySelector('#design_procedures .ql-editor').style.minHeight = '300px';
+    document.querySelector('#design_result .ql-editor').style.minHeight = '300px';
+    document.querySelector('#design_conclusion .ql-editor').style.minHeight = '200px';
+
+  
+      var maxEditorHeight = '300px';
+    document.querySelector('#design_procedures .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#design_result .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#design_conclusion .ql-editor').style.maxHeight = maxEditorHeight;
+
+    document.querySelector('#design_procedures .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#design_result .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#design_conclusion .ql-editor').style.overflowY = 'auto';
+</script>
 
 {% endblock auditcontent %}

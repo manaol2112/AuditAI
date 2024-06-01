@@ -195,7 +195,7 @@
                                 {% if risk.control_mapped_count > 0 %}
                                 <i style="color:green;margin-right:5px;" class="fa-solid fa-circle-check"></i>{{risk.control_mapped_count}}
                                 {%else%}
-                                <i style="color:orange;margin-right:5px;" class="fa-solid fa-triangle-exclamation"></i>
+                                <i style="color:orange;margin-right:5px;" class="fa-solid fa-triangle-exclamation"></i>0
                                 {%endif%}
                             </td>
                         </tr>
@@ -246,9 +246,7 @@
                                                     <thead style="padding-top:12px;text-align:center">
                                                         <tr
                                                             style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
-                                                            <th style="text-align:left;">
-                                                                <input type="checkbox" id="select-all-checkbox-mapped-{{ forloop.counter }}">
-                                                            </th>
+                                                           
                                                             <th style="text-align:left;">Control ID</th>
                                                             <th style="text-align:left;">Control Description</th>
                                                             <th style="text-align:left;">Control Type</th>
@@ -260,17 +258,15 @@
                                                         {% for control in mapped_controls %}
                                                         {% if risk.RISK_ID == control.RISK_ID.RISK_ID %}
                                                         <tr style="vertical-align: middle;">
-                                                            <td>
-                                                                <input type="checkbox" id="user_checkbox_mapped_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}"
-                                                                    name="assigned_controls[]" value="{{ control.id }}">
-                                                            </td>
+                                                           
                                                             <td style="width:20%;font-size:12px;">{{ control.CONTROL_ID.CONTROL_ID }}</td>
                                                             <td style="width:60%;font-size:12px;">{{ control.CONTROL_ID.CONTROL_DESCRIPTION }}</td>
                                                             <td style="width:10%;font-size:12px;">{{ control.CONTROL_ID.CONTROL_TYPE }}</td>
                                                             <td style="width:10%;font-size:12px;">
                                                                 <i style="color:green" class="fa-solid fa-circle-check"></i>
                                                             </td>
-                                                            <td style="width:5%"><button type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray" class="fa-solid fa-link-slash"></i></button></td>
+                                                            <td style="width:5%"><button id="user_checkbox_mapped_{{ forloop.parentloop.counter }}_{{ forloop.counter0 }}"
+                                                                name="assigned_controls[]" type="button" class="btn btn-light btn-sm"><i style="font-size:10px;color:gray" class="fa-solid fa-link-slash"></i></button></td>
                                                         </tr>
                                                         {% endif %}
                                                         {% endfor %}
@@ -299,9 +295,7 @@
                                                         <thead style="padding-top:12px;text-align:center">
                                                             <tr
                                                                 style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
-                                                                <th style="text-align:left;">
-                                                                    <input type="checkbox" id="select-all-checkbox-controls-{{ forloop.counter }}">
-                                                                </th>
+                                                             
                                                                 <th style="text-align:left;">Control ID</th>
                                                                 <th style="text-align:left;">Control Description</th>
                                                                 <th style="text-align:left;">Control Type</th>

@@ -243,6 +243,16 @@ class AuditPerApp(AuditorPermissionMixin,View):
         try:
             workpaper_docs_all = AUDITFILE.objects.filter(AUDIT_ID = audit_id, FOLDER_NAME = 'Workpapers')
             for doc in workpaper_docs_all:
+                try:
+                    control_id = CONTROLLIST.objects.get(CONTROL_ID = doc.file_name)
+                    control = RISKMAPPING.objects.filter(CONTROL_ID = control_id, APP_NAME = selected_app)
+                    print(control)
+                    doc.control = control
+                except RISKMAPPING.DoesNotExist:
+                    doc.control = None
+                except CONTROLLIST.DoesNotExist:
+                    doc.control = None
+
                 if doc.DATE_SENT:
                     date_sent = doc.DATE_SENT.date()
                     doc.days_difference = (today - date_sent).days
@@ -464,11 +474,23 @@ class AuditWorkpapersDetails(AuditPerApp):
             selected_app = None
 
         try:
+            audit_name = AUDITLIST.objects.get(id = audit_id)
+        except AUDITLIST.DoesNotExist:
+            audit_name = None
+
+        try:
             control_name = AUDITFILE.objects.get(id = control_id)
             control_details = CONTROLLIST.objects.get(CONTROL_ID = control_name.file_name)
-            print(control_details.CONTROL_ID)
         except AUDITFILE.DoesNotExist:
             control_name = None
+
+        try:
+            risk_mapped = RISKMAPPING.objects.filter(APP_NAME = selected_app, CONTROL_ID = control_details)
+            for risk in risk_mapped:
+                risk_rating = RISKRATING.objects.get(APP_NAME = selected_app, RISK_ID = risk.RISK_ID)
+                risk.risk_rating = risk_rating
+        except RISKMAPPING.DoesNotExist:
+            risk_mapped = None
 
         context = {
             'comp_id':comp_id,
@@ -478,7 +500,9 @@ class AuditWorkpapersDetails(AuditPerApp):
             'apps':apps,
             'selected_app':selected_app,
             'control_name':control_name,
-            'control_details':control_details
+            'control_details':control_details,
+            'audit_name':audit_name,
+            'risk_mapped':risk_mapped
         }
         return render(request, self.template_name, context)
     

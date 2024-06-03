@@ -62,6 +62,7 @@ path("audit/risk-and-controls/risks/",auditview.CreateRisk.as_view(),name="risk-
 path("audit/risk-and-controls/controls/",auditview.CreateControl.as_view(),name="controls-create"),
 path("audit/risk-and-controls/procedures/",auditview.CreateProcedures.as_view(),name="procedures-create"),
 path("audit/risk-and-controls/procedures/<uuid:id>/",auditview.get_procedure_content,name="get-procedures"),
+path("audit/risk-and-controls/password-policy/<uuid:company_id>/",auditview.get_password_policy,name="get-password-policy"),
 
 #AUTHENTICATION
 path("myclients/actions/audit/<uuid:comp_id>",auditview.AuditHome.as_view(),name="audit-home"),

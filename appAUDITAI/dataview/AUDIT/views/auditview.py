@@ -544,7 +544,45 @@ def get_procedure_content(request,id):
         'interim_procedures': interim_procedures,
         'rollforward_procedures': rollforward_procedures,
     })
-    
+
+def get_password_policy(request,company_id):
+    id = request.GET.get('company_id')
+
+    print(company_id)
+
+    try:
+        company = COMPANY.objects.get(id = id)
+        password  = PASSWORDPOLICY.objects.get(COMPANY_ID = company)
+
+        length = password.LENGTH
+        age = password.AGE
+        history = password.HISTORY
+        upper = password.UPPER
+        lower = password.LOWER
+        number = password.NUMBER
+        special_char = password.SPECIAL_CHAR
+        lockout_attempt = password.LOCKOUT_ATTEMPT
+        lockout_duration = password.LOCKOUT_DURATION
+        mfa_enabled = password.MFA_ENABLED
+
+    except PASSWORDPOLICY.DoesNotExist:
+        password = None
+        print('Policy not found')
+
+    return JsonResponse({
+        'length': length,
+        'age':age,
+        'history':history,
+        'upper':upper,
+        'lower':lower,
+        'number':number,
+        'special_char':special_char,
+        'lockout_attempt':lockout_attempt,
+        'lockout_attempt':lockout_attempt,
+        'lockout_duration':lockout_duration,
+        'mfa_enabled':mfa_enabled,
+        })
+
 class AuditWorkpapersDetails(AuditPerApp):
     template_name = 'pages/AUDIT/audit-workpaper-details.html'
 

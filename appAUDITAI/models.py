@@ -67,7 +67,8 @@ class USER_LOCKOUT(models.Model):
 
     def __str__(self):
         return self.user.username
-
+    
+#AUDITAI PASSWORD CONFIG
 class PASSWORDCONFIG(models.Model):
     MIN_LENGTH = models.CharField(max_length=100,blank=True,null=True)
     HISTORY = models.CharField(max_length=100,blank=True,null=True)
@@ -426,6 +427,7 @@ class TEST_PROCEDURES(models.Model):
     DESIGN_PROCEDURES = models.TextField(blank=True,null=True)
     INTERIM_PROCEDURES = models.TextField(blank=True,null=True)
     ROLLFORWARD_PROCEDURES = models.TextField(blank=True,null=True)
+    DEFAULT = models.BooleanField(default=False,null=True)
 
     class Meta:
         managed = True
@@ -862,8 +864,7 @@ class POLICIES(models.Model):
         db_table = 'POLICIES'
 
 
-#MODELS FOR THE POLICIES ARE SAVED IN HERE
-
+#THIS IS THE CORPORATE POLICY
 class PASSWORDPOLICY(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ManyToManyField(COMPANY,blank=True,null=True)
@@ -927,7 +928,8 @@ class TERMINATIONPOLICY(models.Model):
 class Meta:
         managed = True
         db_table = 'TERMINATIONPOLICY'
-    
+
+#APPLICATION PASSWORD
 class PASSWORD(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     APP_NAME = models.ForeignKey(APP_LIST, on_delete=models.CASCADE, blank=True, null=True)

@@ -60,6 +60,8 @@ path("myclients/actions/audit/selected_app/reports/<uuid:comp_id>/<uuid:audit_id
 path("audit/risk-and-controls/",auditview.RiskAndControls.as_view(),name="risk-and-controls"),
 path("audit/risk-and-controls/risks/",auditview.CreateRisk.as_view(),name="risk-and-controls-create"),
 path("audit/risk-and-controls/controls/",auditview.CreateControl.as_view(),name="controls-create"),
+path("audit/risk-and-controls/procedures/",auditview.CreateProcedures.as_view(),name="procedures-create"),
+path("audit/risk-and-controls/procedures/<uuid:id>/",auditview.get_procedure_content,name="get-procedures"),
 
 #AUTHENTICATION
 path("myclients/actions/audit/<uuid:comp_id>",auditview.AuditHome.as_view(),name="audit-home"),

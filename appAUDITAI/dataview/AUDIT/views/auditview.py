@@ -17,6 +17,9 @@ from django.contrib.auth.models import User
 from django.core.exceptions import MultipleObjectsReturned
 from django.core.files.storage import default_storage
 from django.http import FileResponse
+from django.utils.html import escape
+import html
+
 
 class RiskAndControls(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-risk-and-controls.html'
@@ -73,18 +76,84 @@ class CreateControl(AuditorPermissionMixin,View):
     def post(self, request):
 
         control_id = request.POST.get('control_id')
+        control_title = request.POST.get('control_title')
         control_description = request.POST.get('control_description')
         control_template = request.POST.get('control_template')
+        control_domain = request.POST.get('control_domain')
+        control_relevance = request.POST.get('control_relevance')
 
-        create_risk,created = CONTROLLIST.objects.update_or_create(CONTROL_ID = control_id)
-        create_risk.CONTROL_DESCRIPTION = control_description
-        create_risk.CONTROL_TYPE = control_template
-        create_risk.save()
+        create_control,created = CONTROLLIST.objects.update_or_create(CONTROL_ID = control_id)
+        create_control.CONTROL_TITLE = control_title
+        create_control.CONTROL_DESCRIPTION = control_description
+        create_control.CONTROL_TYPE = control_template
+        create_control.CONTROL_DOMAIN = control_domain
+        create_control.CONTROL_RELEVANCE = control_relevance
+
+        create_control.save()
 
         control_list = CONTROLLIST.objects.all()
         context = {'control_list':control_list}
 
         return render(request, self.template_name,context)
+    
+class CreateProcedures(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-test-procedures.html'
+
+    def get(self,request):
+
+        try:
+            procedure_list = TEST_PROCEDURES.objects.all()
+        except TEST_PROCEDURES.DoesNotExist:
+            procedure_list = None
+
+        # Decode HTML entities in DESIGN_PROCEDURES field
+        if procedure_list:
+            for procedure in procedure_list:
+                procedure.DESIGN_PROCEDURES = html.unescape(procedure.DESIGN_PROCEDURES)
+                procedure.INTERIM_PROCEDURES = html.unescape(procedure.INTERIM_PROCEDURES)
+                procedure.ROLLFORWARD_PROCEDURES = html.unescape(procedure.ROLLFORWARD_PROCEDURES)
+
+        try:
+            control_list = CONTROLLIST.objects.all()
+        except CONTROLLIST.DoesNotExist:
+            control_list = None
+
+        context = {'procedure_list':procedure_list,
+                   'control_list':control_list}
+
+        return render(request, self.template_name,context)
+    
+    def post(self, request):
+
+        control_id = request.POST.get('control_id')
+        procedure_name = request.POST.get('procedure_name')
+        design_procedures_html = request.POST.get('design_procedures_html','')
+        interim_procedures_html = request.POST.get('interim_procedures_html')
+        rollforward_procedures_html = request.POST.get('rollforward_procedures_html')
+
+        # Ensure HTML content is escaped to prevent XSS attacks
+        design_procedures = escape(design_procedures_html)
+        interim_procedures = escape(interim_procedures_html)
+        rollforward_procedures = escape(rollforward_procedures_html)
+
+        try:
+            controlID = CONTROLLIST.objects.get(id = control_id)
+        except CONTROLLIST.DoesNotExist:
+            controlID = None
+
+        try:
+            procedure,created = TEST_PROCEDURES.objects.update_or_create(CONTROL_ID = controlID, PROCEDURE_NAME = procedure_name)
+            procedure.DESIGN_PROCEDURES = design_procedures
+            procedure.INTERIM_PROCEDURES = interim_procedures
+            procedure.ROLLFORWARD_PROCEDURES = rollforward_procedures
+
+            if created:
+                procedure.save()
+        except TEST_PROCEDURES.DoesNotExist:
+            procedure = None
+
+        return redirect('appAUDITAI:procedures-create')
+
     
 class RiskAssessment(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-risk-assessment.html'
@@ -246,7 +315,6 @@ class AuditPerApp(AuditorPermissionMixin,View):
                 try:
                     control_id = CONTROLLIST.objects.get(CONTROL_ID = doc.file_name)
                     control = RISKMAPPING.objects.filter(CONTROL_ID = control_id, APP_NAME = selected_app)
-                    print(control)
                     doc.control = control
                 except RISKMAPPING.DoesNotExist:
                     doc.control = None
@@ -458,6 +526,25 @@ class AuditWorkpapers(AuditPerApp):
 
         return response
     
+def get_procedure_content(request,id):
+    procedure_id = request.GET.get('procedure_id')
+
+    try:
+        procedure = TEST_PROCEDURES.objects.get(id=procedure_id)
+        design_procedures = html.unescape(procedure.DESIGN_PROCEDURES)
+        interim_procedures = html.unescape(procedure.INTERIM_PROCEDURES)
+        rollforward_procedures = html.unescape(procedure.ROLLFORWARD_PROCEDURES)
+    except TEST_PROCEDURES.DoesNotExist:
+        design_procedures = ''
+        interim_procedures = ''
+        rollforward_procedures = ''
+
+    return JsonResponse({
+        'design_procedures': design_procedures,
+        'interim_procedures': interim_procedures,
+        'rollforward_procedures': rollforward_procedures,
+    })
+    
 class AuditWorkpapersDetails(AuditPerApp):
     template_name = 'pages/AUDIT/audit-workpaper-details.html'
 
@@ -492,6 +579,18 @@ class AuditWorkpapersDetails(AuditPerApp):
         except RISKMAPPING.DoesNotExist:
             risk_mapped = None
 
+        try:
+            procedure_list = TEST_PROCEDURES.objects.filter(CONTROL_ID = control_details)
+        except TEST_PROCEDURES.DoesNotExist:
+            procedure_list = None
+
+        # Decode HTML entities in DESIGN_PROCEDURES field
+        if procedure_list:
+            for procedure in procedure_list:
+                procedure.DESIGN_PROCEDURES = html.unescape(procedure.DESIGN_PROCEDURES)
+                procedure.INTERIM_PROCEDURES = html.unescape(procedure.INTERIM_PROCEDURES)
+                procedure.ROLLFORWARD_PROCEDURES = html.unescape(procedure.ROLLFORWARD_PROCEDURES)
+
         context = {
             'comp_id':comp_id,
             'audit_id':audit_id,
@@ -502,7 +601,8 @@ class AuditWorkpapersDetails(AuditPerApp):
             'control_name':control_name,
             'control_details':control_details,
             'audit_name':audit_name,
-            'risk_mapped':risk_mapped
+            'risk_mapped':risk_mapped,
+            'procedure_list':procedure_list
         }
         return render(request, self.template_name, context)
     

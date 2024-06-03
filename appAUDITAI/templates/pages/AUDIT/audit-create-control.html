@@ -57,8 +57,11 @@
                 <th style="text-align:left;">
                     <input type="checkbox" id="select-all-checkbox">
                 <th style="text-align:left;">Control ID</th>
+                <th style="text-align:left;">Control Title</th>
                 <th style="text-align:left;">Control Description</th>
                 <th style="text-align:left;">Control Type</th>
+                <th style="text-align:left;">Control Domain</th>
+                <th style="text-align:left;">Control Relevance</th>
             </tr>
         </thead>
         <tbody style="font-size:13px">
@@ -69,9 +72,12 @@
                         name="user_checkbox" value="{{ risk.id }}">
                 </td>
                 <td style="width:10%;font-size:12px;" ><a href="">{{ control.CONTROL_ID }}</a></td>
-                <td style="width:60%;font-size:12px;">{{ control.CONTROL_DESCRIPTION }}</td>
-                <td style="width:30%;font-size:12px;">{{ control.CONTROL_TYPE }}</td>
-              
+                <td style="width:10%;font-size:12px;" >{{ control.CONTROL_TITLE }}</td>
+                <td style="width:50%;font-size:12px;">{{ control.CONTROL_DESCRIPTION }}</td>
+                <td style="width:10%;font-size:12px;">{{ control.CONTROL_TYPE }}</td>
+                <td style="width:10%;font-size:12px;">{{ control.CONTROL_DOMAIN }}</td>
+                <td style="width:10%;font-size:12px;">{{ control.CONTROL_RELEVANCE }}</td>
+
             </tr>
             {% endfor %}
         </tbody>
@@ -105,16 +111,27 @@
                 <div class="row g-3 align-items-center" style="margin-top:3px;">
                     <div class="col-auto">
                         <label style="font-size:12px; width: 100px;"
-                            class="col-form-label">Description:</label>
+                            class="col-form-label">Control Title:</label>
                     </div>
                     <div class="col-auto">
-                        <textarea class="form-control" style="font-size:12px;width:250px;resize:none" id="control_description"  name="control_description"
-                        rows="4" placeholder="Enter Control Description"  required></textarea>
+                        <input class="form-control sm" id="control_title" name="control_title" type="text"
+                        style="font-size:12px;width:250px;" placeholder="Enter Control Title" autocomplete="off" required
+                        value="">
                     </div>
                 </div>
 
                 <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;"
+                            class="col-form-label">Description:</label>
+                    </div>
+                    <div class="col-auto">
+                        <textarea class="form-control" style="font-size:12px;width:250px;resize:none" id="control_description"  name="control_description"
+                        rows="8" placeholder="Enter Control Description"  required></textarea>
+                    </div>
+                </div>
 
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
                     <div class="col-auto">
                         <label style="font-size:12px; width: 100px;"
                             class="col-form-label">Control Type:</label>
@@ -127,8 +144,43 @@
                             <option value="Other">Other Control</option>
                         </select>
                     </div>
-
                 </div>
+
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;"
+                            class="col-form-label">Domain:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" style="font-size:12px;width:250px;" id="control_domain" name="control_domain" required>
+                            <option selected disabled>Select Control Domain</option>
+                            <option value="Authentication">Password/Authentication</option>
+                            <option value="Provisioning">Provisioning</option>
+                            <option value="Termination">Termination</option>
+                            <option value="Privileged Accounts">Privileged Accounts</option>
+                            <option value="User Access Review">User Access Review</option>
+                            <option value="Physical Security">Physical Security</option>
+                            <option value="Network Security">Network Security</option>
+                            <option value="Back-up">Back-up</option>
+                            <option value="Restoration">Restoration</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;"
+                            class="col-form-label">Relevance:</label>
+                    </div>
+                    <div class="col-auto">
+                        <select class="form-select" style="font-size:12px;width:250px;" id="control_relevance" name="control_relevance" required>
+                            <option selected disabled>Select Control Relevance</option>
+                            <option value="Key">Key</option>
+                            <option value="Non-Key">Non-Key</option>
+                        </select>
+                    </div>
+                </div>
+
 
                 <div class="d-grid gap-2 d-md-flex justify-content-md-end" style="margin-top:20px;">
                     <button type="submit" class="btn btn-primary btn-sm" style="width:80px;" type="button">Save</button>

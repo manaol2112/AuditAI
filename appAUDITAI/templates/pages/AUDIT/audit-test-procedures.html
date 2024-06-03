@@ -1,0 +1,307 @@
+{% extends 'base/base-auditor.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/audit.css' %}" />
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select.css' %}" />
+
+<link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
+
+<div class="card">
+    <div class="card-body">
+
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
+            aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+                <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}"
+                        style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+                <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:risk-and-controls'%}"
+                        style="text-decoration:none;color:#474b4d">Risk and Controls</i></a></li>
+                <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d">Test Procedures</a></li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fas fa-list-ol"
+                            style="margin-right: 10px;color:#474b4d"></span>Test Procedures</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search Audit..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+
+                    <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal"
+                        data-bs-target="#test_procedure_modal" aria-expanded="false" style="height:35px;">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                </form>
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:lightgray" style="font-size:13px;margin-bottom:20px;">
+            <p style="font-size:13px">Manage, create, and map test test procedures</p>
+        </div>
+
+        <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+        style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+        <thead style="padding-top:12px;text-align:center">
+            <tr
+                style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                <th style="text-align:left;">Control ID</th>
+                <th style="text-align:left;">Procedure Name</th>
+                <th style="text-align:left;">Design Procedure</th>
+                <th style="text-align:left;">Interim Procedures</th>
+                <th style="text-align:left;">RollForward Procedures</th>
+     
+            </tr>
+        </thead>
+        <tbody style="font-size:13px">
+            {% for procedure in procedure_list %}
+            <tr style="vertical-align: middle;">
+             
+                <td style="width:10%;font-size:12px;" >{{ procedure.CONTROL_ID.CONTROL_ID }}</a></td>
+                <td style="width:10%;font-size:12px;" >{{ procedure.PROCEDURE_NAME }}</a></td>
+                <td style="width:10%;font-size:12px;" >{{ procedure.DESIGN_PROCEDURES|safe }}</td>
+                <td style="width:50%;font-size:12px;">{{ procedure.INTERIM_PROCEDURES|safe }}</td>
+                <td style="width:50%;font-size:12px;">{{ procedure.ROLLFORWARD_PROCEDURES|safe }}</td>
+     
+            </tr>
+            {% endfor %}
+        </tbody>
+        </table>
+
+    </div>
+</div>
+
+<form id="test_procedure_form" action="#" method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="modal fade modal-xl" id="test_procedure_modal" data-bs-backdrop="static" tabindex="-1"
+        aria-labelledby="test_procedure_modal" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+            <div class="modal-content">
+                <div class="modal-header">
+                   <p><i class="fa-solid fa-plus" style="margin-right:5px;font-size:14px;"></i>Create Test Procedures</p>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+
+                <div class="modal-body">
+
+                    <div class="row g-3 align-items-center" style="margin-bottom:20px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 100px;"
+                                class="col-form-label">Control:</label>
+                        </div>
+                        <div class="col">
+                            <select class="form-select" style="font-size:12px;max-width: 100%;" id="control_id" name="control_id" required>
+                                <option selected disabled>Select Control</option>
+                                {% for control in control_list %}
+                                <option value="{{control.id}}">{{control.CONTROL_ID}}: {{control.CONTROL_TITLE}}</option>
+                                {% endfor %}
+                            </select>
+                        </div>
+                    </div>
+
+
+                    <div class="row g-3 align-items-center" style="margin-bottom:20px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 100px;"
+                                class="col-form-label">Procedure Name:</label>
+                        </div>
+                        <div class="col">
+                            <input class="form-control sm" id="procedure_name" name="procedure_name" type="text" style="font-size:12px;" autocomplete="off"
+                            required>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion accordion-flush" id="test_of_design">
+                        <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                            <h2 class="accordion-header">
+                                <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#design_procedures"
+                                    aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                                    Design
+                                </button>
+                            </h2>
+                           
+                            <div id="design_procedures" class="accordion-collapse collapse" data-bs-parent="#risk_mapped">
+                                <div class="accordion-body">
+                                    <div class="container bg-light" id="design_procedure" style="max-width: 100%;overflow-x:auto;padding:20px;"> 
+                                        {% if procedure_list %}
+                                            {% for procedure in procedure_list %}
+                                            <div style="background-color:white !important;max-height:400px;overflow-y:auto;" id="test_procedure_design"></div>
+                                            <textarea id="design_procedures_html" name="design_procedures_html" style="display: none;"></textarea>
+                                            {% endfor %}
+                                        {% else %}
+                                            <div style="background-color:white !important;max-height:400px;overflow-y:auto;" id="test_procedure_design"></div>
+                                            <textarea id="design_procedures_html" name="design_procedures_html" style="display: none;"></textarea>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        </div>
+
+                        <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                            <h2 class="accordion-header">
+                                <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#interim_procedures"
+                                    aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                                    Interim
+                                </button>
+                            </h2>
+                            <div id="interim_procedures" class="accordion-collapse collapse" data-bs-parent="#risk_mapped">
+                                <div class="accordion-body">
+                                    <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                        <div class="container bg-light" id="design_procedure" style="max-width: 100%;overflow-x:auto;padding:20px;"> 
+                                            {% if procedure_list %}
+                                            {% for procedure in procedure_list %}
+                                            <div style="background-color:white !important;max-height:400px;overflow-y:auto;" id="test_procedure_interim"></div>
+                                            <textarea id="interim_procedures_html" name="interim_procedures_html" style="display: none;"></textarea>
+                                            {% endfor %}
+                                            {% else %}
+                                            <div style="background-color:white !important;max-height:400px;overflow-y:auto;" id="test_procedure_interim"></div>
+                                            <textarea id="interim_procedures_html" name="interim_procedures_html" style="display: none;"></textarea>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                            <h2 class="accordion-header">
+                                <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                                    type="button" data-bs-toggle="collapse" data-bs-target="#rf_procedures"
+                                    aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                                    RollForward
+                                </button>
+                            </h2>
+                            <div id="rf_procedures" class="accordion-collapse collapse" data-bs-parent="#risk_mapped">
+                                <div class="accordion-body">
+                                    <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                        {% if procedure_list %}
+                                        {% for procedure in procedure_list %}
+                                        <div style="background-color:white !important;max-height:400px;overflow-y:auto;" id="test_procedure_rollforward"></div>
+                                        <input type="hidden" name="rollforward_procedures_html" id="rollforward_procedures_html">
+                                        {% endfor %}
+                                        {% else %}
+                                        <div style="background-color:white !important;max-height:400px;overflow-y:auto;" id="test_procedure_rollforward"></div>
+                                        <input type="hidden" name="rollforward_procedures_html" id="rollforward_procedures_html">
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+               
+                </div>
+               
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" name="test_procedure_submit" id="test_procedure_submit"
+                        class="btn btn-primary btn-sm">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script src="{% static 'js/select.js' %}"></script>
+
+<script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
+
+
+<script>
+    var quillDesignProcedures = new Quill('#test_procedure_design', {
+        theme: 'snow',
+        modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }    
+    });
+   
+    document.querySelector('#test_procedure_design .ql-editor').style.minHeight = '300px';
+    var maxEditorHeight = '300px';
+    document.querySelector('#test_procedure_design .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#test_procedure_design .ql-editor').style.overflowY = 'auto';
+
+    var quillInterimProcedures = new Quill('#test_procedure_interim', {
+        theme: 'snow',
+        modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }    
+    });
+   
+    document.querySelector('#test_procedure_interim .ql-editor').style.minHeight = '300px';
+    var maxEditorHeight = '300px';
+    document.querySelector('#test_procedure_interim .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#test_procedure_interim .ql-editor').style.overflowY = 'auto';
+
+    var quillRollforwardProcedures = new Quill('#test_procedure_rollforward', {
+        theme: 'snow',
+        modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }    
+    });
+   
+    document.querySelector('#test_procedure_rollforward .ql-editor').style.minHeight = '300px';
+    var maxEditorHeight = '300px';
+    document.querySelector('#test_procedure_rollforward .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#test_procedure_rollforward .ql-editor').style.overflowY = 'auto';
+
+</script>
+
+<script>
+    document.getElementById('test_procedure_submit').addEventListener('click', function(event) {
+    // Prevent the default form submission behavior
+    event.preventDefault();
+
+    // Decode and assign Quill editor content to hidden form fields
+
+    var htmlContent = document.querySelector('#test_procedure_design .ql-editor').innerHTML;
+    document.querySelector('#design_procedures_html').value = htmlContent;
+
+    var htmlContent = document.querySelector('#test_procedure_interim .ql-editor').innerHTML;
+    document.querySelector('#interim_procedures_html').value = htmlContent;
+
+    var htmlContent = document.querySelector('#test_procedure_rollforward .ql-editor').innerHTML;
+    document.querySelector('#rollforward_procedures_html').value = htmlContent;
+
+    // Submit the form
+    document.getElementById('test_procedure_form').submit();
+});
+</script>
+{% endblock content %}

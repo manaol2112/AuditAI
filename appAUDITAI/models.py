@@ -408,12 +408,28 @@ class CONTROLLIST(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
     CONTROL_ID =  models.CharField(max_length=256,blank=True,null=True)
+    CONTROL_TITLE = models.CharField(max_length=256,blank=True,null=True)
     CONTROL_TYPE = models.CharField(max_length=256,blank=True,null=True)
+    CONTROL_DOMAIN = models.CharField(max_length=256,blank=True,null=True)
+    CONTROL_RELEVANCE = models.CharField(max_length=256,blank=True,null=True)
     CONTROL_DESCRIPTION = models.CharField(max_length=256,blank=True,null=True)
     
     class Meta:
         managed = True
         db_table = 'CONTROLLIST'
+
+class TEST_PROCEDURES(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CONTROL_ID =  models.ForeignKey(CONTROLLIST,on_delete=models.CASCADE,null=True, blank=True)
+    PROCEDURE_NAME = models.CharField(max_length=256,blank=True,null=True)
+    TYPE = models.CharField(max_length=256,blank=True,null=True)
+    DESIGN_PROCEDURES = models.TextField(blank=True,null=True)
+    INTERIM_PROCEDURES = models.TextField(blank=True,null=True)
+    ROLLFORWARD_PROCEDURES = models.TextField(blank=True,null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'TEST_PROCEDURE'
 
 class RISKLIST(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

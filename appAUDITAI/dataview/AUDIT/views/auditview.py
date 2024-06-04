@@ -578,10 +578,10 @@ def get_password_policy(request,company_id):
         'number':number,
         'special_char':special_char,
         'lockout_attempt':lockout_attempt,
-        'lockout_attempt':lockout_attempt,
         'lockout_duration':lockout_duration,
         'mfa_enabled':mfa_enabled,
         })
+
 
 class AuditWorkpapersDetails(AuditPerApp):
     template_name = 'pages/AUDIT/audit-workpaper-details.html'

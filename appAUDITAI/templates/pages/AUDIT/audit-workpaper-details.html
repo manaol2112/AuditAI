@@ -201,9 +201,9 @@
                                    
                                   
                                     {% if procedure_list %}
-                                    <div style="font-size:12px;" class="alert alert-info" role="alert">
+                                    <div style="font-size:12px;" class="alert alert-light" role="alert">
                                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
-                                       </i>Great! Test procedures for this control has already been created. Click <a href="#" data-bs-toggle="modal" data-bs-target="#test_procedure_modal">here</a> to choose from existing templates.
+                                       </i>Great! Test procedures template for this control is available. Click <a href="#" data-bs-toggle="modal" data-bs-target="#test_procedure_modal">here</a> to choose from existing templates.
                                     </div>
                                     {% endif %}
 
@@ -218,7 +218,7 @@
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
                                     <p style="font-size:14px;"><b>Test Result:</b></p>
-                                    <div style="font-size:12px;" class="alert alert-info" role="alert">
+                                    <div style="font-size:12px;" class="alert alert-light" role="alert">
                                         <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
                                        </i>Design narrative is available for <b>{{control_details.CONTROL_ID }}: {{control_details.CONTROL_TITLE }}</b>. Click <a href="#" data-bs-toggle="modal" data-bs-target="#design_result_modal">here</a> to choose from existing narrative.
                                     </div>
@@ -233,9 +233,33 @@
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
                                     <p style="font-size:14px;"><b>Supporting Evidence:</b></p>
+                                    <p style="font-size:12px;">Add supporting evidence to support the evaluation of the design, if applicable:</p>
                                     <div class="row g-3 align-items-center">
                                         <div class="col">
-                                            <div style="background-color:white !important;max-height:500px;overflow-y:auto" id="design_result"></div>
+                                            <div class="file-drop-area" onclick="triggerFileInputClick()"
+                                                style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:100px;" >
+                                                <div class="card-body" style=" text-align: center;">
+                                                    <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
+                                                    <a style="font-size:14px;color:grey">Drag and
+                                                        drop the design supporting evidence
+                                                        here</a>
+                                                </div>
+                                            </div>
+                    
+                                            <div class="row" style="padding-top:20px;" hidden="true">
+                                                <a style="font-size:12px;color:#000000">Or browse
+                                                    and
+                                                    select the file here</a>
+                                                <div class="card" style="border:none;">
+                                                    <div class="card-body"
+                                                        style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
+                                                        <input type="file" id="fileInput" name="file_name" multiple>
+                                                        <input type="hidden" id="design_evidence_upload" name="design_evidence_upload"
+                                                            value="{{ selected_app.APP_NAME }}">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div id="selectedFilesContainer" style="margin-top:20px;font-size:13px;"></div>
                                         </div>
                                     </div>
                                 </div> 
@@ -258,6 +282,19 @@
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
                                     <p style="font-size:14px;"><b>Design Conclusion:</b></p>
+
+                                    <div class="row g-3 align-items-center">
+                                        <div class="col">
+                                            <select id="control_rating" name="control_rating" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                                                <option disabled selected></option>
+                                                <option value="Effective">Effective</option>
+                                                <option value="Not Effective">Not Effective</option>
+                                                <option value="Inconclusive">Inconclusive</option>
+                                              </select>
+                                        </div>
+                                    </div>
+
+                                    <p style="font-size:12px;margin-top:20px;">Document the rationale on how you came up with the conclusion</p>
                                     <div class="row g-3 align-items-center">
                                         <div class="col">
                                             <div style="background-color:white !important" id="design_conclusion"></div>
@@ -498,6 +535,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
+<script src="{% static 'js/workpaper_upload.js' %}"></script>
 
 <script>
     var quillDesignProcedures = new Quill('#design_procedures', {
@@ -561,7 +599,6 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
     document.querySelector('#design_procedures .ql-editor').style.overflowY = 'auto';
     document.querySelector('#design_result .ql-editor').style.overflowY = 'auto';
     document.querySelector('#design_conclusion .ql-editor').style.overflowY = 'auto';
-
 
 </script>
 
@@ -657,6 +694,6 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         });
 
     });
-        </script>
+</script>
 
 {% endblock auditcontent %}

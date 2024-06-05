@@ -35,6 +35,70 @@ function triggerFileInputClick() {
 }
 
 $(document).ready(function() {
+    
+      document.querySelectorAll('.download-icon').forEach(function(downloadIcon) {
+        downloadIcon.addEventListener('click', function(event) {
+          event.stopPropagation(); // Prevent click event propagation to the parent file item
+          var spanElement = this.previousElementSibling;
+          var attachmentId = spanElement.id;
+          var downloadLink = '/design/download/' + attachmentId; 
+          window.location.href = downloadLink;
+        });
+      });
+
+});
+    
+$(document).ready(function() {
+    // Add click event to download icon to trigger download
+    $('.download-icon').each(function () {
+        $(this).on('click', function (event) {
+            event.stopPropagation(); // Prevent click event propagation to the parent file item
+            var spanElement = $(this).prev();
+            var attachmentId = spanElement.attr('id');
+            var downloadLink = '/design/download/' + attachmentId;
+            window.location.href = downloadLink;
+        });
+    });
+
+    $('.delete-icon').each(function () {
+        $(this).on('click', function (event) {
+            event.stopPropagation();
+            var deleteIcon = $(this); 
+            var spanElement = $(this).prev().prev();
+            var attachmentId = spanElement.attr('id');
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                url: '/design/delete/' + attachmentId, 
+                type: 'DELETE',
+                headers: {
+                    'X-CSRFToken': csrfToken
+                },
+                success: function (response) {
+                    deleteAttachment(deleteIcon);
+                    showToast();
+                    console.log('Attachment deleted successfully:', response);
+                },
+                error: function (xhr, status, error) {
+                    console.error('Failed to delete attachment:', error);
+                }
+            });
+        });
+
+        function deleteAttachment(deleteIcon) {
+            var fileItem = deleteIcon.closest('.selected-file-item');
+            fileItem.remove();
+        }
+
+        function showToast() {
+            var toastEl = document.getElementById('design_attachment_delete_toast');
+            var toast = new bootstrap.Toast(toastEl);
+            var toast = new bootstrap.Toast(toastEl, { delay: 2000 });
+            toast.show();
+          }
+        
+    });
+
 
     $('#fileInput').on('change', function(event) {
         var files = event.target.files;
@@ -80,10 +144,10 @@ $(document).ready(function() {
 
             // Create elements to display file name, Font Awesome icon, and delete icon
             var fileItem = $('<div>').addClass('selected-file-item');
-            var iconElement = $('<i>').addClass(iconClass).css({'margin-right': '3px', 'font-size': '13px !important'});
-            var fileNameElement = $('<span>').text(fileName).css({'margin-right': '3px', 'font-size': '13px !important'});
-            var deleteIcon = $('<i>').addClass('far fa-trash-alt delete-icon').css({'cursor': 'pointer', 'color': 'orange', 'font-size': '13px !important', });
-            var downloadIcon = $('<i>').addClass('fas fa-download download-icon').css({'cursor': 'pointer', 'color': 'lightblue', 'font-size': '13px !important','margin-right': '5px'});
+            var iconElement = $('<i>').addClass(iconClass).css({'margin-right': '5px', 'font-size': '16px !important'});
+            var fileNameElement = $('<span>').text(fileName).css({'margin-right': '5px', 'font-size': '14px !important'});
+            var deleteIcon = $('<i>').addClass('far fa-trash-alt delete-icon').css({'cursor': 'pointer', 'color': 'orange', 'font-size': '14px !important', });
+            var downloadIcon = $('<i>').addClass('fas fa-download download-icon').css({'cursor': 'pointer', 'color': 'lightblue', 'font-size': '14px !important','margin-right': '5px'});
 
             // Add click event to delete icon to remove the file item
             deleteIcon.on('click', function(event) {
@@ -105,6 +169,43 @@ $(document).ready(function() {
 
             fileItem.append(iconElement, fileNameElement,downloadIcon, deleteIcon );
             $('#selectedFilesContainer').append(fileItem);
+
+
+            ajax_comp_id = $('#ajax_comp_id').val();
+            ajax_app_id = $('#ajax_app_id').val();
+            ajax_control_id = $('#ajax_control_id').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            form_id =  $('#design_evidence_form').val();
+
+            var formData = new FormData();
+            formData.append('comp_id', ajax_comp_id);
+            formData.append('app_id', ajax_app_id);
+            formData.append('control_id', ajax_control_id);
+            formData.append('form_id', form_id);
+
+            // Append file data
+            var fileInput = $('#fileInput')[0].files[0];
+            formData.append('file', fileInput);
+            
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                headers: {
+                    'X-CSRFToken': csrfToken  
+                },
+                data: formData, // Send formData directly
+                processData: false,  
+                contentType: false,  
+            
+                success: function (response) {
+                    location.reload(); 
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            
+
         });
     });
 });

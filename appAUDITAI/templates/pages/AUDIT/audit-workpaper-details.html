@@ -4,6 +4,12 @@
 {% block auditcontent %}
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
+<input type="hidden" id="ajax_comp_id" name="ajax_comp_id" value="{{comp_id}}">
+<input type="hidden" id="ajax_app_id" name="ajax_app_id" value="{{app_id}}">
+<input type="hidden" id="ajax_control_id" name="ajax_control_id" value="{{control_details.id}}">
+<input type="hidden" id="design_evidence_form" name="form_id" value="form_design_evidence">
+
+
 <nav class="navbar navbar-light bg-light">
     <div class="container-fluid">
       <a class="navbar-brand" style="font-size:16px;"><b>{{control_details.CONTROL_ID }}: {{control_details.CONTROL_TITLE }}</b></a>
@@ -31,8 +37,7 @@
       </li>
 </ul>
 
-<form id="workpaper_details" method="post" enctype="multipart/form-data">
-    <input type="hidden" name="form_id" value="workpaper_details">
+
     <div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-overview" role="tabpanel" aria-labelledby="pills-overview-tab">
             <p style="font-size:14px;"><b>Control Summary:</b></p>
@@ -56,28 +61,33 @@
                     </div>
                 </div>
 
-                <div class="row g-3 align-items-center" style="margin-top:3px;">
-                    <div class="col-auto">
-                        <label style="font-size:12px; width: 150px;" class="col-form-label">Type:</label>
+                <form id="control_type_form" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="form_id" value="control_type_form">
+                    {% csrf_token %}
+                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                        <div class="col-auto">
+                            <label style="font-size:12px; width: 150px;" class="col-form-label">Type:</label>
+                        </div>
+                        <div class="col" style="font-size:12px;">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="control_type" id="preventive"
+                                    value="Preventive" {% if design.CONTROL_TYPE == 'Preventive' %} checked {% endif %}>
+                                <label class="form-check-label" for="preventive">Preventive</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="control_type" id="detective"
+                                    value="Detective" {% if design.CONTROL_TYPE == 'Detective' %} checked {% endif %}>
+                                <label class="form-check-label" for="detective">Detective</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="control_type" id="monitoring"
+                                    value="Monitoring" {% if design.CONTROL_TYPE == 'Monitoring' %} checked {% endif %}>
+                                <label class="form-check-label" for="monitoring">Monitoring</label>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col" style="font-size:12px;">
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="control_type" id="preventive"
-                                value="option1">
-                            <label class="form-check-label" for="preventive">Preventive</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="control_type" id="detective"
-                                value="option2">
-                            <label class="form-check-label" for="detective">Detective</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                            <input class="form-check-input" type="radio" name="control_type" id="monitoring"
-                                value="option3">
-                            <label class="form-check-label" for="monitoring">Monitoring</label>
-                        </div>
-                    </div>
-                </div>
+                </form>
+
             </div>
             <p style="font-size:14px;margin-top:30px;"><b>Relevant Risk:</b></p>
             <div class="container bg-light">
@@ -118,33 +128,58 @@
                 </table>
             </div>
         </div>
-        <div class="tab-pane fade show" id="pills-assessment" role="tabpanel" aria-labelledby="pills-assessment-tab">
-            <p style="font-size:14px;"><b>Control Risk Rating:</b></p>
-            <div class="container bg-light" style="padding:10px;">
-                <div class="row g-3 align-items-center" style="margin-top:3px;">
-                    <div class="col-auto">
-                        <label style="font-size:12px; width: 150px;" class="col-form-label">Control Rating:</label>
-                    </div>
-                    <div class="col">
-                        <select id="control_rating" name="control_rating" style="font-size:12px;" class="form-select" aria-label="Default select example">
-                            <option disabled selected></option>
-                            <option value="High">High</option>
-                            <option value="Medium">Medium</option>
-                            <option value="Low">Low</option>
-                          </select>
-                    </div>
-                </div>
-                <div class="row g-3 align-items-center" style="margin-top:3px;">
-                    <div class="col-auto">
-                        <label style="font-size:12px; width: 150px;" class="col-form-label">Rating Rationale:</label>
-                    </div>
-                    <div class="col">
-                        <textarea class="form-control" style="font-size:12px;resize:none" id="control_rating_rationale"
-                            name="control_rating_rationale" rows="10" required></textarea>
-                    </div>
+       
+            <div class="tab-pane fade show" id="pills-assessment" role="tabpanel" aria-labelledby="pills-assessment-tab">
+                <p style="font-size:14px;"><b>Control Risk Rating:</b></p>
+                <div class="container bg-light" style="padding:10px;">
+                    <form id="control_risk_rating_form" method="post" enctype="multipart/form-data">
+                            <input type="hidden" name="form_id" value="control_risk_rating_form">
+                            {% csrf_token %}
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width: 150px;" class="col-form-label">Control Rating:</label>
+                            </div>
+                            <div class="col">
+                                <select id="control_rating" name="control_rating" style="font-size:12px;" class="form-select" aria-label="Default select example">
+
+                                    {% if design.CONTROL_RATING == 'High' %}
+                                    <option disabled ></option>
+                                    <option value="High" selected>High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                    {% elif design.CONTROL_RATING == 'Medium' %}
+                                    <option disabled ></option>
+                                    <option value="High" >High</option>
+                                    <option value="Medium" selected>Medium</option>
+                                    <option value="Low">Low</option>
+                                    {% elif design.CONTROL_RATING == 'Low' %}
+                                    <option disabled ></option>
+                                    <option value="High" >High</option>
+                                    <option value="Medium" >Medium</option>
+                                    <option value="Low" selected>Low</option>
+                                    {% else  %}
+                                    <option disabled selected></option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                    {% endif  %}
+                                
+                                </select>
+                            </div>
+                        </div>
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width: 150px;" class="col-form-label">Rating Rationale:</label>
+                            </div>
+                            <div class="col">
+                                <textarea class="form-control" style="font-size:12px;resize:none" id="control_rating_rationale"
+                                    name="control_rating_rationale" rows="10" required>{{ design.CONTROL_RATING_RATIONALE }} </textarea>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
-        </div>
+    
         <div class="tab-pane fade show" id="pills-design" role="tabpanel" aria-labelledby="pills-design-tab">
             <div class="accordion accordion-flush" id="test_of_design">
                 <div class="accordion-item rounded-3 border-0 shadow mb-2">
@@ -209,7 +244,15 @@
 
                                     <div class="row g-3 align-items-center">
                                         <div class="col">
-                                            <div style="background-color:white !important" id="design_procedures"></div>
+                                            <form id="design_procedure_form" method="post" enctype="multipart/form-data">
+                                                <input type="hidden" name="form_id" value="design_procedure_form">
+                                                {% csrf_token %}
+                                                {% if design.CONTROL_TEST_PROCEDURE %}
+                                                <div style="background-color:white !important" id="design_procedures">{{design.CONTROL_TEST_PROCEDURE|safe}}</div>
+                                                {% else %}
+                                                <div style="background-color:white !important" id="design_procedures"></div>
+                                                {% endif  %}
+                                            </form>
                                         </div>
                                     </div>
                                 </div> 
@@ -224,7 +267,14 @@
                                     </div>
                                     <div class="row g-3 align-items-center">
                                         <div class="col">
+                                            <form id="design_result_form" method="post" enctype="multipart/form-data">
+                                                <input type="hidden" name="form_id" value="design_result_form">
+                                                {% csrf_token %}
+                                            {% if design.CONTROL_TEST_RESULT %}
+                                            <div style="background-color:white !important;max-height:500px;overflow-y:auto" id="design_result">{{design.CONTROL_TEST_RESULT|safe}}</div>
+                                            {% else %}
                                             <div style="background-color:white !important;max-height:500px;overflow-y:auto" id="design_result"></div>
+                                            {% endif  %}
                                         </div>
                                     </div>
                                 </div> 
@@ -232,39 +282,66 @@
 
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
-                                    <p style="font-size:14px;"><b>Supporting Evidence:</b></p>
-                                    <p style="font-size:12px;">Add supporting evidence to support the evaluation of the design, if applicable:</p>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col">
-                                            <div class="file-drop-area" onclick="triggerFileInputClick()"
-                                                style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:100px;" >
-                                                <div class="card-body" style=" text-align: center;">
-                                                    <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
-                                                    <a style="font-size:14px;color:grey">Drag and
-                                                        drop the design supporting evidence
-                                                        here</a>
-                                                </div>
-                                            </div>
-                    
-                                            <div class="row" style="padding-top:20px;" hidden="true">
-                                                <a style="font-size:12px;color:#000000">Or browse
-                                                    and
-                                                    select the file here</a>
-                                                <div class="card" style="border:none;">
-                                                    <div class="card-body"
-                                                        style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
-                                                        <input type="file" id="fileInput" name="file_name" multiple>
-                                                        <input type="hidden" id="design_evidence_upload" name="design_evidence_upload"
-                                                            value="{{ selected_app.APP_NAME }}">
+                                    <form id="form_design_evidence" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="form_id" value="form_design_evidence">
+                                        {% csrf_token %}
+                                        <p style="font-size:14px;"><b>Supporting Evidence:</b></p>
+                                        <p style="font-size:12px;">Add supporting evidence to support the evaluation of the design, if applicable:</p>
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col">
+                                    
+                                                <div class="file-drop-area" onclick="triggerFileInputClick()"
+                                                    style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:100px;">
+                                                    <div class="card-body" style=" text-align: center;">
+                                                        <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
+                                                        <a style="font-size:14px;color:grey">Drag and
+                                                            drop the design supporting evidence
+                                                            here</a>
                                                     </div>
                                                 </div>
-                                            </div>
-                                            <div id="selectedFilesContainer" style="margin-top:20px;font-size:13px;"></div>
-                                        </div>
-                                    </div>
-                                </div> 
-                            </div>
+                                    
+                                                <div class="row" style="padding-top:20px;" hidden="true">
+                                                    <a style="font-size:12px;color:#000000">Or browse
+                                                        and
+                                                        select the file here</a>
+                                                    <div class="card" style="border:none;">
+                                                        <div class="card-body"
+                                                            style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
+                                                            <input type="file" id="fileInput" name="file_name" multiple>
+                                                            <input type="hidden" id="design_evidence_upload" name="design_evidence_upload"
+                                                                value="{{ selected_app.APP_NAME }}">
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div id="selectedFilesContainer" style="margin-top:20px;font-size:13px;">
+                                                    <form id="design_delete_attacchment" method="post" enctype="multipart/form-data">
+                                                        <input type="hidden" name="form_id" value="design_delete_attacchment">
+                                                        {% csrf_token %}
+                                                        {% if design_attachment %}
+                                                            {% for attachment in design_attachment %}
+                                                                <div class="selected-file-item">
+                                                                    <i class="fas fa-file" style="margin-right: 5px; font-size: 16px;"></i>
+                                                                    <input id="design_attachment_id" hidden="true" value="{{attachment.id}}">
+                                                                    <span id="{{attachment.id}}" style="margin-right: 5px; font-size: 14px;">{{ attachment.file_names }}</span>
+                                                                    <i id="download_attachment_icon" class="fas fa-download download-icon"
+                                                                        style="cursor: pointer; color: lightblue; font-size: 14px; margin-right: 5px;"></i>
+                                                                    <i id="delete_attachment_icon" class="far fa-trash-alt delete-icon"
+                                                                        style="cursor: pointer; color: orange; font-size: 14px;"></i>
+                                                                </div>
+                                                            {% endfor %}
+                                                        {% else %}
+                                                       
+                                                        {% endif %}
+                                                    </form>
+                                                </div>
 
+                                            </div>
+                                    
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                          
                         </div>
                     </div>
                 </div>
@@ -315,7 +392,7 @@
             Roll-forward
         </div>
     </div>
-</form>
+
 
 <div class="modal fade modal-xl" id="test_procedure_modal" data-bs-backdrop="static" tabindex="-1"
 aria-labelledby="test_procedure_modal" aria-hidden="true">
@@ -531,6 +608,17 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
     </div>
 </div>
 
+<div style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 11; padding: 1rem;margin-top:50px !important">
+    <div id="design_attachment_delete_toast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
+      <div class="toast-header">
+        <strong class="me-auto"><i class="fa-solid fa-circle-info" style="margin-right:5px"></i>Notification</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        <p>The attachment has been successfully deleted.</p>
+      </div>
+    </div>
+  </div>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
@@ -605,6 +693,164 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 <script>
     $(document).ready(function () {
 
+        var initialFieldValues = {};
+        var initialContent_design_procedure = quillDesignProcedures.root.innerHTML;
+        var initialContent_design_result = quillDesignResult.root.innerHTML;
+
+        
+        var ajax_comp_id = $('#ajax_comp_id').val();
+        var ajax_app_id = $('#ajax_app_id').val();
+        var ajax_control_id = $('#ajax_control_id').val();
+
+      //DESIGN RESULT FORM
+        $(quillDesignResult.root).on('blur', function() {
+            var design_result = quillDesignResult.root.innerHTML;
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#design_result_form').find('input[name="form_id"]').val();
+
+            if (initialContent_design_procedure !== design_result) {
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    design_result: design_result,
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            
+            }
+        });
+
+
+        //DESIGN PROCEDURE FORM
+        $(quillDesignProcedures.root).on('blur', function() {
+            var design_procedures = quillDesignProcedures.root.innerHTML;
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#design_procedure_form').find('input[name="form_id"]').val();
+
+            if (initialContent_design_procedure !== design_procedures) {
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    design_procedures: design_procedures,
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            
+            }
+        });
+
+        //CONTROL ASSESSMENT FORM
+        $('#control_rating_rationale').on('blur', function () {
+            control_rating_rationale = $(this).val();
+            control_rating = $('#control_rating').val();
+            formId = $('#control_risk_rating_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    control_rating: control_rating,
+                    control_rating_rationale:control_rating_rationale
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
+        $('#control_rating').on('change', function () {
+            control_rating = $(this).val();
+            control_rating_rationale = $('#control_rating_rationale').val();
+            formId = $('#control_risk_rating_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    control_rating: control_rating,
+                    control_rating_rationale:control_rating_rationale
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
+
+        //CONTROL OVERVIEW FORM
+        $('input[type=radio][name=control_type]').change(function () {
+            var selectedValue = $(this).val();
+            var formId = $('#control_type_form').find('input[name="form_id"]').val();
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+   
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    control_type: selectedValue,
+                    csrfmiddlewaretoken: csrfToken
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
         var responseData;
 
         $('#procedure_name').on('change', function () {
@@ -672,16 +918,18 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 
                         quillDesignResult.root.innerHTML = designation + ' inquired with ' + process_owner + ' on ' + formatDate(inquirydate) + ' to understand the design of the control. Based on this, ' + designation + ' determined that a password policy is in place to govern the password requirements for ' + app_name + '. ' + designation + ' obtained the policy and per inspection, ' + designation + ' ascertained that the following password parameters are required to be configured in ' + app_name + '.<br>';
                     
-                        quillDesignResult.root.innerHTML += 'Password Length: ' + response.length + '\n';
-                        quillDesignResult.root.innerHTML += 'Password Age/Expiry: ' + response.age + '\n';
-                        quillDesignResult.root.innerHTML += 'Password Remembered: ' + response.history + '\n';
-                        quillDesignResult.root.innerHTML += 'Require Upper Case?: ' + response.upper + '\n';
-                        quillDesignResult.root.innerHTML += 'Require Lower Case: ' + response.lower + '\n';
-                        quillDesignResult.root.innerHTML += 'Require Numeric: ' + response.number + '\n';
-                        quillDesignResult.root.innerHTML += 'Require Special Character: ' + response.special_char + '\n';
-                        quillDesignResult.root.innerHTML += 'Max Failed Login Attempt: ' + response.lockout_attempt + '\n';
-                        quillDesignResult.root.innerHTML += 'Lockout Duration: ' + response.lockout_duration + '\n';
-                        quillDesignResult.root.innerHTML += 'MFA Enabled?: ' + response.mfa_enabled + '<br>';
+          
+                        quillDesignResult.root.innerHTML += '<li>Password Length: ' + response.length + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>Password Age/Expiry: ' + response.age + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>Password Remembered: ' + response.history + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>Require Upper Case?: ' + response.upper + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>Require Lower Case: ' + response.lower + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>Require Numeric: ' + response.number + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>Require Special Character: ' + response.special_char + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>Max Failed Login Attempt: ' + response.lockout_attempt + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>Lockout Duration: ' + response.lockout_duration + '</li>';
+                        quillDesignResult.root.innerHTML += '<li>MFA Enabled?: ' + response.mfa_enabled + '</li><br>';
+
 
                         quillDesignResult.root.innerHTML += designation + ' corroborated the design of the control by inspecting the password configuration as part of the operating effectiveness test (refer to OE section within the Interim/Rollforward section for the test results. <br>'
 

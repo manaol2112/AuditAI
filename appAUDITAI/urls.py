@@ -63,6 +63,8 @@ path("audit/risk-and-controls/controls/",auditview.CreateControl.as_view(),name=
 path("audit/risk-and-controls/procedures/",auditview.CreateProcedures.as_view(),name="procedures-create"),
 path("audit/risk-and-controls/procedures/<uuid:id>/",auditview.get_procedure_content,name="get-procedures"),
 path("audit/risk-and-controls/password-policy/<uuid:company_id>/",auditview.get_password_policy,name="get-password-policy"),
+path("audit/risk-and-controls/auto_save/<uuid:comp_id>/<uuid:app_id>/<uuid:control_id>/",auditview.AutoSave_Workpapers.as_view(),name="autosave-workpapers"),
+path("audit/risk-and-controls/auto_save/evidence/<uuid:comp_id>/<uuid:app_id>/<uuid:control_id>/",auditview.AutoSave_Workpapers.as_view(),name="autosave-workpapers-design"),
 
 #AUTHENTICATION
 path("myclients/actions/audit/<uuid:comp_id>",auditview.AuditHome.as_view(),name="audit-home"),
@@ -148,6 +150,9 @@ path("error/needed-permission-not-found/",utils.no_permission.as_view(),name="no
 #AUDIT URLS
 
 path('download/<uuid:id>/', auditview.download_file, name='download_file'),
+
+path('design/delete/<uuid:id>/', auditview.delete_design_attachment, name='delete_design_attachment'),
+path('design/download/<uuid:id>/', auditview.download_design_attachment, name='download_design_attachment'),
 
 ]
 

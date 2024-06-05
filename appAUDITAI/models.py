@@ -94,8 +94,6 @@ class PASSWORDCONFIG(models.Model):
         managed = True
         db_table = 'SYS_PWCONFIG'
 
-
-
 #COMPANY
 class COMPANY(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -119,7 +117,6 @@ class COMPANY(models.Model):
     #AUDITPROJECT
 
 def workpaper_upload_to(instance, filename):
-    # Assuming instance has an audit_id attribute
     audit_id = instance.audit_id
     return f'workpapers/{audit_id}/{filename}'
 
@@ -220,7 +217,6 @@ class AUDITNOTESREPLY(models.Model):
     class Meta:
         managed = True
         db_table = 'AUDITNOTESREPLY'
-
 
 
 class AUDITLIST(models.Model):
@@ -367,9 +363,6 @@ class APP_USERS(models.Model):
     STATUS = models.CharField(max_length=100,blank=True,null=True)
     LOCKED = models.CharField(max_length=100,blank=True,null=True)
 
-
-
-
 class APP_LIST(models.Model):
     #APPLICATION LIST
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -414,6 +407,9 @@ class CONTROLLIST(models.Model):
     CONTROL_DOMAIN = models.CharField(max_length=256,blank=True,null=True)
     CONTROL_RELEVANCE = models.CharField(max_length=256,blank=True,null=True)
     CONTROL_DESCRIPTION = models.CharField(max_length=256,blank=True,null=True)
+
+    def __str__(self):
+        return self.CONTROL_ID
     
     class Meta:
         managed = True
@@ -432,6 +428,52 @@ class TEST_PROCEDURES(models.Model):
     class Meta:
         managed = True
         db_table = 'TEST_PROCEDURE'
+
+
+class DESIGN_TESTING(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CONTROL_ID =  models.ForeignKey(CONTROLLIST,on_delete=models.CASCADE,null=True,blank=True)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    CONTROL_TYPE = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_RATING = models.CharField(max_length=10,blank=True,null=True)
+    CONTROL_RATING_RATIONALE = models.CharField(max_length=500,blank=True,null=True)
+    CONTROL_TEST_PROCEDURE = models.TextField(null=True,blank=True)
+    CONTROL_TEST_RESULT = models.TextField(null=True,blank=True)
+    CONTROL_CONCLUSION = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_RATIONALE = models.TextField(null=True,blank=True)
+
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,default=False,null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'DESIGN_TESTING'
+
+def design_evidence_folder(instance, filename):
+
+    control_id = instance.CONTROL_ID_id
+    app_id = instance.APP_NAME_id
+        # Debugging output
+    print("Control ID:", control_id)
+    print("App ID:", app_id)
+    print("App ID:", filename)
+    return f'workpapers/{app_id}/{control_id}/design/{filename}'
+
+
+class DESIGN_EVIDENCE(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CONTROL_ID =  models.ForeignKey(CONTROLLIST,on_delete=models.CASCADE,null=True,blank=True)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    file_name = models.FileField(upload_to=design_evidence_folder, max_length=256)
+
+    class Meta:
+        managed = True
+        db_table = 'DESIGN_EVIDENCE'
 
 class RISKLIST(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

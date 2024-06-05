@@ -1418,7 +1418,6 @@ class DeletePWAttachment(View):
             response_data = {'message': 'Attachment deleted successfully'}
             return JsonResponse(response_data)
         else:
-            # Assuming you want to send an error message if the attachment is not found
             response_data = {'error': 'Attachment not found'}
             return JsonResponse(response_data, status=404)
 

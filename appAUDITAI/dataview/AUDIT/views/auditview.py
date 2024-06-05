@@ -19,6 +19,8 @@ from django.core.files.storage import default_storage
 from django.http import FileResponse
 from django.utils.html import escape
 import html
+from django.core.cache import cache
+import os
 
 
 class RiskAndControls(AuditorPermissionMixin,View):
@@ -240,7 +242,12 @@ class AuditPerApp(AuditorPermissionMixin,View):
             for control in control_list:
                 if control.id not in mapped_control_ids:
                     unmapped_controls[control.id] = control
-        
+
+        try:
+            company = COMPANY.objects.get(id = comp_id)
+        except COMPANY.DoesNotExist:
+            company = None
+
         try:
             planning_docs_all = AUDITFILE.objects.filter(AUDIT_ID = audit_id, FOLDER_NAME = 'Planning')
             today = datetime.now().date()
@@ -274,7 +281,6 @@ class AuditPerApp(AuditorPermissionMixin,View):
 
         except AUDITFILE.DoesNotExist:
             docs = None
-
 
         try:
             planning_docs_me = planning_docs_all.filter(CURRENTLY_WITH=user.email) if planning_docs_all else None
@@ -351,7 +357,6 @@ class AuditPerApp(AuditorPermissionMixin,View):
         user = request.user
         workpaper_doc_with_me = workpaper_docs_all.filter(CURRENTLY_WITH=user.email) if workpaper_docs_all else None
 
-
         context = {
             'comp_id':comp_id,
             'audit_id':audit_id,
@@ -368,7 +373,8 @@ class AuditPerApp(AuditorPermissionMixin,View):
             'mapped_controls':mapped_controls,
             'unmapped_controls':unmapped_controls,
             'workpaper_docs_all':workpaper_docs_all,
-            'workpaper_doc_with_me':workpaper_doc_with_me
+            'workpaper_doc_with_me':workpaper_doc_with_me,
+           
         }
         return render(request,self.template_name,context)
     
@@ -386,14 +392,31 @@ def download_file(request, id):
         # Handle the exception
         pass
 
-    
+def download_design_attachment(request, id):
+    attachment = get_object_or_404(DESIGN_EVIDENCE, id=id)
+    file_path = attachment.file_name.path
+    file_name = os.path.basename(file_path) 
+
+    try:
+        response = FileResponse(open(file_path, 'rb'), content_type='application/octet-stream')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
+        return response
+    except Exception as e:
+        # Handle the exception
+        pass
+
+def delete_design_attachment(request, id):
+    attachment = get_object_or_404(DESIGN_EVIDENCE, id=id)
+    attachment.delete()
+    response_data = {'message': 'Attachment deleted successfully'}
+    return JsonResponse(response_data)
+
+
 class AuditPlanningDocs(AuditPerApp):
     template_name = 'pages/AUDIT/audit-planning.html'
 
     def get(self, request, comp_id, audit_id, app_id):
-        # Call the parent class's get method to retain its functionality and context
         response = super().get(request, comp_id, audit_id, app_id)
-
         return response
 
     def post(self, request, comp_id, audit_id, app_id):
@@ -548,8 +571,6 @@ def get_procedure_content(request,id):
 def get_password_policy(request,company_id):
     id = request.GET.get('company_id')
 
-    print(company_id)
-
     try:
         company = COMPANY.objects.get(id = id)
         password  = PASSWORDPOLICY.objects.get(COMPANY_ID = company)
@@ -582,11 +603,150 @@ def get_password_policy(request,company_id):
         'mfa_enabled':mfa_enabled,
         })
 
+class AutoSave_Workpapers(AuditorPermissionMixin,View):
 
+    def post(self, request, *args, **kwargs):
+        user = request.user
+        form_id = request.POST.get('form_id')
+        comp_id = kwargs.get('comp_id')
+        app_id = kwargs.get('app_id')
+        control_id = kwargs.get('control_id')
+
+        #CONTROL TYPE
+        control_type = request.POST.get('control_type')
+
+        #CONTROL RISK RATING
+        control_rating = request.POST.get('control_rating')
+        control_rating_rationale = request.POST.get('control_rating_rationale')
+
+        #TEST PROCEDURES
+        design_procedures = request.POST.get('design_procedures')
+
+        #TEST_RESULTS
+        design_result = request.POST.get('design_result')
+        
+        #FILE_NAME
+        file_name = request.POST.get('file')
+
+        # Generate cache keys
+        company_cache_key = f"company_{comp_id}"
+        app_cache_key = f"app_{app_id}"
+        control_cache_key = f"control_{control_id}"
+
+        # Attempt to fetch values from cache
+        company = cache.get(company_cache_key)
+        app = cache.get(app_cache_key)
+        control = cache.get(control_cache_key)
+
+       # If not found in cache, query the database
+        if not company:
+            try:
+                company = COMPANY.objects.get(id=comp_id)
+                # Cache the value with expiry time
+                cache.set(company_cache_key, company, timeout=120)  # Cache for 1 minute
+            except COMPANY.DoesNotExist:
+                company = None
+        
+        if not app:
+            try:
+                app = APP_LIST.objects.get(id=app_id)
+                # Cache the value with expiry time
+                cache.set(app_cache_key, app, timeout=120)  # Cache for 1 minute
+            except APP_LIST.DoesNotExist:
+                app = None
+
+        # Repeat the same process for 'control'
+        if not control:
+            try:
+                control = CONTROLLIST.objects.get(id=control_id)
+                # Cache the value with expiry time
+                cache.set(control_cache_key, control, timeout=120)  # Cache for 1 minute
+            except CONTROLLIST.DoesNotExist:
+                control = None
+
+        if form_id == 'control_type_form':
+            try:
+                design,created = DESIGN_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                design.CONTROL_TYPE = control_type
+                if created:
+                    design.CREATED_BY = user.email
+                    design.CREATED_ON = timezone.now()
+                else:
+                    design.MODIFIED_BY = user.email
+                    design.LAST_MODIFIED = timezone.now()
+                design.save()
+            except DESIGN_TESTING.DoesNotExist:
+                design = None
+
+        elif form_id == 'control_risk_rating_form':
+            try:
+                design,created = DESIGN_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                design.CONTROL_RATING = control_rating
+                design.CONTROL_RATING_RATIONALE = control_rating_rationale
+                if created:
+                    design.CREATED_BY = user.email
+                    design.CREATED_ON = timezone.now()
+                else:
+                    design.MODIFIED_BY = user.email
+                    design.LAST_MODIFIED = timezone.now()
+                design.save()
+            except DESIGN_TESTING.DoesNotExist:
+                design = None
+
+        elif form_id == 'design_procedure_form':
+            try:
+                design,created = DESIGN_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                design.CONTROL_TEST_PROCEDURE = escape(design_procedures)
+                if created:
+                    design.CREATED_BY = user.email
+                    design.CREATED_ON = timezone.now()
+                else:
+                    design.MODIFIED_BY = user.email
+                    design.LAST_MODIFIED = timezone.now()
+                design.save()
+            except DESIGN_TESTING.DoesNotExist:
+                design = None
+        elif form_id == 'design_result_form':
+            try:
+                design,created = DESIGN_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                design.CONTROL_TEST_RESULT = escape(design_result)
+                if created:
+                    design.CREATED_BY = user.email
+                    design.CREATED_ON = timezone.now()
+                else:
+                    design.MODIFIED_BY = user.email
+                    design.LAST_MODIFIED = timezone.now()
+                design.save()
+            except DESIGN_TESTING.DoesNotExist:
+                design = None
+
+        elif form_id == 'form_design_evidence':
+            form = DESIGN_EVIDENCE_UPLOAD_FORM(request.POST, request.FILES)
+            if form.is_valid():
+                design_evidence = form.save(commit=False)
+                design_evidence.COMPANY_ID_id = comp_id
+                design_evidence.CONTROL_ID_id = control_id
+                design_evidence.APP_NAME_id = app_id
+                if 'file' in request.FILES:
+                    design_evidence.file_name = request.FILES['file']
+                design_evidence.save()
+                return JsonResponse({'status': 'success'}, status=200)
+            else:
+                return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+
+        elif form_id == 'design_conclusion':
+            pass
+        else:
+            print('Nothing is triggered')
+            pass
+
+        return JsonResponse({'success': 'Success'}, status=200)
+    
 class AuditWorkpapersDetails(AuditPerApp):
     template_name = 'pages/AUDIT/audit-workpaper-details.html'
 
     def get(self, request, comp_id, audit_id, app_id, control_id):
+
         user = request.user
         try:
             apps = APP_LIST.objects.filter(COMPANY_ID = comp_id)
@@ -622,12 +782,33 @@ class AuditWorkpapersDetails(AuditPerApp):
         except TEST_PROCEDURES.DoesNotExist:
             procedure_list = None
 
+        try:
+            company = COMPANY.objects.get(id = comp_id)
+        except COMPANY.DoesNotExist:
+            company =  None
+
+        try:
+            design = DESIGN_TESTING.objects.get(COMPANY_ID = company, APP_NAME = selected_app, CONTROL_ID = control_details)
+            design.CONTROL_TEST_PROCEDURE = html.unescape(design.CONTROL_TEST_PROCEDURE)
+            design.CONTROL_TEST_RESULT = html.unescape(design.CONTROL_TEST_RESULT)
+        except DESIGN_TESTING.DoesNotExist:
+            design = None
+
         # Decode HTML entities in DESIGN_PROCEDURES field
         if procedure_list:
             for procedure in procedure_list:
                 procedure.DESIGN_PROCEDURES = html.unescape(procedure.DESIGN_PROCEDURES)
                 procedure.INTERIM_PROCEDURES = html.unescape(procedure.INTERIM_PROCEDURES)
                 procedure.ROLLFORWARD_PROCEDURES = html.unescape(procedure.ROLLFORWARD_PROCEDURES)
+
+        try:
+            design_attachment = DESIGN_EVIDENCE.objects.filter(COMPANY_ID = company, APP_NAME = selected_app, CONTROL_ID = control_details)
+            for attachment in design_attachment:
+                file_names = [os.path.basename(attachment.file_name.name)]
+                attachment.file_names = ', '.join(file_names)  # Join the file names into a string
+            
+        except DESIGN_EVIDENCE.DoesNotExist:
+            design_attachment = None
 
         context = {
             'comp_id':comp_id,
@@ -640,7 +821,10 @@ class AuditWorkpapersDetails(AuditPerApp):
             'control_details':control_details,
             'audit_name':audit_name,
             'risk_mapped':risk_mapped,
-            'procedure_list':procedure_list
+            'procedure_list':procedure_list,
+            'design':design,
+            'design_attachment':design_attachment
+            
         }
         return render(request, self.template_name, context)
     

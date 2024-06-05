@@ -8,6 +8,7 @@
 <input type="hidden" id="ajax_app_id" name="ajax_app_id" value="{{app_id}}">
 <input type="hidden" id="ajax_control_id" name="ajax_control_id" value="{{control_details.id}}">
 <input type="hidden" id="design_evidence_form" name="form_id" value="form_design_evidence">
+<input type="hidden" id="selected_app" name="selected_app" value="{{selected_app.id}}">
 
 
 <nav class="navbar navbar-light bg-light">
@@ -41,7 +42,7 @@
     <div class="tab-content border rounded-3 border-light p-3 " id="pills-tabContent">
         <div class="tab-pane fade show active" id="pills-overview" role="tabpanel" aria-labelledby="pills-overview-tab">
             <p style="font-size:14px;"><b>Control Summary:</b></p>
-            <div class="container bg-light" style="padding:10px;">
+            <div class="container bg-light" style="padding:10px;max-width:100%">
                 <div class="row g-3 align-items-center" style="margin-top:3px;">
                     <div class="col-auto">
                         <label style="font-size:12px; width: 150px;" class="col-form-label">Control ID:</label>
@@ -56,7 +57,7 @@
                         <label style="font-size:12px; width: 150px;" class="col-form-label">Control Description:</label>
                     </div>
                     <div class="col">
-                        <textarea class="form-control" style="font-size:12px;resize:none" id="control_description"
+                        <textarea class="form-control" style="font-size:12px;resize:none;max-width: 100%;" id="control_description"
                             name="control_description" rows="4" required readonly>{{control_details.CONTROL_DESCRIPTION}}</textarea>
                     </div>
                 </div>
@@ -90,7 +91,7 @@
 
             </div>
             <p style="font-size:14px;margin-top:30px;"><b>Relevant Risk:</b></p>
-            <div class="container bg-light">
+            <div class="container bg-light" style="max-width:100%">
                 <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
                 style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
                 <thead style="padding-top:12px;text-align:center">
@@ -131,7 +132,7 @@
        
             <div class="tab-pane fade show" id="pills-assessment" role="tabpanel" aria-labelledby="pills-assessment-tab">
                 <p style="font-size:14px;"><b>Control Risk Rating:</b></p>
-                <div class="container bg-light" style="padding:10px;">
+                <div class="container bg-light" style="padding:10px;max-width: 100%;">
                     <form id="control_risk_rating_form" method="post" enctype="multipart/form-data">
                             <input type="hidden" name="form_id" value="control_risk_rating_form">
                             {% csrf_token %}
@@ -193,11 +194,11 @@
                     <div id="control_summary" class="accordion-collapse collapse" data-bs-parent="#risk_mapped">
                         <div class="accordion-body">
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
-                                <div class="container bg-light" style="padding:10px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%;">
                                     <p style="font-size:14px;"><b>Control Description:</b></p>
                                     <div class="row g-3 align-items-center">
                                         <div class="col">
-                                            <textarea class="form-control" style="font-size:12px;resize:none" id="control_description"
+                                            <textarea class="form-control" style="font-size:12px;resize:none;max-width: 100%;" id="control_description"
                                                 name="control_description" rows="4" required
                                                 readonly>{{control_details.CONTROL_ID}}: {{control_details.CONTROL_DESCRIPTION}}</textarea>
                                         </div>
@@ -218,10 +219,10 @@
                     </h2>
                     <div id="design_evaluation" class="accordion-collapse collapse" >
                         <div class="accordion-body">
+                            <!-- DESIGN PROCEDURES -->
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
                                     <p style="font-size:14px;"><b>Test Procedures:</b></p>
-
                                     <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
                                         <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
                                           <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
@@ -255,9 +256,11 @@
                                             </form>
                                         </div>
                                     </div>
+
                                 </div> 
                             </div>
 
+                            <!-- DESIGN TEST RESULT -->
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
                                     <p style="font-size:14px;"><b>Test Result:</b></p>
@@ -280,6 +283,7 @@
                                 </div> 
                             </div>
 
+                            <!-- DESIGN EVIDENCE SECTION -->
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
                                     <form id="form_design_evidence" method="post" enctype="multipart/form-data">
@@ -289,7 +293,7 @@
                                         <p style="font-size:12px;">Add supporting evidence to support the evaluation of the design, if applicable:</p>
                                         <div class="row g-3 align-items-center">
                                             <div class="col">
-                                    
+        
                                                 <div class="file-drop-area" onclick="triggerFileInputClick()"
                                                     style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:100px;">
                                                     <div class="card-body" style=" text-align: center;">
@@ -345,7 +349,7 @@
                         </div>
                     </div>
                 </div>
-
+                <!-- DESIGN CONCLUSION -->
                 <div class="accordion-item rounded-3 border-0 shadow mb-2">
                     <h2 class="accordion-header">
                         <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
@@ -354,29 +358,56 @@
                             Conclusion
                         </button>
                     </h2>
+                    
                     <div id="design_conclude" class="accordion-collapse collapse" >
                         <div class="accordion-body">
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
                                     <p style="font-size:14px;"><b>Design Conclusion:</b></p>
+                                    <form id="design_conclusion_form" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="form_id" value="design_conclusion_form">
+                                        {% csrf_token %}
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col">
+                                                <select id="design_conclusion_select" name="design_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                                                    {% if design.CONTROL_CONCLUSION == 'Effective' %}
+                                                    <option disabled ></option>
+                                                    <option selected value="Effective">Effective</option>
+                                                    <option value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% elif design.CONTROL_CONCLUSION == 'Not Effective' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Effective">Effective</option>
+                                                    <option selected value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% elif design.CONTROL_CONCLUSION == 'Inconclusive' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Effective">Effective</option>
+                                                    <option  value="Not Effective">Not Effective</option>
+                                                    <option selected value="Inconclusive">Inconclusive</option>
+                                                    {% else %}
+                                                    <option disabled selected></option>
+                                                    <option value="Effective">Effective</option>
+                                                    <option value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% endif %}
 
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col">
-                                            <select id="control_rating" name="control_rating" style="font-size:12px;" class="form-select" aria-label="Default select example">
-                                                <option disabled selected></option>
-                                                <option value="Effective">Effective</option>
-                                                <option value="Not Effective">Not Effective</option>
-                                                <option value="Inconclusive">Inconclusive</option>
-                                              </select>
+                                                   
+                                                </select>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <p style="font-size:12px;margin-top:20px;">Document the rationale on how you came up with the conclusion</p>
-                                    <div class="row g-3 align-items-center">
-                                        <div class="col">
-                                            <div style="background-color:white !important" id="design_conclusion"></div>
+                                        <p style="font-size:12px;margin-top:20px;">Document the rationale on how you came up with the conclusion</p>
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col">
+                                                {% if design.CONTROL_CONCLUSION_RATIONALE %}
+                                                <div style="background-color:white !important" id="design_conclusion">{{design.CONTROL_CONCLUSION_RATIONALE|safe}}</div>
+                                                {% else %}
+                                                <div style="background-color:white !important" id="design_conclusion"></div>
+                                                {% endif %}
+                                            </div>
                                         </div>
-                                    </div>
+                                    </form>
                                 </div> 
                             </div>
 
@@ -386,14 +417,304 @@
             </div>
         </div>
         <div class="tab-pane fade show" id="pills-interim" role="tabpanel" aria-labelledby="pills-interim-tab">
-            Interim
+            <div class="accordion accordion-flush" id="test_of_design">
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 class="accordion-header">
+                        <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#population_sample"
+                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                        Timing and Sampling
+                        </button>
+                    </h2>
+                    <div id="population_sample" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%;">
+                                    <p style="font-size:14px;"><b>Period Covered:</b></p>
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; " class="col-form-label">Start Date:</label>
+                                        </div>
+                                        <div class="col">
+                                            <input class="form-control sm" id="interim_start_date" name="interim_start_date" type="date" style="font-size:12px;"
+                                                value="">
+                                        </div>
+                                        <div class="col-auto">
+                                            <label style="font-size:12px;" class="col-form-label">End Date:</label>
+                                        </div>
+                                        <div class="col">
+                                            <input class="form-control sm" id="interim_end_date" name="interim_end_date" type="date" style="font-size:12px;"
+                                                value="">
+                                        </div>
+                                    </div>
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                       
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%;">
+                                    <p style="font-size:14px;"><b>Population and Samples:</b></p>
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Population:</label>
+                                        </div>
+                                        <div class="col">
+                                            <input class="form-control sm" id="interim_population" name="interim_population" type="text" style="font-size:12px;"
+                                                value="" required>
+                                        </div>
+                                    </div>
+
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Control Frequency:</label>
+                                        </div>
+                                        <div class="col">
+                                            <select id="design_conclusion_select" name="design_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                                                <option disabled selected></option>
+                                                <option value="Multiple">Many times per day</option>
+                                                <option value="Daily">Daily</option>
+                                                <option value="Weekly">Weekly</option>
+                                                <option value="Monthly">Monthly</option>
+                                                <option value="Quarterly">Quarterly</option>
+                                                <option value="Semi-Annual">Semi-Anually</option>
+                                                <option value="Anually">Anually</option>
+                                                <option value="Continuous">Continuous</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="col-auto">
+                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Samples:</label>
+                                        </div>
+                                        <div class="col">
+                                            <input class="form-control sm" id="interim_samples" name="interim_samples" type="text" style="font-size:12px;"
+                                                value="" required>
+                                        </div>
+                                    </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+
+                
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 class="accordion-header">
+                        <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#oe_procedures_container"
+                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                        Operating Effectiveness Evaluation
+                        </button>
+                    </h2>
+
+                    <div id="oe_procedures_container" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+
+                            <!-- OE TEST PROCEDURES -->
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <p style="font-size:14px;"><b>Test Procedures:</b></p>
+
+                                <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                    </symbol>
+                                    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+                                      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                                    </symbol>
+                                    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                    </symbol>
+                                </svg>
+                               
+                              
+                                {% if procedure_list %}
+                                <div style="font-size:12px;" class="alert alert-light" role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+                                   </i>Great! Test procedures template for this control is available. Click <a href="#" data-bs-toggle="modal" data-bs-target="#test_procedure_modal">here</a> to choose from existing templates.
+                                </div>
+                                {% endif %}
+
+                                <div class="row g-3 align-items-center">
+                                    <div class="col">
+                                        <form id="oe_procedure_form" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="form_id" value="oe_procedure_form">
+                                            {% csrf_token %}
+                                            {% if design.CONTROL_TEST_PROCEDURE %}
+                                            <div style="background-color:white !important" id="oe_procedures">{{design.CONTROL_TEST_PROCEDURE|safe}}</div>
+                                            {% else %}
+                                            <div style="background-color:white !important" id="oe_procedures"></div>
+                                            {% endif  %}
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
+
+                            <!-- OE TEST RESULT -->
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <p style="font-size:14px;"><b>Test Result:</b></p>
+
+                                <div style="font-size:12px;" class="alert alert-light" role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+                                   </i>Good news! Automated test result for <b>{{control_details.CONTROL_ID }}: {{control_details.CONTROL_TITLE }}</b> is available. Click <a href="#" data-bs-toggle="modal" data-bs-target="#oe_result_modal">here</a> to review the details.
+                                </div>
+
+                                <div class="row g-3 align-items-center">
+                                    <div class="col">
+                                        <form id="oe_result_form" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="form_id" value="oe_result_form">
+                                            {% csrf_token %}
+                                            {% if design.CONTROL_TEST_PROCEDURE %}
+                                            <div style="background-color:white !important" id="oe_result">{{design.CONTROL_TEST_PROCEDURE|safe}}</div>
+                                            {% else %}
+                                            <div style="background-color:white !important" id="oe_result"></div>
+                                            {% endif  %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- OE TEST EVIDENCE -->
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
+                                <p style="font-size:14px;"><b>Supporting Evidence:</b></p>
+                                <p style="font-size:12px;">Add supporting evidence to support the operating effectiveness test result, if applicable:</p>
+                                <div class="row g-3 align-items-center">
+                                    <div class="col">
+                                      
+                                    <div class="file-drop-area" onclick="triggerFileInputClick()"
+                                        style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:100px;">
+                                        <div class="card-body" style=" text-align: center;">
+                                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
+                                            <a style="font-size:14px;color:grey">Drag and
+                                                drop the operating effective supporting evidence
+                                                here</a>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="row" style="padding-top:20px;" hidden="true">
+                                        <a style="font-size:12px;color:#000000">Or browse
+                                            and
+                                            select the file here</a>
+                                        <div class="card" style="border:none;">
+                                            <div class="card-body"
+                                                style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
+                                                <input type="file" id="fileInput" name="file_name" multiple>
+                                                <input type="hidden" id="oe_evidence_upload" name="oe_evidence_upload"
+                                                    value="{{ selected_app.APP_NAME }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="selectedFilesContainer" style="margin-top:20px;font-size:13px;">
+                                        <form id="oe_delete_attacchment" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="form_id" value="oe_delete_attacchment">
+                                            {% csrf_token %}
+                                            {% if design_attachment %}
+                                                {% for attachment in design_attachment %}
+                                                    <div class="selected-file-item">
+                                                        <i class="fas fa-file" style="margin-right: 5px; font-size: 16px;"></i>
+                                                        <input id="design_attachment_id" hidden="true" value="{{attachment.id}}">
+                                                        <span id="{{attachment.id}}" style="margin-right: 5px; font-size: 14px;">{{ attachment.file_names }}</span>
+                                                        <i id="download_attachment_icon" class="fas fa-download download-icon"
+                                                            style="cursor: pointer; color: lightblue; font-size: 14px; margin-right: 5px;"></i>
+                                                        <i id="delete_attachment_icon" class="far fa-trash-alt delete-icon"
+                                                            style="cursor: pointer; color: orange; font-size: 14px;"></i>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                           
+                                            {% endif %}
+                                        </form>
+                                    </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 class="accordion-header">
+                        <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#oe_conclusion"
+                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                        Conclusion
+                        </button>
+                    </h2>
+
+                    <div id="oe_conclusion" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%">
+                                    <p style="font-size:14px;"><b>Design Conclusion:</b></p>
+                                    <form id="design_conclusion_form" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="form_id" value="design_conclusion_form">
+                                        {% csrf_token %}
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col">
+                                                <select id="design_conclusion_select" name="design_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                                                    {% if design.CONTROL_CONCLUSION == 'Effective' %}
+                                                    <option disabled ></option>
+                                                    <option selected value="Effective">Effective</option>
+                                                    <option value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% elif design.CONTROL_CONCLUSION == 'Not Effective' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Effective">Effective</option>
+                                                    <option selected value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% elif design.CONTROL_CONCLUSION == 'Inconclusive' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Effective">Effective</option>
+                                                    <option  value="Not Effective">Not Effective</option>
+                                                    <option selected value="Inconclusive">Inconclusive</option>
+                                                    {% else %}
+                                                    <option disabled selected></option>
+                                                    <option value="Effective">Effective</option>
+                                                    <option value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% endif %}
+
+                                                   
+                                                </select>
+                                            </div>
+                                        </div>
+
+                                        <p style="font-size:12px;margin-top:20px;">Document the rationale on how you came up with the conclusion</p>
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col">
+                                                {% if design.CONTROL_CONCLUSION_RATIONALE %}
+                                                <div style="background-color:white !important" id="design_conclusion">{{design.CONTROL_CONCLUSION_RATIONALE|safe}}</div>
+                                                {% else %}
+                                                <div style="background-color:white !important" id="design_conclusion"></div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div> 
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="tab-pane fade show" id="pills-rollforward" role="tabpanel" aria-labelledby="pills-rollforward-tab">
             Roll-forward
         </div>
     </div>
 
-
+<!-- MODAL FOR DESIGN TEST PROCEDURES GENERATION -->
 <div class="modal fade modal-xl" id="test_procedure_modal" data-bs-backdrop="static" tabindex="-1"
 aria-labelledby="test_procedure_modal" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
@@ -410,7 +731,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                         class="col-form-label">Procedure Name:</label>
                 </div>
                 <div class="col">
-                    <select class="form-select" style="font-size:12px;max-width: 100%;" id="procedure_name" name="procedure_name" required>
+                    <select class="form-select" style="font-size:12px;max-width: 100%;" id="procedure_name_template" name="procedure_name_template" required>
                         <option selected disabled>Select Procedure</option>
                         {% for procedure in procedure_list %}
                         <option value="{{procedure.id}}">{{procedure.PROCEDURE_NAME}}</option>
@@ -528,6 +849,8 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 </div>
 </div>
 
+
+<!-- MODAL FOR DESIGN TEST RESULT GENERATION -->
 <div class="modal fade modal-xl" id="design_result_modal" data-bs-backdrop="static" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -608,6 +931,64 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
     </div>
 </div>
 
+<!-- MODAL FOR OE TEST RESULT GENERATION -->
+<div class="modal fade modal-xl" id="oe_result_modal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p><i class="fas fa-book" style="margin-right:5px;font-size:14px;"></i>Operating Effectiveness Result</p>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+
+             <div class="modal-body"> 
+                
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;" class="col-form-label">Control:</label>
+                    </div>
+                    <div class="col">
+                        <select id="oe_control_selection" name="oe_control_selection" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                            <option disabled selected></option>
+                            <option value="Password">Authentication/Password</option>
+                            <option value="Provisioning">Access Provisioning</option>
+                            <option value="Termination">Access Termination</option>
+                            <option value="Privileged">Privileged Access</option>
+                            <option value="Jobs">Job Access and Monitoring</option>
+                            <option value="Back-up">Back-up Control</option>
+                            <option value="Restoration">Restoration Control</option>
+                          </select>
+                    </div>
+                </div>
+
+                <div class="row g-3 align-items-center" style="margin-top:3px;margin-bottom:20px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;"
+                            class="col-form-label">Tester:</label>
+                    </div>
+                    <div class="col">
+                        <input class="form-control sm" id="oe_designation" name="oe_designation" type="text" style="font-size:12px;"
+                            value="" autocomplete="off" required>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <button id="oe_copy" class="btn btn-light me-md-2 btn-sm" type="button"><i class="far fa-copy"></i> Copy</button>
+                </div>
+
+                <div style="background-color:white !important" id="oe_result_generation"></div>
+
+             </div>
+
+             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" name="generate_oe_result" id="generate_oe_result"
+                    class="btn btn-primary btn-sm">Generate</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
 <div style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 11; padding: 1rem;margin-top:50px !important">
     <div id="design_attachment_delete_toast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-header">
@@ -625,6 +1006,8 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 
 <script src="{% static 'js/workpaper_upload.js' %}"></script>
 
+<script src="{% static 'js/audit.js' %}"></script>
+
 <script>
     var quillDesignProcedures = new Quill('#design_procedures', {
             theme: 'snow',
@@ -634,7 +1017,22 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     [{ 'size': ['small', false, 'large', 'huge'] }],
                     ['bold', 'italic', 'underline', 'strike'],
                     [{ 'color': [] }, { 'background': [] }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }
+        });
+
+    var quillOEProcedures = new Quill('#oe_procedures', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
                     ['link'],
                     ['clean'],
                 ]
@@ -649,7 +1047,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     [{ 'size': ['small', false, 'large', 'huge'] }],
                     ['bold', 'italic', 'underline', 'strike'],
                     [{ 'color': [] }, { 'background': [] }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
                     ['link'],
                     ['clean'],
                 ]
@@ -664,28 +1062,63 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     [{ 'size': ['small', false, 'large', 'huge'] }],
                     ['bold', 'italic', 'underline', 'strike'],
                     [{ 'color': [] }, { 'background': [] }],
-                    [{ 'list': 'ordered' }, { 'list': 'bullet' }, { 'indent': '-1' }, { 'indent': '+1' }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
                     ['link'],
                     ['clean'],
                 ]
             }
         });
 
+    var quillOEResultGenerator = new Quill('#oe_result_generation', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }
+        });
+
+    var quillOEResult = new Quill('#oe_result', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }
+        });
    
     document.querySelector('#design_procedures .ql-editor').style.minHeight = '300px';
+    document.querySelector('#oe_procedures .ql-editor').style.minHeight = '300px';
     document.querySelector('#design_result .ql-editor').style.minHeight = '300px';
+    document.querySelector('#oe_result .ql-editor').style.minHeight = '300px';
+    document.querySelector('#oe_result_generation .ql-editor').style.minHeight = '300px';
     document.querySelector('#design_conclusion .ql-editor').style.minHeight = '200px';
-  
-
   
     var maxEditorHeight = '300px';
     document.querySelector('#design_procedures .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#oe_procedures .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#design_result .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#oe_result .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#oe_result_generation .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#design_conclusion .ql-editor').style.maxHeight = maxEditorHeight;
 
-
     document.querySelector('#design_procedures .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#oe_procedures .ql-editor').style.overflowY = 'auto';
     document.querySelector('#design_result .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#oe_result .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#oe_result_generation .ql-editor').style.overflowY = 'auto';
     document.querySelector('#design_conclusion .ql-editor').style.overflowY = 'auto';
 
 </script>
@@ -696,11 +1129,76 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         var initialFieldValues = {};
         var initialContent_design_procedure = quillDesignProcedures.root.innerHTML;
         var initialContent_design_result = quillDesignResult.root.innerHTML;
+        var initialContent_design_conclusion = quillDesignConclusion.root.innerHTML;
 
         
         var ajax_comp_id = $('#ajax_comp_id').val();
         var ajax_app_id = $('#ajax_app_id').val();
         var ajax_control_id = $('#ajax_control_id').val();
+
+
+        $('#design_conclusion_select').on('change', function () {
+            design_conclusion = $(this).val();
+            var design_conclusion_rationale = quillDesignConclusion.root.innerHTML;
+
+            formId = $('#design_conclusion_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+                    design_conclusion: design_conclusion,
+                    design_conclusion_rationale:design_conclusion_rationale        
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
+
+         //DESIGN CONCLUSION FORM
+        $(quillDesignConclusion.root).on('blur', function() {
+            var design_conclusion_rationale = quillDesignConclusion.root.innerHTML;
+            var design_conclusion = $('#design_conclusion_select').val();
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#design_conclusion_form').find('input[name="form_id"]').val();
+
+            if (initialContent_design_conclusion !== design_conclusion) {
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+                    design_conclusion:design_conclusion,
+                    design_conclusion_rationale: design_conclusion_rationale,
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            
+            }
+        });
+
 
       //DESIGN RESULT FORM
         $(quillDesignResult.root).on('blur', function() {
@@ -851,11 +1349,11 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             });
         });
 
+        
         var responseData;
 
-        $('#procedure_name').on('change', function () {
+        $('#procedure_name_template').on('change', function () {
             var selectedProcedure = $(this).val();
-
 
             $('#test_procedure_design').empty();
             $('#test_procedure_interim').empty();
@@ -863,6 +1361,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 
             $.ajax({
                 url: '/audit/risk-and-controls/procedures/' + selectedProcedure,
+
                 type: 'GET',
                 data: {
                     procedure_id: selectedProcedure
@@ -879,6 +1378,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             });
         });
 
+
         $("#design_copy").click(function () {
             if (responseData && responseData.design_procedures) {
                 quillDesignProcedures.root.innerHTML = responseData.design_procedures
@@ -888,6 +1388,27 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             }
         });   
 
+        $("#interim_copy").click(function () {
+            if (responseData && responseData.design_procedures) {
+                quillOEProcedures.root.innerHTML = responseData.interim_procedures
+                $('#test_procedure_modal').modal('hide');
+            } else {
+                console.error("Response data is not available or doesn't have design_procedures.");
+            }
+        });  
+
+        $("#oe_copy").click(function () {
+            var isEmpty = quillOEResultGenerator.root.innerHTML.trim() === '<p><br></p>';
+            if (!isEmpty) {
+                quillOEResult.root.innerHTML = quillOEResultGenerator.root.innerHTML;
+            } else {
+                console.log("quillOEResultGenerator.root.innerHTML is empty. Nothing to copy.");
+                return; 
+            }
+            $('#oe_result_modal').modal('hide');
+        });
+
+
         function formatDate(dateString) {
         var dateParts = dateString.split("-");
         var month = parseInt(dateParts[1]);
@@ -896,7 +1417,122 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         return months[month - 1] + " " + day + ", " + year;
     }
+
+
+        $("#generate_oe_result").click(function () {
+            var control_selection = $('#oe_control_selection').val()
+            var app_id = $('#selected_app').val()
+            var company_id = $('#company_id').val()
+            var designation = $('#oe_designation').val()
+            var app_name = $('#narrative_appname').val()
+            var date = new Date().toISOString();
+
+            if (control_selection === 'Password') {
+
+                $.ajax({
+                    url: '/audit/risk-and-controls/password-config/' + app_id,
+                    type: 'GET',
+                    data: {
+                        app_id: app_id,
+                        company_id:company_id
+                    },
+                    success: function (response) {
+                    
+                    if (response.policy && response.config) {
+
+                        var policy = response.policy;
+                        var config = response.config;
+
+                        quillOEResultGenerator.root.innerHTML = designation + ' obtained the password configuration of ' + app_name + ' on ' + formatDate(date) + '. Per inspection of the password configuration and per comparison with the password policy, ' + designation + ' noted the following: <br>';
+
+                        let exceptions = [];
+
+                        if (policy.length <= config.length) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Length: Compliant with the requirement of the policy which requires ' + policy.length + ' characters. <b>No exception noted</b>. </li>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Length: Password length configured is ' + config.length + ' characters, while policy require ' + policy.length + ' characters. <b style="color:red">Exception noted</b></li>';
+                            exceptions.push('Password Length');
+                        }
+
+                        if (policy.age >= config.age) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Age: Compliant with the requirement of the policy which requires account to expire within ' + policy.age + ' days. <b>No exception noted</b>. </li>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Age: Password age configured is ' + config.age + ' days, while policy requires accounts to be expired every ' + policy.age + ' days. <b style="color:red">Exception noted</b></li>';
+                            exceptions.push('Password Age');
+                        }
+
+                        if (policy.history <= config.history) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password History: Compliant with the requirement of the policy that prevents users to re-use their last ' + policy.history + ' passwords. <b>No exception noted</b>. </li>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password History: Password history configured is ' + config.history + ' passwords, while policy requires ' + policy.history + ' passwords to be remembered. <b style="color:red">Exception noted</b></li>';
+                            exceptions.push('Password History');
+                        }
+
+                        if (policy.lockout_attempt >= config.lockout_attempt) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Account Lockout: Compliant with the requirement of the policy that locks the user access after ' + policy.lockout_attempt + ' failed login attempts. <b>No exception noted</b>. </li>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Account Lockout: Account lockout configured is ' + config.lockout_attempt + ' attempts, while policy only requires ' + policy.lockout_attempt + ' failed login attempts. <b style="color:red">Exception noted</b></li>';
+                            exceptions.push('Account Lockout');
+                        }
+
+                        if (policy.special_char === config.special_char) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Complexity (Special Character): Compliant with the requirement of the policy. <b>No exception noted</b>. </li>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Complexity (Special Character): Password configured does not require special character, which is not in line with the policy. <b style="color:red">Exception noted</b></li>';
+                            exceptions.push('Password Complexity (Special Character)');
+                        }
+
+                        if (policy.upper === config.upper) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Complexity (Upper Case): Compliant with the requirement of the policy. <b>No exception noted</b>. </li>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Complexity (Upper Character): Password configured does not require upper case, which is not in line with the policy. <b style="color:red">Exception noted</b></li>';
+                            exceptions.push('Password Complexity (Upper Case)');
+                        }
+
+                        if (policy.lower === config.lower) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Complexity (Lower Case): Compliant with the requirement of the policy. <b>No exception noted</b>. </li>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Complexity (Lower Character): Password configured does not require lower case, which is not in line with the policy. <b style="color:red">Exception noted</b></li>';
+                            exceptions.push('Password Complexity (Lower Case)');
+                        }
+
+                        if (policy.number === config.number) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Complexity (Numeric): Compliant with the requirement of the policy. <b>No exception noted</b>. </li>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Password Complexity (Numeric): Password configured does not require number, which is not in line with the policy. <b style="color:red">Exception noted</b></li>';
+                            exceptions.push('Password Complexity (Numeric)');
+                        }
+
+                        if (policy.mfa_enabled === config.mfa_enabled) {
+                            quillOEResultGenerator.root.innerHTML += '<li>Multi Factor Authentication (MFA): Compliant with the requirement of the policy. <b>No exception noted</b>. </li><br>';
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += '<li>Multi Factor Authentication (MFA): MFA is not configured, which is not in line with the policy. <b style="color:red">Exception noted</b></li>br>';
+                            exceptions.push('Multi Factor Authentication (MFA)');
+                        }
+
+                        // Append the summary of exceptions
+                        if (exceptions.length > 0) {
+                            quillOEResultGenerator.root.innerHTML += 'Based on this, ' + designation + ' ascertained that the password control is Not Effective due to the following password configuration exceptions:';
+                            exceptions.forEach(function(exception) {
+                                quillOEResultGenerator.root.innerHTML += '<li>- ' + exception + '</li>';
+                            });
+                        } else {
+                            quillOEResultGenerator.root.innerHTML += 'Based on this, ' + designation + ' ascertained that the password configurations are in line with the policy. As such, No Exception is noted.<br>';
+                        }
+                
+                    } else {
+                        quillOEResultGenerator.root.innerHTML += '<li>Policy or Config data is missing</li>';
+                    }
+                },
+                error: function (error) {
+                    quillOEResultGenerator.root.innerHTML += '<li>Error retrieving data: ' + error.responseText + '</li>';
+                }
+            });
+
+            }
+        });
       
+
         $("#generate_design_result").click(function () {
 
             var inquirydate = $('#inquiry_date').val()
@@ -922,18 +1558,41 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                         quillDesignResult.root.innerHTML += '<li>Password Length: ' + response.length + '</li>';
                         quillDesignResult.root.innerHTML += '<li>Password Age/Expiry: ' + response.age + '</li>';
                         quillDesignResult.root.innerHTML += '<li>Password Remembered: ' + response.history + '</li>';
-                        quillDesignResult.root.innerHTML += '<li>Require Upper Case?: ' + response.upper + '</li>';
-                        quillDesignResult.root.innerHTML += '<li>Require Lower Case: ' + response.lower + '</li>';
-                        quillDesignResult.root.innerHTML += '<li>Require Numeric: ' + response.number + '</li>';
-                        quillDesignResult.root.innerHTML += '<li>Require Special Character: ' + response.special_char + '</li>';
+                        if (response.upper === true) {
+                            quillDesignResult.root.innerHTML += '<li>Require Upper Case?: Yes</li>';
+                        } else {
+                            quillDesignResult.root.innerHTML += '<li>Require Upper Case?: No</li>';
+                        }
+
+                        if (response.lower === true) {
+                            quillDesignResult.root.innerHTML += '<li>Require Lower Case?: Yes</li>';
+                        } else {
+                            quillDesignResult.root.innerHTML += '<li>Require Lower Case?: No</li>';
+                        }
+
+                        if (response.number === true) {
+                            quillDesignResult.root.innerHTML += '<li>Require Number?: Yes</li>';
+                        } else {
+                            quillDesignResult.root.innerHTML += '<li>Require Number?: No</li>';
+                        }
+
+                        if (response.special_char === true) {
+                            quillDesignResult.root.innerHTML += '<li>Require  Special Character?: Yes</li>';
+                        } else {
+                            quillDesignResult.root.innerHTML += '<li>Require  Special Character?: No</li>';
+                        }
+                       
                         quillDesignResult.root.innerHTML += '<li>Max Failed Login Attempt: ' + response.lockout_attempt + '</li>';
                         quillDesignResult.root.innerHTML += '<li>Lockout Duration: ' + response.lockout_duration + '</li>';
-                        quillDesignResult.root.innerHTML += '<li>MFA Enabled?: ' + response.mfa_enabled + '</li><br>';
 
+                        if (response.mfa_enabled === true) {
+                            quillDesignResult.root.innerHTML += '<li>Require Multi-Factor Authentication?: Yes</li>';
+                        } else {
+                            quillDesignResult.root.innerHTML += '<li>Require  Multi-Factor Authentication?: No</li><br>';
+                        }
 
                         quillDesignResult.root.innerHTML += designation + ' corroborated the design of the control by inspecting the password configuration as part of the operating effectiveness test (refer to OE section within the Interim/Rollforward section for the test results. <br>'
 
-                        $('#design_result_modal').modal('hide');
                     }
                 });
             

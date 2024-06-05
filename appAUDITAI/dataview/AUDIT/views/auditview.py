@@ -588,8 +588,9 @@ def get_password_policy(request,company_id):
 
     except PASSWORDPOLICY.DoesNotExist:
         password = None
-        print('Policy not found')
-
+    except COMPANY.DoesNotExist:
+        company = None
+       
     return JsonResponse({
         'length': length,
         'age':age,
@@ -602,6 +603,63 @@ def get_password_policy(request,company_id):
         'lockout_duration':lockout_duration,
         'mfa_enabled':mfa_enabled,
         })
+
+def get_app_password(request, app_id):
+    app_id = request.GET.get('app_id')
+    comp_id = request.GET.get('company_id')
+
+    response_data = {}
+
+    try:
+        selected_app = APP_LIST.objects.get(id=app_id)
+    except APP_LIST.DoesNotExist:
+        selected_app = None
+    
+    try:
+        company = COMPANY.objects.get(id=comp_id)
+        policy = PASSWORDPOLICY.objects.get(COMPANY_ID=company)
+        
+        if policy:
+            response_data['policy'] = {
+                'length': policy.LENGTH,
+                'age': policy.AGE,
+                'history': policy.HISTORY,
+                'upper': policy.UPPER,
+                'lower': policy.LOWER,
+                'number': policy.NUMBER,
+                'special_char': policy.SPECIAL_CHAR,
+                'lockout_attempt': policy.LOCKOUT_ATTEMPT,
+                'lockout_duration': policy.LOCKOUT_DURATION,
+                'mfa_enabled': policy.MFA_ENABLED,
+            }
+
+    except PASSWORDPOLICY.DoesNotExist:
+        response_data['policy'] = None
+    except COMPANY.DoesNotExist:
+        response_data['company'] = None
+    
+    try:
+        password = PASSWORD.objects.get(APP_NAME=selected_app)
+        
+        if password:
+            response_data['config'] = {
+                'length': password.LENGTH,
+                'age': password.AGE,
+                'history': password.HISTORY,
+                'upper': password.UPPER,
+                'lower': password.LOWER,
+                'number': password.NUMBER,
+                'special_char': password.SPECIAL_CHAR,
+                'lockout_attempt': password.LOCKOUT_ATTEMPT,
+                'lockout_duration': password.LOCKOUT_DURATION,
+                'mfa_enabled': password.MFA_ENABLED,
+            }
+
+    except PASSWORD.DoesNotExist:
+        response_data['config'] = None
+
+    return JsonResponse(response_data)
+        
 
 class AutoSave_Workpapers(AuditorPermissionMixin,View):
 
@@ -624,6 +682,10 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
 
         #TEST_RESULTS
         design_result = request.POST.get('design_result')
+        
+        #TEST_CONCLUSION'
+        design_conclusion = request.POST.get('design_conclusion')
+        design_conclusion_rationale = request.POST.get('design_conclusion_rationale')
         
         #FILE_NAME
         file_name = request.POST.get('file')
@@ -734,8 +796,20 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
             else:
                 return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
-        elif form_id == 'design_conclusion':
-            pass
+        elif form_id == 'design_conclusion_form':
+            try:
+                design,created = DESIGN_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                design.CONTROL_CONCLUSION = design_conclusion
+                design.CONTROL_CONCLUSION_RATIONALE = escape(design_conclusion_rationale)
+                if created:
+                    design.CREATED_BY = user.email
+                    design.CREATED_ON = timezone.now()
+                else:
+                    design.MODIFIED_BY = user.email
+                    design.LAST_MODIFIED = timezone.now()
+                design.save()
+            except DESIGN_TESTING.DoesNotExist:
+                design = None
         else:
             print('Nothing is triggered')
             pass
@@ -789,8 +863,13 @@ class AuditWorkpapersDetails(AuditPerApp):
 
         try:
             design = DESIGN_TESTING.objects.get(COMPANY_ID = company, APP_NAME = selected_app, CONTROL_ID = control_details)
-            design.CONTROL_TEST_PROCEDURE = html.unescape(design.CONTROL_TEST_PROCEDURE)
-            design.CONTROL_TEST_RESULT = html.unescape(design.CONTROL_TEST_RESULT)
+            if design.CONTROL_TEST_PROCEDURE:
+                design.CONTROL_TEST_PROCEDURE = html.unescape(design.CONTROL_TEST_PROCEDURE)
+            if design.CONTROL_TEST_RESULT:
+                design.CONTROL_TEST_RESULT = html.unescape(design.CONTROL_TEST_RESULT)
+            if design.CONTROL_CONCLUSION_RATIONALE:
+                design.CONTROL_CONCLUSION_RATIONALE = html.unescape(design.CONTROL_CONCLUSION_RATIONALE)
+
         except DESIGN_TESTING.DoesNotExist:
             design = None
 

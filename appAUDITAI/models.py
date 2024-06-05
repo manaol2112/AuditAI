@@ -441,7 +441,7 @@ class DESIGN_TESTING(models.Model):
     CONTROL_TEST_PROCEDURE = models.TextField(null=True,blank=True)
     CONTROL_TEST_RESULT = models.TextField(null=True,blank=True)
     CONTROL_CONCLUSION = models.CharField(max_length=25,blank=True,null=True)
-    CONTROL_RATIONALE = models.TextField(null=True,blank=True)
+    CONTROL_CONCLUSION_RATIONALE = models.TextField(null=True,blank=True)
 
     #LOG
     CREATED_BY = models.CharField(max_length=50,blank=True,null=True)

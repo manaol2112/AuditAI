@@ -155,5 +155,7 @@ path('download/<uuid:id>/', auditview.download_file, name='download_file'),
 path('design/delete/<uuid:id>/', auditview.delete_design_attachment, name='delete_design_attachment'),
 path('design/download/<uuid:id>/', auditview.download_design_attachment, name='download_design_attachment'),
 
+path('oe/download/<uuid:id>/', auditview.download_oe_attachment, name='download_design_attachment'),
+path('oe/delete/<uuid:id>/', auditview.delete_oe_attachment, name='delete_design_attachment'),
 ]
 

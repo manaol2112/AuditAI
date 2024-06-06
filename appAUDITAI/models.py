@@ -453,14 +453,32 @@ class DESIGN_TESTING(models.Model):
         managed = True
         db_table = 'DESIGN_TESTING'
 
-def design_evidence_folder(instance, filename):
+class OE_TESTING(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CONTROL_ID =  models.ForeignKey(CONTROLLIST,on_delete=models.CASCADE,null=True,blank=True)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    CONTROL_TYPE = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_RATING = models.CharField(max_length=10,blank=True,null=True)
+    CONTROL_RATING_RATIONALE = models.CharField(max_length=500,blank=True,null=True)
+    CONTROL_TEST_PROCEDURE = models.TextField(null=True,blank=True)
+    CONTROL_TEST_RESULT = models.TextField(null=True,blank=True)
+    CONTROL_CONCLUSION = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_CONCLUSION_RATIONALE = models.TextField(null=True,blank=True)
 
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,default=False,null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'OE_TESTING'
+
+def design_evidence_folder(instance, filename):
     control_id = instance.CONTROL_ID_id
     app_id = instance.APP_NAME_id
-        # Debugging output
-    print("Control ID:", control_id)
-    print("App ID:", app_id)
-    print("App ID:", filename)
     return f'workpapers/{app_id}/{control_id}/design/{filename}'
 
 
@@ -474,6 +492,24 @@ class DESIGN_EVIDENCE(models.Model):
     class Meta:
         managed = True
         db_table = 'DESIGN_EVIDENCE'
+
+
+def oe_evidence_folder(instance, filename):
+    control_id = instance.CONTROL_ID_id
+    app_id = instance.APP_NAME_id
+    return f'workpapers/{app_id}/{control_id}/oe/{filename}'
+
+class OE_EVIDENCE(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CONTROL_ID =  models.ForeignKey(CONTROLLIST,on_delete=models.CASCADE,null=True,blank=True)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    file_name = models.FileField(upload_to=oe_evidence_folder, max_length=256)
+
+    class Meta:
+        managed = True
+        db_table = 'OE_EVIDENCE'
+
 
 class RISKLIST(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

@@ -8,6 +8,7 @@
 <input type="hidden" id="ajax_app_id" name="ajax_app_id" value="{{app_id}}">
 <input type="hidden" id="ajax_control_id" name="ajax_control_id" value="{{control_details.id}}">
 <input type="hidden" id="design_evidence_form" name="form_id" value="form_design_evidence">
+<input type="hidden" id="oe_evidence_form" name="form_id" value="form_oe_evidence">
 <input type="hidden" id="selected_app" name="selected_app" value="{{selected_app.id}}">
 
 
@@ -173,8 +174,13 @@
                                 <label style="font-size:12px; width: 150px;" class="col-form-label">Rating Rationale:</label>
                             </div>
                             <div class="col">
+                                {% if design.CONTROL_RATING_RATIONALE %}
                                 <textarea class="form-control" style="font-size:12px;resize:none" id="control_rating_rationale"
                                     name="control_rating_rationale" rows="10" required>{{ design.CONTROL_RATING_RATIONALE }} </textarea>
+                                {% else %}
+                                <textarea class="form-control" style="font-size:12px;resize:none" id="control_rating_rationale"
+                                    name="control_rating_rationale" rows="10" required></textarea>
+                                {% endif %}
                             </div>
                         </div>
                     </form>
@@ -544,8 +550,8 @@
                                         <form id="oe_procedure_form" method="post" enctype="multipart/form-data">
                                             <input type="hidden" name="form_id" value="oe_procedure_form">
                                             {% csrf_token %}
-                                            {% if design.CONTROL_TEST_PROCEDURE %}
-                                            <div style="background-color:white !important" id="oe_procedures">{{design.CONTROL_TEST_PROCEDURE|safe}}</div>
+                                            {% if oe.CONTROL_TEST_PROCEDURE %}
+                                            <div style="background-color:white !important" id="oe_procedures">{{oe.CONTROL_TEST_PROCEDURE|safe}}</div>
                                             {% else %}
                                             <div style="background-color:white !important" id="oe_procedures"></div>
                                             {% endif  %}
@@ -570,8 +576,8 @@
                                         <form id="oe_result_form" method="post" enctype="multipart/form-data">
                                             <input type="hidden" name="form_id" value="oe_result_form">
                                             {% csrf_token %}
-                                            {% if design.CONTROL_TEST_PROCEDURE %}
-                                            <div style="background-color:white !important" id="oe_result">{{design.CONTROL_TEST_PROCEDURE|safe}}</div>
+                                            {% if oe.CONTROL_TEST_RESULT %}
+                                            <div style="background-color:white !important" id="oe_result">{{oe.CONTROL_TEST_RESULT|safe}}</div>
                                             {% else %}
                                             <div style="background-color:white !important" id="oe_result"></div>
                                             {% endif  %}
@@ -587,7 +593,7 @@
                                 <div class="row g-3 align-items-center">
                                     <div class="col">
                                       
-                                    <div class="file-drop-area" onclick="triggerFileInputClick()"
+                                    <div class="oe_file-drop-area" onclick="oe_triggerFileInputClick()"
                                         style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:100px;">
                                         <div class="card-body" style=" text-align: center;">
                                             <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
@@ -604,26 +610,26 @@
                                         <div class="card" style="border:none;">
                                             <div class="card-body"
                                                 style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
-                                                <input type="file" id="fileInput" name="file_name" multiple>
+                                                <input type="file" id="oe_fileInput" name="file_name" multiple>
                                                 <input type="hidden" id="oe_evidence_upload" name="oe_evidence_upload"
                                                     value="{{ selected_app.APP_NAME }}">
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div id="selectedFilesContainer" style="margin-top:20px;font-size:13px;">
+                                    <div id="oe_selectedFilesContainer" style="margin-top:20px;font-size:13px;">
                                         <form id="oe_delete_attacchment" method="post" enctype="multipart/form-data">
                                             <input type="hidden" name="form_id" value="oe_delete_attacchment">
                                             {% csrf_token %}
-                                            {% if design_attachment %}
-                                                {% for attachment in design_attachment %}
+                                            {% if oe_attachment %}
+                                                {% for attachment in oe_attachment %}
                                                     <div class="selected-file-item">
                                                         <i class="fas fa-file" style="margin-right: 5px; font-size: 16px;"></i>
                                                         <input id="design_attachment_id" hidden="true" value="{{attachment.id}}">
                                                         <span id="{{attachment.id}}" style="margin-right: 5px; font-size: 14px;">{{ attachment.file_names }}</span>
-                                                        <i id="download_attachment_icon" class="fas fa-download download-icon"
+                                                        <i id="download_attachment_icon" class="fas fa-download oe-download-icon"
                                                             style="cursor: pointer; color: lightblue; font-size: 14px; margin-right: 5px;"></i>
-                                                        <i id="delete_attachment_icon" class="far fa-trash-alt delete-icon"
+                                                        <i id="delete_attachment_icon" class="far fa-trash-alt oe-delete-icon"
                                                             style="cursor: pointer; color: orange; font-size: 14px;"></i>
                                                     </div>
                                                 {% endfor %}
@@ -1131,6 +1137,9 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         var initialContent_design_result = quillDesignResult.root.innerHTML;
         var initialContent_design_conclusion = quillDesignConclusion.root.innerHTML;
 
+        var initialContent_oe_procedure = quillOEProcedures.root.innerHTML;
+        var initialContent_oe_result = quillOEResult.root.innerHTML;
+
         
         var ajax_comp_id = $('#ajax_comp_id').val();
         var ajax_app_id = $('#ajax_app_id').val();
@@ -1206,7 +1215,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             var csrfToken = $('[name=csrfmiddlewaretoken]').val();
             var formId = $('#design_result_form').find('input[name="form_id"]').val();
 
-            if (initialContent_design_procedure !== design_result) {
+            if (initialContent_design_result !== design_result) {
                 $.ajax({
                 type: 'POST',
                 url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
@@ -1218,6 +1227,37 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     csrfmiddlewaretoken: csrfToken,
 
                     design_result: design_result,
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            
+            }
+        });
+
+        //OE RESULT FORM
+        $(quillOEResult.root).on('blur', function() {
+            var oe_result = quillOEResult.root.innerHTML;
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#oe_result_form').find('input[name="form_id"]').val();
+
+            if (initialContent_oe_result !== oe_result) {
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    oe_result: oe_result,
                
                 },
                 success: function (response) {
@@ -1250,6 +1290,38 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     csrfmiddlewaretoken: csrfToken,
 
                     design_procedures: design_procedures,
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            
+            }
+        });
+
+
+        //OE PROCEDURE FORM
+        $(quillOEProcedures.root).on('blur', function() {
+            var oe_procedures = quillOEProcedures.root.innerHTML;
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#oe_procedure_form').find('input[name="form_id"]').val();
+
+            if (initialContent_oe_procedure !== oe_procedures) {
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    oe_procedures: oe_procedures,
                
                 },
                 success: function (response) {
@@ -1510,11 +1582,10 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                             exceptions.push('Multi Factor Authentication (MFA)');
                         }
 
-                        // Append the summary of exceptions
                         if (exceptions.length > 0) {
                             quillOEResultGenerator.root.innerHTML += 'Based on this, ' + designation + ' ascertained that the password control is Not Effective due to the following password configuration exceptions:';
                             exceptions.forEach(function(exception) {
-                                quillOEResultGenerator.root.innerHTML += '<li>- ' + exception + '</li>';
+                                quillOEResultGenerator.root.innerHTML += '<li> ' + exception + '</li>';
                             });
                         } else {
                             quillOEResultGenerator.root.innerHTML += 'Based on this, ' + designation + ' ascertained that the password configurations are in line with the policy. As such, No Exception is noted.<br>';

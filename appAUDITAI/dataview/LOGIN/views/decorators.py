@@ -22,8 +22,12 @@ class AuditorPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
         return user.groups.filter(name='Auditor').exists()
 
     def handle_no_permission(self):
-        user_dashboard_url = reverse('appAUDITAI:no_permission')  
-        return redirect(user_dashboard_url)
+        if self.request.user.is_authenticated:
+            user_dashboard_url = reverse('appAUDITAI:no_permission')
+            return redirect(user_dashboard_url)
+        else:
+            return redirect('appAUDITAI:authenticate-user')
+        
     
 class ProcessOwnerPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
     login_url = 'appAUDITAI:authenticate-user' 
@@ -33,8 +37,11 @@ class ProcessOwnerPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
         return user.groups.filter(name='Process Owner').exists()
 
     def handle_no_permission(self):
-        user_dashboard_url = reverse('appAUDITAI:no_permission')  
-        return redirect(user_dashboard_url)
+        if self.request.user.is_authenticated:
+            user_dashboard_url = reverse('appAUDITAI:no_permission')  
+            return redirect(user_dashboard_url)
+        else:
+            return redirect('appAUDITAI:authenticate-user')
     
 class AdminPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
     login_url = 'appAUDITAI:authenticate-user' 
@@ -44,8 +51,13 @@ class AdminPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
         return user.groups.filter(name='Administrator').exists() or user.is_superuser
 
     def handle_no_permission(self):
-        user_dashboard_url = reverse('appAUDITAI:no_permission')  
-        return redirect(user_dashboard_url)
+        if self.request.user.is_authenticated:
+            user_dashboard_url = reverse('appAUDITAI:no_permission')  
+            return redirect(user_dashboard_url)
+        else:
+            next_url = self.request.get_full_path()
+            login_url = f"{reverse(self.login_url)}?next={next_url}"
+            return redirect(login_url)
     
 class AccessRequestor(LoginRequiredMixin, UserPassesTestMixin):
     login_url = 'appAUDITAI:authenticate-user' 
@@ -55,5 +67,8 @@ class AccessRequestor(LoginRequiredMixin, UserPassesTestMixin):
         return user.groups.filter(name='Access Requestor').exists()
 
     def handle_no_permission(self):
-        user_dashboard_url = reverse('appAUDITAI:no_permission')  
-        return redirect(user_dashboard_url)
+        if self.request.user.is_authenticated:
+            user_dashboard_url = reverse('appAUDITAI:no_permission')  
+            return redirect(user_dashboard_url)
+        else:
+            return redirect('appAUDITAI:authenticate-user')

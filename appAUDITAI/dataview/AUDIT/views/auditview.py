@@ -412,6 +412,25 @@ def delete_design_attachment(request, id):
     return JsonResponse(response_data)
 
 
+def download_oe_attachment(request, id):
+    attachment = get_object_or_404(OE_EVIDENCE, id=id)
+    file_path = attachment.file_name.path
+    file_name = os.path.basename(file_path) 
+
+    try:
+        response = FileResponse(open(file_path, 'rb'), content_type='application/octet-stream')
+        response['Content-Disposition'] = 'attachment; filename="{}"'.format(file_name)
+        return response
+    except Exception as e:
+        pass
+
+def delete_oe_attachment(request, id):
+    attachment = get_object_or_404(OE_EVIDENCE, id=id)
+    attachment.delete()
+    response_data = {'message': 'Attachment deleted successfully'}
+    return JsonResponse(response_data)
+
+
 class AuditPlanningDocs(AuditPerApp):
     template_name = 'pages/AUDIT/audit-planning.html'
 
@@ -679,9 +698,11 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
 
         #TEST PROCEDURES
         design_procedures = request.POST.get('design_procedures')
+        oe_procedures = request.POST.get('oe_procedures')
 
         #TEST_RESULTS
         design_result = request.POST.get('design_result')
+        oe_result = request.POST.get('oe_result')
         
         #TEST_CONCLUSION'
         design_conclusion = request.POST.get('design_conclusion')
@@ -795,6 +816,20 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
                 return JsonResponse({'status': 'success'}, status=200)
             else:
                 return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
+            
+        elif form_id == 'form_oe_evidence':
+            form = OE_EVIDENCE_UPLOAD_FORM(request.POST, request.FILES)
+            if form.is_valid():
+                oe_evidence = form.save(commit=False)
+                oe_evidence.COMPANY_ID_id = comp_id
+                oe_evidence.CONTROL_ID_id = control_id
+                oe_evidence.APP_NAME_id = app_id
+                if 'file' in request.FILES:
+                    oe_evidence.file_name = request.FILES['file']
+                oe_evidence.save()
+                return JsonResponse({'status': 'success'}, status=200)
+            else:
+                return JsonResponse({'status': 'error', 'errors': form.errors}, status=400)
 
         elif form_id == 'design_conclusion_form':
             try:
@@ -810,6 +845,34 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
                 design.save()
             except DESIGN_TESTING.DoesNotExist:
                 design = None
+        elif form_id == 'oe_procedure_form':
+            try:
+                oe,created = OE_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                oe.CONTROL_TEST_PROCEDURE = escape(oe_procedures)
+                if created:
+                    oe.CREATED_BY = user.email
+                    oe.CREATED_ON = timezone.now()
+                else:
+                    oe.MODIFIED_BY = user.email
+                    oe.LAST_MODIFIED = timezone.now()
+                oe.save()
+            except OE_TESTING.DoesNotExist:
+                oe = None
+
+        elif form_id == 'oe_result_form':
+            try:
+                oe,created = OE_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                oe.CONTROL_TEST_RESULT = escape(oe_result)
+                if created:
+                    oe.CREATED_BY = user.email
+                    oe.CREATED_ON = timezone.now()
+                else:
+                    oe.MODIFIED_BY = user.email
+                    oe.LAST_MODIFIED = timezone.now()
+                oe.save()
+            except OE_TESTING.DoesNotExist:
+                oe = None
+
         else:
             print('Nothing is triggered')
             pass
@@ -869,9 +932,20 @@ class AuditWorkpapersDetails(AuditPerApp):
                 design.CONTROL_TEST_RESULT = html.unescape(design.CONTROL_TEST_RESULT)
             if design.CONTROL_CONCLUSION_RATIONALE:
                 design.CONTROL_CONCLUSION_RATIONALE = html.unescape(design.CONTROL_CONCLUSION_RATIONALE)
-
         except DESIGN_TESTING.DoesNotExist:
-            design = None
+                    design = None
+
+        try:
+            oe = OE_TESTING.objects.get(COMPANY_ID = company, APP_NAME = selected_app, CONTROL_ID = control_details)
+            if oe.CONTROL_TEST_PROCEDURE:
+                oe.CONTROL_TEST_PROCEDURE = html.unescape(oe.CONTROL_TEST_PROCEDURE)
+            if oe.CONTROL_TEST_RESULT:
+                oe.CONTROL_TEST_RESULT = html.unescape(oe.CONTROL_TEST_RESULT)
+            if oe.CONTROL_CONCLUSION_RATIONALE:
+                oe.CONTROL_CONCLUSION_RATIONALE = html.unescape(oe.CONTROL_CONCLUSION_RATIONALE)
+
+        except OE_TESTING.DoesNotExist:
+                oe = None
 
         # Decode HTML entities in DESIGN_PROCEDURES field
         if procedure_list:
@@ -885,9 +959,16 @@ class AuditWorkpapersDetails(AuditPerApp):
             for attachment in design_attachment:
                 file_names = [os.path.basename(attachment.file_name.name)]
                 attachment.file_names = ', '.join(file_names)  # Join the file names into a string
-            
         except DESIGN_EVIDENCE.DoesNotExist:
             design_attachment = None
+
+        try:
+            oe_attachment = OE_EVIDENCE.objects.filter(COMPANY_ID = company, APP_NAME = selected_app, CONTROL_ID = control_details)
+            for attachment in oe_attachment:
+                file_names = [os.path.basename(attachment.file_name.name)]
+                attachment.file_names = ', '.join(file_names)  # Join the file names into a string
+        except OE_EVIDENCE.DoesNotExist:
+            oe_attachment = None
 
         context = {
             'comp_id':comp_id,
@@ -902,7 +983,9 @@ class AuditWorkpapersDetails(AuditPerApp):
             'risk_mapped':risk_mapped,
             'procedure_list':procedure_list,
             'design':design,
-            'design_attachment':design_attachment
+            'design_attachment':design_attachment,
+            'oe':oe,
+            'oe_attachment':oe_attachment
             
         }
         return render(request, self.template_name, context)

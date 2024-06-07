@@ -92,7 +92,6 @@ DATABASES = {
 #         'ENGINE': 'django.db.backends.mysql',
 #         'NAME': 'auditaidb3',  # Database name
 #         'USER': 'audit-ai',     # Username
-#         'PASSWORD': 'AVNS_tD9jbRpL1w8jQP6arsL',  # Password
 #         'HOST': 'private-auditaidb3-do-user-16868343-0.c.db.ondigitalocean.com',  # Host
 #         'PORT': '25060',       # Port
 #     }

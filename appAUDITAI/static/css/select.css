@@ -1,6 +1,8 @@
 .mult-select-tag {
   display: flex;
-  width: 200px !important;
+  width: 100% !important;
+  padding: 0; /* Reset padding */
+  margin: 0; /* Reset margin */
   flex-direction: column;
   align-items: center;
   position: relative;

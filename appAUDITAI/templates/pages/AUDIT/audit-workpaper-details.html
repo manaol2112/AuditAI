@@ -652,34 +652,34 @@
                 <div class="accordion-item rounded-3 border-0 shadow mb-2">
                     <h2 class="accordion-header">
                         <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
-                            type="button" data-bs-toggle="collapse" data-bs-target="#oe_conclusion"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#oe_conclusion_container"
                             aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
                         Conclusion
                         </button>
                     </h2>
 
-                    <div id="oe_conclusion" class="accordion-collapse collapse">
+                    <div id="oe_conclusion_container" class="accordion-collapse collapse">
                         <div class="accordion-body">
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
-                                    <p style="font-size:14px;"><b>Design Conclusion:</b></p>
-                                    <form id="design_conclusion_form" method="post" enctype="multipart/form-data">
-                                        <input type="hidden" name="form_id" value="design_conclusion_form">
+                                    <p style="font-size:14px;"><b>Operating Effectiveness Conclusion:</b></p>
+                                    <form id="oe_conclusion_form" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="form_id" value="oe_conclusion_form">
                                         {% csrf_token %}
                                         <div class="row g-3 align-items-center">
                                             <div class="col">
-                                                <select id="design_conclusion_select" name="design_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
-                                                    {% if design.CONTROL_CONCLUSION == 'Effective' %}
+                                                <select id="oe_conclusion_select" name="design_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                                                    {% if oe.CONTROL_CONCLUSION == 'Effective' %}
                                                     <option disabled ></option>
                                                     <option selected value="Effective">Effective</option>
                                                     <option value="Not Effective">Not Effective</option>
                                                     <option value="Inconclusive">Inconclusive</option>
-                                                    {% elif design.CONTROL_CONCLUSION == 'Not Effective' %}
+                                                    {% elif oe.CONTROL_CONCLUSION == 'Not Effective' %}
                                                     <option disabled ></option>
                                                     <option  value="Effective">Effective</option>
                                                     <option selected value="Not Effective">Not Effective</option>
                                                     <option value="Inconclusive">Inconclusive</option>
-                                                    {% elif design.CONTROL_CONCLUSION == 'Inconclusive' %}
+                                                    {% elif oe.CONTROL_CONCLUSION == 'Inconclusive' %}
                                                     <option disabled ></option>
                                                     <option  value="Effective">Effective</option>
                                                     <option  value="Not Effective">Not Effective</option>
@@ -690,7 +690,6 @@
                                                     <option value="Not Effective">Not Effective</option>
                                                     <option value="Inconclusive">Inconclusive</option>
                                                     {% endif %}
-
                                                    
                                                 </select>
                                             </div>
@@ -699,10 +698,10 @@
                                         <p style="font-size:12px;margin-top:20px;">Document the rationale on how you came up with the conclusion</p>
                                         <div class="row g-3 align-items-center">
                                             <div class="col">
-                                                {% if design.CONTROL_CONCLUSION_RATIONALE %}
-                                                <div style="background-color:white !important" id="design_conclusion">{{design.CONTROL_CONCLUSION_RATIONALE|safe}}</div>
+                                                {% if oe.CONTROL_CONCLUSION_RATIONALE %}
+                                                <div style="background-color:white !important" id="oe_conclusion">{{oe.CONTROL_CONCLUSION_RATIONALE|safe}}</div>
                                                 {% else %}
-                                                <div style="background-color:white !important" id="design_conclusion"></div>
+                                                <div style="background-color:white !important" id="oe_conclusion"></div>
                                                 {% endif %}
                                             </div>
                                         </div>
@@ -1060,6 +1059,21 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             }  
     });
 
+    var quillOEConclusion = new Quill('#oe_conclusion', {
+        theme: 'snow',
+        modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }  
+    });
+
     var quillDesignResult = new Quill('#design_result', {
             theme: 'snow',
             modules: {
@@ -1111,6 +1125,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
     document.querySelector('#oe_result .ql-editor').style.minHeight = '300px';
     document.querySelector('#oe_result_generation .ql-editor').style.minHeight = '300px';
     document.querySelector('#design_conclusion .ql-editor').style.minHeight = '200px';
+    document.querySelector('#oe_conclusion .ql-editor').style.minHeight = '200px';
   
     var maxEditorHeight = '300px';
     document.querySelector('#design_procedures .ql-editor').style.maxHeight = maxEditorHeight;
@@ -1119,6 +1134,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
     document.querySelector('#oe_result .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#oe_result_generation .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#design_conclusion .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#oe_conclusion .ql-editor').style.maxHeight = maxEditorHeight;
 
     document.querySelector('#design_procedures .ql-editor').style.overflowY = 'auto';
     document.querySelector('#oe_procedures .ql-editor').style.overflowY = 'auto';
@@ -1126,6 +1142,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
     document.querySelector('#oe_result .ql-editor').style.overflowY = 'auto';
     document.querySelector('#oe_result_generation .ql-editor').style.overflowY = 'auto';
     document.querySelector('#design_conclusion .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#oe_conclusion .ql-editor').style.overflowY = 'auto';
 
 </script>
 
@@ -1136,14 +1153,54 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         var initialContent_design_procedure = quillDesignProcedures.root.innerHTML;
         var initialContent_design_result = quillDesignResult.root.innerHTML;
         var initialContent_design_conclusion = quillDesignConclusion.root.innerHTML;
+       
 
         var initialContent_oe_procedure = quillOEProcedures.root.innerHTML;
         var initialContent_oe_result = quillOEResult.root.innerHTML;
+        var initialContent_oe_conclusion = quillOEConclusion.root.innerHTML;
 
-        
         var ajax_comp_id = $('#ajax_comp_id').val();
         var ajax_app_id = $('#ajax_app_id').val();
         var ajax_control_id = $('#ajax_control_id').val();
+
+        //PERIOD
+
+        $('#interim_start_date').on('change', function() {
+                var selectedDate = $(this).val();
+                
+         });
+
+
+        //OE CONCLUSION
+        $('#oe_conclusion_select').on('change', function () {
+            oe_conclusion = $(this).val();
+            var oe_conclusion_rationale = quillOEConclusion.root.innerHTML;
+
+            formId = $('#oe_conclusion_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    oe_conclusion: oe_conclusion,
+                    oe_conclusion_rationale:oe_conclusion_rationale        
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
 
 
         $('#design_conclusion_select').on('change', function () {
@@ -1195,6 +1252,39 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     csrfmiddlewaretoken: csrfToken,
                     design_conclusion:design_conclusion,
                     design_conclusion_rationale: design_conclusion_rationale,
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            
+            }
+        });
+
+         //DESIGN CONCLUSION FORM
+         $(quillOEConclusion.root).on('blur', function() {
+            var oe_conclusion_rationale = quillOEConclusion.root.innerHTML;
+            var oe_conclusion = $('#oe_conclusion_select').val();
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#oe_conclusion_form').find('input[name="form_id"]').val();
+
+            if (initialContent_oe_conclusion !== oe_conclusion) {
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    oe_conclusion:oe_conclusion,
+                    oe_conclusion_rationale: oe_conclusion_rationale,
                
                 },
                 success: function (response) {

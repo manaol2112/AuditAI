@@ -147,7 +147,6 @@ path("policies/manage/adminaccounts/", policies_view.PoliciesAdminView.as_view()
 path("error/page-not-found/",utils.error_404,name="error_404"),
 path("error/needed-permission-not-found/",utils.no_permission.as_view(),name="no_permission"),
 
-
 #AUDIT URLS
 
 path('download/<uuid:id>/', auditview.download_file, name='download_file'),

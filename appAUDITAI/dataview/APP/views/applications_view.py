@@ -166,17 +166,24 @@ class AppComplianceAuth(ProcessOwnerPermissionMixin,View):
         except PASSWORD.DoesNotExist:
             pw_configured = None
             pass
-
+        
+        auth_compliant = None  # Initialize auth_compliant
         try: 
             pw_policy = PASSWORDPOLICY.objects.get(COMPANY_ID = comp_id)
+            if pw_policy:
+                if pw_policy.LENGTH <= pw_configured.LENGTH and pw_policy.AGE >= pw_configured.AGE and pw_policy.HISTORY <= pw_configured.HISTORY and pw_policy.LOCKOUT_ATTEMPT >= pw_configured.LOCKOUT_ATTEMPT and pw_policy.LOCKOUT_DURATION <= pw_configured.LOCKOUT_DURATION and pw_policy.SPECIAL_CHAR == pw_configured.SPECIAL_CHAR and pw_policy.UPPER and pw_configured.UPPER and pw_policy.LOWER == pw_configured.LOWER and pw_policy.NUMBER == pw_configured.NUMBER and pw_policy.MFA_ENABLED == pw_configured.MFA_ENABLED:
+                    auth_compliant = 'Yes'
+                else:
+                    auth_compliant = 'No'
+            else:
+                auth_compliant = 'Not Set'
+                pass
+
         except PASSWORDPOLICY.DoesNotExist:
             pw_policy = None
+        except Exception as e:
+            print(str(e))
             pass
-
-        if pw_policy.LENGTH <= pw_configured.LENGTH and pw_policy.AGE >= pw_configured.AGE and pw_policy.HISTORY <= pw_configured.HISTORY and pw_policy.LOCKOUT_ATTEMPT >= pw_configured.LOCKOUT_ATTEMPT and pw_policy.LOCKOUT_DURATION <= pw_configured.LOCKOUT_DURATION and pw_policy.SPECIAL_CHAR == pw_configured.SPECIAL_CHAR and pw_policy.UPPER and pw_configured.UPPER and pw_policy.LOWER == pw_configured.LOWER and pw_policy.NUMBER == pw_configured.NUMBER and pw_policy.MFA_ENABLED == pw_configured.MFA_ENABLED:
-            auth_compliant = 'Yes'
-        else:
-            auth_compliant = 'No'
 
         context = {
             'comp_id':comp_id,
@@ -213,10 +220,14 @@ class ApplistByProcessOwner(ProcessOwnerPermissionMixin, View):
 
     def common_data(self, request, comp_id):
         user = request.user
-        app = APP_LIST.objects.filter(APPLICATION_OWNER=user, COMPANY_ID=comp_id)
+        try:
+            app = APP_OWNERS.objects.filter(APPLICATION_OWNER=user)
+        except APP_OWNERS.DoesNotExist:
+            app = None
         process_owner_group_name = "Process Owner"
         app_owners = User.objects.filter(
             is_active=True, groups__name=process_owner_group_name)
+        
         company_name = COMPANY.objects.get(id=comp_id)
         context = {
             'app_owners': app_owners,
@@ -235,10 +246,9 @@ class ApplistByProcessOwner(ProcessOwnerPermissionMixin, View):
         risk_rating = request.POST.get('risk_rating')
         relevant_process = request.POST.get('relevant_process')
         date_implemented = request.POST.get('date_implemented')
-        app_list_app_owner1 = request.POST.get('app_list_app_owner1')
         auth_type = request.POST.get('auth_type')
         company = COMPANY.objects.filter(id = comp_id)
-        app_owner = User.objects.get(id = app_list_app_owner1)
+        app_owner = request.POST.getlist('app_owner_list')
 
         new_app, created = APP_LIST.objects.get_or_create(APP_NAME=app_name, COMPANY_ID = company.first())
         new_app.COMPANY_ID = company.first()
@@ -248,10 +258,25 @@ class ApplistByProcessOwner(ProcessOwnerPermissionMixin, View):
         new_app.HOSTED = hosting
         new_app.RISKRATING = risk_rating
         new_app.RELEVANT_PROCESS = relevant_process
-        new_app.APPLICATION_OWNER = app_owner
         new_app.AUTHENTICATION_TYPE = auth_type
         new_app.DATE_IMPLEMENTED = date_implemented
         new_app.save()
+
+        try:
+            app = APP_LIST.objects.get(APP_NAME = new_app )
+        except APP_LIST.DoesNotExist:
+            app = None
+
+        for owner in app_owner:
+            try:
+                sys_owner = User.objects.get(id = owner)
+            except User.DoesNotExist:
+                sys_owner = None
+            if app and sys_owner:
+                app_owner, created = APP_OWNERS.objects.update_or_create(APP_NAME = app, APPLICATION_OWNER = sys_owner)
+                app_owner.save()
+        
+
 
         context = self.common_data(request, comp_id)
         return render(request, self.template_name, context)
@@ -889,7 +914,12 @@ class AppdetailsByProcessOwner(ProcessOwnerPermissionMixin, View):
 
     def common_data(self, request, comp_id, app_id):
         user = request.user
-        app = APP_LIST.objects.filter(APPLICATION_OWNER=user)
+
+        try: 
+            app = APP_OWNERS.objects.filter(APPLICATION_OWNER = user)
+        except APP_OWNERS.DoesNotExist:
+            app = None
+
         selected_app = APP_LIST.objects.get(id=app_id)
         password_exist = PASSWORD.objects.filter(APP_NAME=selected_app.id)
         attachment = PWCONFIGATTACHMENTS.objects.filter(

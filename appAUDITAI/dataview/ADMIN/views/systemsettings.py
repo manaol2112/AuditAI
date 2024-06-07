@@ -56,6 +56,7 @@ class ManageHRRecordDetailsView(AdminPermissionMixin, View):
         return render(request,self.template_name,context)
     
     def post(self, request, comp_id):
+        
         form = request.POST.get('form_id')
         if form == 'hr_sftp_create_form':
             self.hr_sftp_upload(request, comp_id)
@@ -76,132 +77,141 @@ class ManageHRRecordDetailsView(AdminPermissionMixin, View):
         return datetime(1900, 1, 1)
     
     def hr_manual_upload(self,request,comp_id):
-        user = request.user
-        date_formats = ["%Y-%m-%d", "%d/%m/%Y",
-                                "%m/%d/%Y", "%Y%m%d", "%m/%d/%y"] 
-        
-        user_id_mapped = request.POST.get('user_id_mapped')
-        email_mapped = request.POST.get('email_mapped')
-        first_name_mapped = request.POST.get('first_name_mapped')
-        last_name_mapped = request.POST.get('last_name_mapped')
-        job_title_mapped = request.POST.get('job_title_mapped')
-        department_mapped = request.POST.get('department_mapped')
-        manager_mapped = request.POST.get('manager_mapped')
-        emp_type_mapped = request.POST.get('emp_type_mapped')
-        status_mapped = request.POST.get('status_mapped')
-        date_hired_mapped = request.POST.get('date_hired_mapped')
-        date_rehired_mapped = request.POST.get('date_rehired_mapped')
-        date_revoked_mapped = request.POST.get('date_revoked_mapped')
+        if request.method == 'POST':
 
-        form = MANUAL_USER_UPLOAD_FORM(request.POST, request.FILES)
-        if form.is_valid():
-            uploaded_file = form.cleaned_data['file_name']
-            # Check if the uploaded file is a CSV file
-            if uploaded_file.name.endswith('.csv'):
-                file_path = default_storage.save('temp/' + uploaded_file.name, uploaded_file)
-                # Get the absolute file path
-                absolute_file_path = default_storage.path(file_path)
-                with open(absolute_file_path, 'r', encoding='utf-8-sig',newline='') as file:
-                    csv_rows = csv.reader(file)
-                    # Extract headers from the CSV file
+            user = request.user
+            date_formats = ["%Y-%m-%d", "%d/%m/%Y",
+                                    "%m/%d/%Y", "%Y%m%d", "%m/%d/%y"] 
+            
+            user_id_mapped = request.POST.get('user_id_mapped')
+            email_mapped = request.POST.get('email_mapped')
+            first_name_mapped = request.POST.get('first_name_mapped')
+            last_name_mapped = request.POST.get('last_name_mapped')
+            job_title_mapped = request.POST.get('job_title_mapped')
+            department_mapped = request.POST.get('department_mapped')
+            manager_mapped = request.POST.get('manager_mapped')
+            emp_type_mapped = request.POST.get('emp_type_mapped')
+            status_mapped = request.POST.get('status_mapped')
+            date_hired_mapped = request.POST.get('date_hired_mapped')
+            date_rehired_mapped = request.POST.get('date_rehired_mapped')
+            date_revoked_mapped = request.POST.get('date_revoked_mapped')
 
-                    # Clean headers to handle various newline characters
-                    headers = [header.strip().replace('\r', '').replace('\n', '') for header in next(csv_rows, [])]
-                    # Clean mapping variables and headers to handle whitespace and newline characters
-                    user_id_mapped_cleaned = user_id_mapped.strip().replace('\r', '').replace('\n', '')
-                    email_mapped_cleaned = email_mapped.strip().replace('\r', '').replace('\n', '')
-                    first_name_mapped_cleaned = first_name_mapped.strip().replace('\r', '').replace('\n', '')
-                    last_name_mapped_cleaned = last_name_mapped.strip().replace('\r', '').replace('\n', '')
-                    job_title_mapped_cleaned = job_title_mapped.strip().replace('\r', '').replace('\n', '')
-                    department_mapped_cleaned = department_mapped.strip().replace('\r', '').replace('\n', '')
-                    manager_mapped_cleaned = manager_mapped.strip().replace('\r', '').replace('\n', '')
-                    emp_type_mapped_cleaned = emp_type_mapped.strip().replace('\r', '').replace('\n', '')
-                    status_mapped_cleaned = status_mapped.strip().replace('\r', '').replace('\n', '')
-                    date_hired_mapped_cleaned = date_hired_mapped.strip().replace('\r', '').replace('\n', '')
-                    date_rehired_mapped_cleaned = date_rehired_mapped.strip().replace('\r', '').replace('\n', '')
-                    date_revoked_mapped_cleaned = date_revoked_mapped.strip().replace('\r', '').replace('\n', '')
+            form = HR_LIST_UPLOAD_FORM(request.POST, request.FILES)
+
+            if request.method == 'POST':
+                form = HR_LIST_UPLOAD_FORM(request.POST, request.FILES)
+                if 'file_name' in request.FILES:
+                    print("File detected:", request.FILES['file_name'])
+                else:
+                    print('No file detected in request.FILES')
+
+            if form.is_valid():
+                uploaded_file = form.cleaned_data['file_name']
+                # Check if the uploaded file is a CSV file
+                if uploaded_file.name.endswith('.csv'):
+                    file_path = default_storage.save('temp/' + uploaded_file.name, uploaded_file)
+                    # Get the absolute file path
+                    absolute_file_path = default_storage.path(file_path)
+                    with open(absolute_file_path, 'r', encoding='utf-8-sig',newline='') as file:
+                        csv_rows = csv.reader(file)
+
+                        # Clean headers to handle various newline characters
+                        headers = [header.strip().replace('\r', '').replace('\n', '') for header in next(csv_rows, [])]
+                        # Clean mapping variables and headers to handle whitespace and newline characters
+                        user_id_mapped_cleaned = user_id_mapped.strip().replace('\r', '').replace('\n', '')
+                        email_mapped_cleaned = email_mapped.strip().replace('\r', '').replace('\n', '')
+                        first_name_mapped_cleaned = first_name_mapped.strip().replace('\r', '').replace('\n', '')
+                        last_name_mapped_cleaned = last_name_mapped.strip().replace('\r', '').replace('\n', '')
+                        job_title_mapped_cleaned = job_title_mapped.strip().replace('\r', '').replace('\n', '')
+                        department_mapped_cleaned = department_mapped.strip().replace('\r', '').replace('\n', '')
+                        manager_mapped_cleaned = manager_mapped.strip().replace('\r', '').replace('\n', '')
+                        emp_type_mapped_cleaned = emp_type_mapped.strip().replace('\r', '').replace('\n', '')
+                        status_mapped_cleaned = status_mapped.strip().replace('\r', '').replace('\n', '')
+                        date_hired_mapped_cleaned = date_hired_mapped.strip().replace('\r', '').replace('\n', '')
+                        date_rehired_mapped_cleaned = date_rehired_mapped.strip().replace('\r', '').replace('\n', '')
+                        date_revoked_mapped_cleaned = date_revoked_mapped.strip().replace('\r', '').replace('\n', '')
 
 
-                    # Get indices of mapped values in headers
-                    try:
-                        user_id_index = headers.index(user_id_mapped_cleaned)
-                        email_index = headers.index(email_mapped_cleaned)
-                        first_name_index = headers.index(first_name_mapped_cleaned)
-                        last_name_index = headers.index(last_name_mapped_cleaned)
-                        job_title_index = headers.index(job_title_mapped_cleaned)
-                        department_index = headers.index(department_mapped_cleaned)
-                        manager_index = headers.index(manager_mapped_cleaned)
-                        emp_type_index = headers.index(emp_type_mapped_cleaned)
-                        status_index = headers.index(status_mapped_cleaned)
-                        date_hired_index = headers.index(date_hired_mapped_cleaned)
-                        date_rehired_index = headers.index(date_rehired_mapped_cleaned)
-                        date_revoked_index = headers.index(date_revoked_mapped_cleaned)
+                        # Get indices of mapped values in headers
+                        try:
+                            user_id_index = headers.index(user_id_mapped_cleaned)
+                            email_index = headers.index(email_mapped_cleaned)
+                            first_name_index = headers.index(first_name_mapped_cleaned)
+                            last_name_index = headers.index(last_name_mapped_cleaned)
+                            job_title_index = headers.index(job_title_mapped_cleaned)
+                            department_index = headers.index(department_mapped_cleaned)
+                            manager_index = headers.index(manager_mapped_cleaned)
+                            emp_type_index = headers.index(emp_type_mapped_cleaned)
+                            status_index = headers.index(status_mapped_cleaned)
+                            date_hired_index = headers.index(date_hired_mapped_cleaned)
+                            date_rehired_index = headers.index(date_rehired_mapped_cleaned)
+                            date_revoked_index = headers.index(date_revoked_mapped_cleaned)
 
-                    except ValueError as e:
-                        print(f"Error: {e}. Mapped value not found in headers.")
-                    try:
-                        for row in csv_rows:
-                        # Access the value in the 'USER_ID' column
-                            user_id_value = row[user_id_index]
-                            email_value = row[email_index]
-                            first_name_value = row[first_name_index]
-                            last_name_value = row[last_name_index]
-                            job_title_value= row[job_title_index]
-                            department_value= row[department_index]
-                            manager_value= row[manager_index]
-                            emp_type_value= row[emp_type_index]
-                            status_value= row[status_index]
+                        except ValueError as e:
+                            print(f"Error: {e}. Mapped value not found in headers.")
+                        try:
+                            for row in csv_rows:
+                            # Access the value in the 'USER_ID' column
+                                user_id_value = row[user_id_index]
+                                email_value = row[email_index]
+                                first_name_value = row[first_name_index]
+                                last_name_value = row[last_name_index]
+                                job_title_value= row[job_title_index]
+                                department_value= row[department_index]
+                                manager_value= row[manager_index]
+                                emp_type_value= row[emp_type_index]
+                                status_value= row[status_index]
 
-                            date_hired_value = row[date_hired_index]
-                            date_hired_value = timezone.make_aware(self.parse_date(
-                                        str(date_hired_value), date_formats))
-                            date_rehired_value = row[date_rehired_index]
-                            date_rehired_value = timezone.make_aware(self.parse_date(
-                                        str(date_rehired_value), date_formats))
-                            date_revoked_value = row[date_revoked_index]
-                            date_revoked_value = timezone.make_aware(self.parse_date(
-                                        str(date_revoked_value), date_formats))
-                            
-                            try:
-                                selected_company = COMPANY.objects.get(id=comp_id)
-                            except COMPANY.DoesNotExist:
-                                selected_company = None
-
-                            if selected_company:
+                                date_hired_value = row[date_hired_index]
+                                date_hired_value = timezone.make_aware(self.parse_date(
+                                            str(date_hired_value), date_formats))
+                                date_rehired_value = row[date_rehired_index]
+                                date_rehired_value = timezone.make_aware(self.parse_date(
+                                            str(date_rehired_value), date_formats))
+                                date_revoked_value = row[date_revoked_index]
+                                date_revoked_value = timezone.make_aware(self.parse_date(
+                                            str(date_revoked_value), date_formats))
+                                
                                 try:
-                                    hr_record, created = HR_RECORD.objects.get_or_create(COMPANY_ID = selected_company.id, USER_ID = user_id_value)
-                                    hr_record.EMAIL_ADDRESS = email_value
-                                    hr_record.FIRST_NAME = first_name_value
-                                    hr_record.LAST_NAME = last_name_value
-                                    hr_record.JOB_TITLE = job_title_value
-                                    hr_record.DEPARTMENT = department_value
-                                    hr_record.MANAGER = manager_value
-                                    hr_record.EMP_TYPE = emp_type_value
-                                    hr_record.STATUS = status_value
-                                    hr_record.HIRE_DATE = date_hired_value
-                                    hr_record.REHIRE_DATE = date_rehired_value
-                                    hr_record.TERMINATION_DATE = date_revoked_value
+                                    selected_company = COMPANY.objects.get(id=comp_id)
+                                except COMPANY.DoesNotExist:
+                                    selected_company = None
 
-                                    if created:  # Check if the record was just created
-                                        hr_record.CREATED_BY = user.username
-                                        hr_record.CREATED_ON = timezone.now()
-                                    else:
-                                        hr_record.MODIFIED_BY = user.username
-                                        hr_record.LAST_MODIFIED = timezone.now()
-                                    
-                                    hr_record.save()  # Save the changes to the database
+                                if selected_company:
+                                    try:
+                                        hr_record, created = HR_RECORD.objects.get_or_create(COMPANY_ID = selected_company.id, USER_ID = user_id_value)
+                                        hr_record.EMAIL_ADDRESS = email_value
+                                        hr_record.FIRST_NAME = first_name_value
+                                        hr_record.LAST_NAME = last_name_value
+                                        hr_record.JOB_TITLE = job_title_value
+                                        hr_record.DEPARTMENT = department_value
+                                        hr_record.MANAGER = manager_value
+                                        hr_record.EMP_TYPE = emp_type_value
+                                        hr_record.STATUS = status_value
+                                        hr_record.HIRE_DATE = date_hired_value
+                                        hr_record.REHIRE_DATE = date_rehired_value
+                                        hr_record.TERMINATION_DATE = date_revoked_value
 
-                                except ValueError as e:
-                                    print('Error:', e)
-                                except Exception as e:
-                                    # Handle exceptions appropriately
-                                    print("Error:", e)
-                    except Exception as e:
-                        print(str(e))
+                                        if created:  # Check if the record was just created
+                                            hr_record.CREATED_BY = user.username
+                                            hr_record.CREATED_ON = timezone.now()
+                                        else:
+                                            hr_record.MODIFIED_BY = user.username
+                                            hr_record.LAST_MODIFIED = timezone.now()
+                                        
+                                        hr_record.save()  # Save the changes to the database
+
+                                    except ValueError as e:
+                                        print('Error:', e)
+                                    except Exception as e:
+                                        # Handle exceptions appropriately
+                                        print("Error:", e)
+                        except Exception as e:
+                            print(str(e))
+                else:
+                    return HttpResponse("Uploaded file is not a CSV.")
             else:
-                return HttpResponse("Uploaded file is not a CSV.")
-        else:
-            return HttpResponse("Form is not valid.")
+                print('Form is not valid')
         
     def hr_sftp_upload(self,request,comp_id):
         try:

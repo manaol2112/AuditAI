@@ -375,7 +375,6 @@ class APP_LIST(models.Model):
     RELEVANT_PROCESS = models.CharField(max_length=100,blank=True,null=True)
     DATE_IMPLEMENTED = models.CharField(max_length=100,blank=True,null=True)
     DATE_TERMINATED = models.DateField(null=True,blank=True)
-    APPLICATION_OWNER = models.ForeignKey(User,on_delete=models.DO_NOTHING,blank=True,null=True)
     AUTHENTICATION_TYPE = models.CharField(max_length=50,blank=True,null=True)
     SETUP_COMPLETE = models.BooleanField(blank=True, null=True)
 
@@ -397,6 +396,14 @@ class APP_LIST(models.Model):
     class Meta:
         managed = True
         db_table = 'APP_LIST'
+
+class APP_OWNERS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    APPLICATION_OWNER = models.ForeignKey(User,on_delete=models.DO_NOTHING,blank=True,null=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    class Meta:
+        managed = True
+        db_table = 'APP_OWNERS'
 
 class CONTROLLIST(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -465,6 +472,11 @@ class OE_TESTING(models.Model):
     CONTROL_TEST_RESULT = models.TextField(null=True,blank=True)
     CONTROL_CONCLUSION = models.CharField(max_length=25,blank=True,null=True)
     CONTROL_CONCLUSION_RATIONALE = models.TextField(null=True,blank=True)
+    PERIOD_START_DATE = models.DateField(null=True, blank=True)
+    PERIOD_END_DATE = models.DateField(null=True, blank=True)
+    CONTROL_FREQUENCY = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_POPULATION = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_SAMPLES = models.CharField(max_length=25,blank=True,null=True)
 
     #LOG
     CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
@@ -901,6 +913,12 @@ class APP_NEW_USER_APPROVAL(models.Model):
     class Meta:
         managed = True
         db_table = 'NEW_USER_APPROVAL'
+
+class HR_MANUAL_UPLOAD(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    file_name = models.FileField(upload_to='manualhrcvs')
+    upload_date = models.DateTimeField(auto_now_add=True)
+
         
 class CSV(models.Model):
     file_name = models.FileField(upload_to='csvs')

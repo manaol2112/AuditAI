@@ -68,7 +68,8 @@
                     </div>
                 {% else %}
                 <div class="alert alert-light" style="font-size:12px;" role="alert">
-                    <p>No audit project has been created yet. Please create a new project by clicking the + icon at the upper right side of the page.</p>
+                    <p>You have not created any audit yet. Click <a href="setup_audit" data-bs-toggle="offcanvas"
+                        data-bs-target="#setup_audit">here </a> to start an audit project.</p>
                 </div>
                 {% endif %}
                     
@@ -82,7 +83,7 @@
     {% csrf_token %}
 <div class="offcanvas offcanvas-end" tabindex="-1" id="setup_audit" aria-labelledby="offcanvasRightLabel" style="margin-top:40px;">
     <div class="offcanvas-header" style="border-bottom:solid;border-color:lightgray">
-        <h6 class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-plus" style="margin-right:5px;"></i>Create an Audit file</h6>
+        <h6 class="offcanvas-title" id="offcanvasRightLabel"><i class="fa-solid fa-plus" style="margin-right:5px;"></i>Create Audit Project</h6>
         <button type="button" class="btn-close" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">

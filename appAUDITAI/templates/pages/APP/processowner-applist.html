@@ -4,6 +4,9 @@
 
 {% block content %}
 
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<link rel="stylesheet" href="{% static 'css/select.css' %}">
+
 <div class="card">
     <div class="card-body">
         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
@@ -45,28 +48,28 @@
 
                     {% if app %}
                         {% for app_item in app %}
-                        <a href="{% url 'appAUDITAI:appdetails-process-owner' comp_id app_item.id %}"
+                        <a href="{% url 'appAUDITAI:appdetails-process-owner' comp_id app_item.APP_NAME.id %}"
                             style="text-decoration: none; color:#474b4d">
-                            <div class="card app-card" data-appname="{{ app_item.APP_NAME }}"
-                                data-apptype="{{ app_item.APP_TYPE }}"
+                            <div class="card app-card" data-appname="{{ app_item.APP_NAME.APP_NAME }}"
+                                data-apptype="{{ app_item.APP_NAME.APP_TYPE }}"
                                 style=" border-radius: 25px;cursor:pointer;height: 150px; width:160px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
                                 onmouseover="this.style.backgroundColor='#d5ecf7';"
                                 onmouseout="this.style.backgroundColor='#fff';">
 
-                                {% if app_item.APP_TYPE == 'Application' %}
+                                {% if app_item.APP_NAME.APP_TYPE == 'Application' %}
                                 <span class="fab fa-app-store-ios" style="font-size: 40px;color:#8bd5f7"></span>
-                                {% elif app_item.APP_TYPE == 'Network' %}
+                                {% elif app_item.APP_NAME.APP_TYPE == 'Network' %}
                                 <span class="fab fa-hive" style="font-size: 40px;color:#8bd5f7"></span>
-                                {% elif app_item.APP_TYPE == 'Database' %}
+                                {% elif app_item.APP_NAME.APP_TYPE == 'Database' %}
                                 <span class="fas fa-database" style="font-size: 40px;color:#8bd5f7"></span>
-                                {% elif app_item.APP_TYPE == 'Operating System' %}
+                                {% elif app_item.APP_NAME.APP_TYPE == 'Operating System' %}
                                 <span class="fab fa-centos" style="font-size: 40px;color:#8bd5f7"></span>
-                                {% elif app_item.APP_TYPE == 'Server' %}
+                                {% elif app_item.APP_NAME.APP_TYPE == 'Server' %}
                                 <span class="fas fa-server" style="font-size: 40px;color:#8bd5f7"></span>
                                 {% endif %}
 
-                                <p style="font-size: 16px; margin-top: 10px;color:#474b4d">{{ app_item.APP_NAME }}</p>
-                                <p style="font-size: 10px;margin-top:-10px" style="color:lightgray">({{ app_item.APP_TYPE}})</p>
+                                <p style="font-size: 16px; margin-top: 10px;color:#474b4d">{{ app_item.APP_NAME.APP_NAME }}</p>
+                                <p style="font-size: 10px;margin-top:-10px" style="color:lightgray">({{ app_item.APP_NAME.APP_TYPE}})</p>
                                     
                             </div>
                         </a>
@@ -74,7 +77,8 @@
                     {% else %}
                     <div class="alert alert-light" role="alert">
                         <div class="text-center">
-                            <p style="font-size:12px;">No applications has been setup for this company yet. Click the + icon on the upper left corner of the page to add a new application.</p>
+                            <p style="font-size:12px;">No applications has been setup for this company yet. Click <a href="newAppModal" data-bs-toggle="modal"
+                                data-bs-target="#newAppModal">here</a> to add a new application.</p>
                         </div>
                     </div>
                    
@@ -90,7 +94,7 @@
         {% csrf_token %}
         <div class="modal fade" id="newAppModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
             aria-labelledby="staticBackdropLabel" aria-hidden="true">
-            <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-dialog modal-dialog-centered modal-xl" >
                 <div class="modal-content">
                     <div class="modal-header">
                         <h1 class="modal-title fs-5" id="staticBackdropLabel"> <a style="font-size:16px;"><span
@@ -110,9 +114,9 @@
                                                     class="col-form-label">Application
                                                     Name:</label>
                                             </div>
-                                            <div class="col-auto">
+                                            <div class="col">
                                                 <input class="form-control sm" id="app_name" name="app_name" type="text"
-                                                    style="font-size:12px;width:300px;" autocomplete="off" required>
+                                                    style="font-size:12px;max-width: 100%;" autocomplete="off" required>
                                             </div>
                                         </div>
 
@@ -122,9 +126,9 @@
                                                     class="col-form-label">Description
                                                     :</label>
                                             </div>
-                                            <div class="col-auto">
-                                                <textarea class="form-control" style="font-size:12px;width:300px;" id="system_description"  name="system_description"
-                                                rows="3" required></textarea>
+                                            <div class="col">
+                                                <textarea class="form-control" style="font-size:12px;max-width: 100%;resize:none" id="system_description"  name="system_description"
+                                                rows="5" required></textarea>
                                             </div>
                                         </div>
 
@@ -134,9 +138,9 @@
                                                     class="col-form-label">Application Type
                                                     :</label>
                                             </div>
-                                            <div class="col-auto">
+                                            <div class="col">
                                                 <select class="form-control sm" id="app_type" name="app_type"
-                                                    style="font-size:12px;width:300px;" required>
+                                                    style="font-size:12px;max-width: 100%;" required>
                                                     <option value="" disabled selected></option>
                                                     <option value="Application">Application</option>
                                                     <option value="Network">Network</option>
@@ -153,9 +157,9 @@
                                                     class="col-form-label">Hosting:
                                                 </label>
                                             </div>
-                                            <div class="col-auto">
+                                            <div class="col">
                                                 <select class="form-control sm" id="hosting" name="hosting"
-                                                    style="font-size:12px;width:300px;" required>
+                                                    style="font-size:12px;max-width: 100%;" required>
                                                     <option value="" disabled selected></option>
                                                     <option value="On-prem">On-prem</option>
                                                     <option value="Hosted">Vendor Hosted</option>
@@ -170,9 +174,9 @@
                                                     Rating:
                                                 </label>
                                             </div>
-                                            <div class="col-auto">
+                                            <div class="col">
                                                 <select class="form-control sm" id="risk_rating" name="risk_rating"
-                                                    style="font-size:12px;width:300px;" required>
+                                                    style="font-size:12px;max-width: 100%;" required>
                                                     <option value="" disabled selected></option>
                                                     <option value="Low">Low</option>
                                                     <option value="Medium">Medium</option>
@@ -188,15 +192,14 @@
                                                     class="col-form-label">Relevant
                                                     Process:</label>
                                             </div>
-                                            <div class="col-auto">
+                                            <div class="col">
                                                 <input class="form-control sm" id="relevant_process"
                                                     name="relevant_process" type="text"
-                                                    placeholder="e.g., Financial Reporting, Revenue, Payroll, HR"
-                                                    style="font-size:12px;width:300px;" autocomplete="false">
+                                                    style="font-size:12px;max-width: 100%;" autocomplete="false">
                                             </div>
                                         </div>
                                         
-                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;" hidden="true">
                                             <div class="col-auto">
                                                 <label style="font-size:12px; width: 110px;" class="col-form-label">Year
                                                     Implemented:
@@ -211,19 +214,22 @@
 
                                         <div class="row g-3 align-items-center" style="margin-top:3px;">
                                             <div class="col-auto">
-                                                <label style="font-size:12px; width: 110px;"
+                                                <label style="font-size:12px;"
                                                     class="col-form-label">Application Owner:
                                                 </label>
                                             </div>
-                                            <div class="col-auto">
-                                                <input type="hidden" list="app_owner_list" name ="app_list_app_owner1" id="app_list_app_owner1">
-                                                <input class="form-control sm" list="app_owner_list" id="app_list_app_owners"
-                                                    placeholder="" style="font-size:12px;width:300px;">
-                                                <datalist id="app_owner_list">
-                                                    {% for user in app_owners %}
-                                                    <option value="{{ user.first_name }} {{ user.last_name }} ({{ user.email}})" data-user-id="{{user.id}}"></option>
-                                                    {% endfor %}
-                                                </datalist>
+                                            <div class="col">
+                                                <select name="app_owner_list" id="app_owner_list" style="font-size:12px;max-width: 100%;"
+                                                class="selectpicker" multiple data-live-search="true" required>
+                                                    {% if app_owners%}
+                                                        {% for user in app_owners %}
+                                                            <option value="{{ user.id}}">{{user.first_name}} {{user.last_name}} ({{user.email}})</option>
+                                                        {% endfor %}
+                                                    {% else %}
+                                                    <option value="{{ user.id}}">Nothing to select</option>
+                                                    {% endif %}
+            
+                                            </select>
                                             </div>
                                         </div>
                                     </div>
@@ -240,6 +246,17 @@
                 </div>
             </div>
     </form>
+
+
+    <script src="{% static 'js/select.js' %}"></script>
+
+    <script>
+        new MultiSelectTag('app_owner_list', {
+            rounded: true,
+            shadow: true,
+            placeholder: 'Select Process Owners',
+        })
+    </script>
 
 
     {% endblock content %}

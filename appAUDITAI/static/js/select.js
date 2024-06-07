@@ -93,7 +93,6 @@ function MultiSelectTag(e, t = { shadow: false, rounded: true }) {
           l[d].selected &&
             selected_values.push({ label: l[d].label, value: l[d].value });
       e && t.hasOwnProperty("onChange") && t.onChange(selected_values);
-      document.getElementById("control_selected_values").value = JSON.stringify(selected_values);
     }
   
     (n = document.getElementById(e)),
@@ -115,7 +114,7 @@ function MultiSelectTag(e, t = { shadow: false, rounded: true }) {
         r.style.fontSize = "12px";
           (c = document.createElement("inputBody")).classList.add("input-body"),
           c.append(r),
-          o.style.width = "400px"; // Set default width to 400px
+          o.style.width = "100%"; // Set default width to 400px
           o.style.borderRadius = "5px";
           i.append(o),
           (s = document.createElement("div")).classList.add("btn-container"),

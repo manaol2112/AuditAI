@@ -33,6 +33,8 @@
             {% endif %}
             </div>
 
+            {% if pw_policy %}
+
             {% if auth_compliant == 'Yes' %}
             <p style="font-size:14px;">Overall Status:<span style="margin-left:5px;"class="badge bg-success">Compliant</span></p>
             {% else %}
@@ -44,6 +46,7 @@
                 <p style="font-size:13px;"></p>
             </div>
 
+           
             <p style="font-size:20px;margin-top:20px">Authentication</p>
             <p style="font-size:14px;">Compliance status of {{selected_app.APP_NAME}} password settings.</p>
 
@@ -477,6 +480,12 @@
                     </div>
                 </div>
             </div>
+            {% else %}
+            <p style="font-size:20px;margin-top:20px">Authentication</p>
+            <div class="alert alert-light" style="font-size:13px;margin-top:20px;" role="alert">
+                Uh oh! The password policy has not been defined yet within the system. You may add the details of the password policy in the <a href="">Policy</a> workspace to view the compliance status of this application. 
+              </div>
+            {% endif %}
     </div>
 </div>
 

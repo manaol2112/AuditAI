@@ -108,9 +108,9 @@ class AuthenticateUsers(View):
                     try:   
                         if 'Administrator' in group_names:
                             context = {'user':user, 'group_names':group_names}
-                            template_name = 'pages/DASHBOARD/admin-dashboard.html'
+                            template_name = 'pages/DASHBOARD/system-setting.html'
                         elif 'Auditor' in group_names:
-                            user_roles = USERROLES.objects.get(USERNAME=user)
+                            user_roles = USERROLES.objects.get(USERNAME=user)   
                             companies = user_roles.COMPANY_ID.all()
                             context = {'user':user, 'group_names':group_names, 'companies':companies}
                             template_name = 'pages/DASHBOARD/auditor-dashboard.html'
@@ -129,7 +129,7 @@ class AuthenticateUsers(View):
                             if user.is_superuser:
                                 context = {'user':user, 'group_names':group_names}
                                 #template_name = 'pages/DASHBOARD/admin-dashboard.html'
-                                return redirect('appAUDITAI:access-request-home', context)
+                                return redirect('appAUDITAI:systemsettings', context)
                             else:
                                 return redirect('appAUDITAI:authenticate-user')
                        
@@ -231,7 +231,6 @@ class AuthenticateUsers(View):
                     messages.error(request, 'Your account has been locked due to multiple failed login attempts. Please contact your system administrator to reset password.')
             except USER_LOCKOUT.DoesNotExist:
                 # Create UserLockout record for the user if it doesn't exist
-                messages.error(request, 'Incorrect username or password. Please try again.')
                 return redirect('appAUDITAI:authenticate-user') 
 
         # Redirect back to the login page

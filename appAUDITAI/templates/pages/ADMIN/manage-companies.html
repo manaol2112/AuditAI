@@ -6,7 +6,7 @@
 <link rel="stylesheet" href="{% static 'css/select.css' %}" />
 
 
-<div class="card" style="height:90vh">
+<div class="card">
     <div class="card-body">
         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);"
             aria-label="breadcrumb">
@@ -48,17 +48,24 @@
         </div>
 
         <div class="card-container"
-            style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;border-bottom:solid;border-color:lightgray">
-            {% for company in companies %}
-            <a href="{% url 'appAUDITAI:manage-companies-details' company.id %} " style="text-decoration: none;color:#474b4d">
-                <div class="card"
-                    style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
-                    onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
-                    <span class="fa-regular fa-building" style="font-size: 30px;color:#72BAED"></span>
-                    <p style="font-size: 12px; margin-top: 16px;">{{company.COMPANY_NAME}}</p>
-                </div>
-            </a>
-            {% endfor %}
+            style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;">
+            {% if companies %}
+                {% for company in companies %}
+                <a href="{% url 'appAUDITAI:manage-companies-details' company.id %} " style="text-decoration: none;color:#474b4d">
+                    <div class="card"
+                        style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"
+                        onmouseover="this.style.backgroundColor='#d5ecf7';" onmouseout="this.style.backgroundColor='#fff';">
+                        <span class="fa-regular fa-building" style="font-size: 30px;color:#72BAED"></span>
+                        <p style="font-size: 12px; margin-top: 16px;">{{company.COMPANY_NAME}}</p>
+                    </div>
+                </a>
+                {% endfor %}
+            {% else %}
+            <div class="alert alert-light" style="font-size:12px;max-width:100%" role="alert">
+                No company has been setup yet. Click <a href="#create_user_template"  data-bs-toggle="offcanvas"
+                data-bs-target="#create_user_template">here</a> to create a new company record. 
+              </div>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -97,7 +104,7 @@
                             <label style="font-size:12px; width:110px;" class="col-form-label">Company Name
                                 :</label>
                         </div>
-                        <div class="col-auto">
+                        <div class="col">
                             <input class="form-control sm" id="company_name" name="company_name" type="text"
                                 style="font-size:12px;width:200px;" autocomplete="off" required>
                         </div>
@@ -106,7 +113,7 @@
                 </div>
             </div>
             <!-- THIS IS THE BUTTON TO UPLOAD THE ATTACH USER LIST -->
-            <div class="modal-footer" style="margin-top:20px;">
+            <div class="modal-footer" style="margin-top:20px;max-width: 100%;">
                 <button type="submit" class="btn btn-secondary btn-sm" style="font-size:13px;width:100px;">
                     Create</button>
             </div>

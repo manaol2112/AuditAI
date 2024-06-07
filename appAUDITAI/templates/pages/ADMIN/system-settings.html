@@ -4,7 +4,7 @@
 
 <script src="{% static 'js/main.js' %}"></script>
 
-<div class="card" style="height:90vh">
+<div class="card">
     <div class="card-body">
         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
             <ol class="breadcrumb" style="font-size:14px;">
@@ -36,7 +36,7 @@
             <p style="font-size:13px">Manage users, integrations, system security, and other settings</p>
         </div>
         
-        <div class="card-container" style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;border-bottom:solid;border-color:lightgray">
+        <div class="card-container" style="display: flex; gap: 30px;margin-top:30px;padding-bottom:30px;flex-wrap: wrap;justify-content: left;">
             <a href="{% url 'appAUDITAI:manage-companies' %}" style="text-decoration: none;color:#474b4d">
                 <div class="card"
                     style="border-radius: 25px; cursor: pointer; height: 130px; width: 140px; background-color: #fff; box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; transition: background-color 0.3s;"

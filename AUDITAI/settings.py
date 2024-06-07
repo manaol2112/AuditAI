@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-7a52xj@@-97%hq4t$@30n3^ar10t5ou)n6k(*g2d7*jo#@#i#o
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['10.0.0.20','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['10.0.0.20','localhost','127.0.0.1','*']
 
 # Application definition
 
@@ -87,6 +87,17 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'auditaidb3',  # Database name
+#         'USER': 'audit-ai',     # Username
+#         'PASSWORD': 'AVNS_tD9jbRpL1w8jQP6arsL',  # Password
+#         'HOST': 'private-auditaidb3-do-user-16868343-0.c.db.ondigitalocean.com',  # Host
+#         'PORT': '25060',       # Port
+#     }
+# }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -123,6 +134,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 

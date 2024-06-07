@@ -201,19 +201,20 @@ class AuditPerApp(AuditorPermissionMixin,View):
         except RISKGENERAL.DoesNotExist:
             risk_general = None
 
+        risk_list  = None
         try:
             app = APP_LIST.objects.get(id = app_id)
-            risk_list = RISKLIST.objects.filter(RISK_TYPE = risk_general.RISK_TYPE)
-            risks_with_ratings = []
-            for risk in risk_list:
-                rate = RISKRATING.objects.filter(APP_NAME=app, RISK_ID=risk).first()  # Use .first() to get a single rating
-                risk.rate = rate.RATING if rate else 'N/A'  # Assuming 'RATING' is the field that stores the rating value
-                # Count the number of control mappings for this risk
-                control_mapped_count = RISKMAPPING.objects.filter(APP_NAME=app, RISK_ID=risk).count()
-                risk.control_mapped_count = control_mapped_count
+            if risk_general:
+                risk_list = RISKLIST.objects.filter(RISK_TYPE = risk_general.RISK_TYPE)
+                risks_with_ratings = []
+                for risk in risk_list:
+                    rate = RISKRATING.objects.filter(APP_NAME=app, RISK_ID=risk).first()  # Use .first() to get a single rating
+                    risk.rate = rate.RATING if rate else 'N/A'  # Assuming 'RATING' is the field that stores the rating value
+                    # Count the number of control mappings for this risk
+                    control_mapped_count = RISKMAPPING.objects.filter(APP_NAME=app, RISK_ID=risk).count()
+                    risk.control_mapped_count = control_mapped_count
 
-                risks_with_ratings.append(risk)
-
+                    risks_with_ratings.append(risk)
         except RISKLIST.DoesNotExist:
             risk_list = None
 
@@ -704,9 +705,13 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
         design_result = request.POST.get('design_result')
         oe_result = request.POST.get('oe_result')
         
-        #TEST_CONCLUSION'
+        #DESIGN_TEST_CONCLUSION'
         design_conclusion = request.POST.get('design_conclusion')
         design_conclusion_rationale = request.POST.get('design_conclusion_rationale')
+
+        #OE_TEST_CONCLUSION'
+        oe_conclusion = request.POST.get('oe_conclusion')
+        oe_conclusion_rationale = request.POST.get('oe_conclusion_rationale')
         
         #FILE_NAME
         file_name = request.POST.get('file')
@@ -871,6 +876,21 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
                     oe.LAST_MODIFIED = timezone.now()
                 oe.save()
             except OE_TESTING.DoesNotExist:
+                oe = None
+
+        elif form_id == 'oe_conclusion_form':
+            try:
+                oe,created = OE_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                oe.CONTROL_CONCLUSION = oe_conclusion
+                oe.CONTROL_CONCLUSION_RATIONALE = escape(oe_conclusion_rationale)
+                if created:
+                    oe.CREATED_BY = user.email
+                    oe.CREATED_ON = timezone.now()
+                else:
+                    oe.MODIFIED_BY = user.email
+                    oe.LAST_MODIFIED = timezone.now()
+                oe.save()
+            except DESIGN_TESTING.DoesNotExist:
                 oe = None
 
         else:

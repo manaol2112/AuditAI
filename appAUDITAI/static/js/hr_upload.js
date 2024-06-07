@@ -220,8 +220,14 @@ $(document).ready(function() {
                         } else {
                             
                         }
+
                         
                         $("#mapping_div").show();
+
+                        //Attach the file to the input
+                        const fileInput = document.getElementById('hr_fileInput');
+                        fileInput.files = files;
+                        
                     }
                 };
                 reader.readAsText(file);
@@ -254,8 +260,10 @@ $(document).ready(function() {
     }, false);
 
     // Handle file selection through input element
-    $('#fileInput').change(function(e) {
-        handleFileSelect(e.target.files);
+    $('#hr_fileInput').change(function(e) {
+        let files = event.target.files;
+        // Call handleFileSelect function with selected files
+        handleFileSelect(files);
     });
 
     function preventDefaults(e) {
@@ -270,4 +278,6 @@ $(document).ready(function() {
     function unhighlight() {
         $(".file-drop-area").removeClass('highlight');
     }
+
+    
 });

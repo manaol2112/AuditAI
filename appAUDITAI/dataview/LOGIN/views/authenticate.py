@@ -240,3 +240,7 @@ class LogoutUser(View):
     def get(self, request):
         logout(request)
         return redirect('appAUDITAI:authenticate-user')
+    
+
+def loginpage(request):
+    return render(request, 'pages/landingpage.html')

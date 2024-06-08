@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from appAUDITAI.CSV.csvuploadform import CSVModelForm
-from appAUDITAI.models import CSV, SAP_USR02,HR_RECORD
+from appAUDITAI.models import CSV,HR_RECORD
 from django.contrib import messages
 from datetime import datetime
 from django.http import JsonResponse

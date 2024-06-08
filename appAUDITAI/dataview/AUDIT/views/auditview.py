@@ -712,7 +712,31 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
         #OE_TEST_CONCLUSION'
         oe_conclusion = request.POST.get('oe_conclusion')
         oe_conclusion_rationale = request.POST.get('oe_conclusion_rationale')
-        
+
+        #OE_PERIOD:
+
+        interim_start =  request.POST.get('interim_start')
+        interim_end =  request.POST.get('interim_end')
+
+        #RF_PERIOD:
+
+        rf_start =  request.POST.get('rf_start')
+        rf_end =  request.POST.get('rf_end')
+
+        #OE_FREQUENCY:
+        frequency =  request.POST.get('frequency')
+
+        #OE_FREQUENCY:
+        rf_frequency =  request.POST.get('rf_frequency')
+
+        #OE POPULATION:
+        population =  request.POST.get('population')
+        samples = request.POST.get('samples')
+
+        #RF POPULATION:
+        rf_population =  request.POST.get('rf_population')
+        rf_samples = request.POST.get('rf_samples')
+
         #FILE_NAME
         file_name = request.POST.get('file')
 
@@ -890,12 +914,158 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
                     oe.MODIFIED_BY = user.email
                     oe.LAST_MODIFIED = timezone.now()
                 oe.save()
-            except DESIGN_TESTING.DoesNotExist:
+            except OE_TESTING.DoesNotExist:
+                oe = None
+        elif form_id == 'interim_period':
+            try:
+                oe,created = OE_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                oe.PERIOD_START_DATE = interim_start 
+
+                if created:
+                    oe.CREATED_BY = user.email
+                    oe.CREATED_ON = timezone.now()
+                else:
+                    oe.MODIFIED_BY = user.email
+                    oe.LAST_MODIFIED = timezone.now()
+                oe.save()
+            except OE_TESTING.DoesNotExist:
+                oe = None
+        elif form_id == 'interim_period_end':
+            try:
+                oe,created = OE_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                oe.PERIOD_END_DATE = interim_end
+
+                if created:
+                    oe.CREATED_BY = user.email
+                    oe.CREATED_ON = timezone.now()
+                else:
+                    oe.MODIFIED_BY = user.email
+                    oe.LAST_MODIFIED = timezone.now()
+                oe.save()
+            except OE_TESTING.DoesNotExist:
                 oe = None
 
+        elif form_id == 'interim_population_form':
+            try:
+                oe,created = OE_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                oe.CONTROL_POPULATION = population
+
+                if created:
+                    oe.CREATED_BY = user.email
+                    oe.CREATED_ON = timezone.now()
+                else:
+                    oe.MODIFIED_BY = user.email
+                    oe.LAST_MODIFIED = timezone.now()
+                oe.save()
+            except OE_TESTING.DoesNotExist:
+                oe = None
+
+        elif form_id == 'interim_frequency_form':
+            try:
+                oe,created = OE_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                oe.CONTROL_FREQUENCY = frequency
+
+                if created:
+                    oe.CREATED_BY = user.email
+                    oe.CREATED_ON = timezone.now()
+                else:
+                    oe.MODIFIED_BY = user.email
+                    oe.LAST_MODIFIED = timezone.now()
+                oe.save()
+            except OE_TESTING.DoesNotExist:
+                oe = None
+
+        elif form_id == 'interim_sample_form':
+            try:
+                oe,created = OE_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                oe.CONTROL_SAMPLES = samples
+
+                if created:
+                    oe.CREATED_BY = user.email
+                    oe.CREATED_ON = timezone.now()
+                else:
+                    oe.MODIFIED_BY = user.email
+                    oe.LAST_MODIFIED = timezone.now()
+                oe.save()
+            except OE_TESTING.DoesNotExist:
+                oe = None
+
+        elif form_id == 'rf_period':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.PERIOD_START_DATE = rf_start 
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
+
+        elif form_id == 'rf_period_end':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.PERIOD_END_DATE = rf_end
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
+
+        elif form_id == 'rf_population_form':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.CONTROL_POPULATION = rf_population
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
+
+        elif form_id == 'rf_frequency_form':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.CONTROL_FREQUENCY = rf_frequency
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
+
+        elif form_id == 'rf_sample_form':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.CONTROL_SAMPLES = rf_samples
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
         else:
             print('Nothing is triggered')
-            pass
 
         return JsonResponse({'success': 'Success'}, status=200)
     
@@ -967,6 +1137,18 @@ class AuditWorkpapersDetails(AuditPerApp):
         except OE_TESTING.DoesNotExist:
                 oe = None
 
+        try:
+            rf = RF_TESTING.objects.get(COMPANY_ID = company, APP_NAME = selected_app, CONTROL_ID = control_details)
+            if rf.CONTROL_TEST_PROCEDURE:
+                rf.CONTROL_TEST_PROCEDURE = html.unescape(rf.CONTROL_TEST_PROCEDURE)
+            if rf.CONTROL_TEST_RESULT:
+                rf.CONTROL_TEST_RESULT = html.unescape(rf.CONTROL_TEST_RESULT)
+            if rf.CONTROL_CONCLUSION_RATIONALE:
+                rf.CONTROL_CONCLUSION_RATIONALE = html.unescape(rf.CONTROL_CONCLUSION_RATIONALE)
+
+        except OE_TESTING.DoesNotExist:
+                rf = None
+
         # Decode HTML entities in DESIGN_PROCEDURES field
         if procedure_list:
             for procedure in procedure_list:
@@ -1005,7 +1187,8 @@ class AuditWorkpapersDetails(AuditPerApp):
             'design':design,
             'design_attachment':design_attachment,
             'oe':oe,
-            'oe_attachment':oe_attachment
+            'oe_attachment':oe_attachment,
+            'rf':rf
             
         }
         return render(request, self.template_name, context)

@@ -15,49 +15,6 @@ class UserToken(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     token = models.UUIDField(default=uuid.uuid4, editable=False)
 
-# SAP S/4HANA AND ECC MODELS ARE STORED IN THIS GROUP
-
-class SAP_USR02(models.Model):
-    BNAME = models.CharField(max_length=50,blank=True,null=True) #USERID
-    MANDT = models.CharField(max_length=50,blank=True,null=True) #CLIENTCODE
-    USTYP = models.CharField(max_length=2,blank=True,null=True) #USER TYPE AS TO DIALOG, SYSTEM, OR COMM
-    GLTGB = models.DateTimeField() #RECORD CREATION DATE AND TIME
-    GLTGV = models.DateField() #LAST LOGON OF USER
-    TRDAT = models.DateTimeField() #LAST SUCCESSFUL LOGIN
-    LTIME = models.DateTimeField() #LAST UNSUCCESSFUL ATTEMPT
-    UFLAG = models.CharField(max_length=10,blank=True,null=False) #USER STATUS (ACTIVE OR LOCKED)
-    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
-    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
-    LAST_MODIFIED = models.DateTimeField(null=True)
-    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
-
-    def __str__(self):
-        return self.BNAME
-    
-    class Meta:
-        managed = True
-        db_table = 'SAP_USR02'
-
-class SAP_AGR_USERS(models.Model):
-    UNAME = models.CharField(max_length=50,blank=True,null=True) #USERID
-    MANDT = models.CharField(max_length=50,blank=True,null=True) #CLIENTCODE
-    AGR_NAME = models.CharField(max_length=50,blank=True,null=True) #AUTHORIZATIONS ASSIGNED
-    FROM_DAT = models.DateTimeField() #VALIDITY START DATE
-    TO_DAT = models.DateTimeField() #VALIDITY END DATE
-    
-    #LOG
-    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
-    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
-    LAST_MODIFIED = models.DateTimeField(null=True)
-    MODIFIED_BY = models.CharField(max_length=50,blank=True,null=True)
-
-    def __str__(self):
-        return self.MANDT
-    
-    class Meta:
-        managed = True
-        db_table = 'SAP_AGR_USERS'
-
 class USER_LOCKOUT(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     failed_attempts = models.IntegerField(default=0)
@@ -488,6 +445,34 @@ class OE_TESTING(models.Model):
         managed = True
         db_table = 'OE_TESTING'
 
+class RF_TESTING(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CONTROL_ID =  models.ForeignKey(CONTROLLIST,on_delete=models.CASCADE,null=True,blank=True)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    CONTROL_TYPE = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_RATING = models.CharField(max_length=10,blank=True,null=True)
+    CONTROL_RATING_RATIONALE = models.CharField(max_length=500,blank=True,null=True)
+    CONTROL_TEST_PROCEDURE = models.TextField(null=True,blank=True)
+    CONTROL_TEST_RESULT = models.TextField(null=True,blank=True)
+    CONTROL_CONCLUSION = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_CONCLUSION_RATIONALE = models.TextField(null=True,blank=True)
+    PERIOD_START_DATE = models.DateField(null=True, blank=True)
+    PERIOD_END_DATE = models.DateField(null=True, blank=True)
+    CONTROL_FREQUENCY = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_POPULATION = models.CharField(max_length=25,blank=True,null=True)
+    CONTROL_SAMPLES = models.CharField(max_length=25,blank=True,null=True)
+
+    #LOG
+    CREATED_BY = models.CharField(max_length=50,blank=True,null=True)
+    CREATED_ON = models.DateField(auto_now_add=True,null=True,blank=True)
+    LAST_MODIFIED = models.DateTimeField(null=True)
+    MODIFIED_BY = models.CharField(max_length=50,default=False,null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'RF_TESTING'
+
 def design_evidence_folder(instance, filename):
     control_id = instance.CONTROL_ID_id
     app_id = instance.APP_NAME_id
@@ -521,6 +506,22 @@ class OE_EVIDENCE(models.Model):
     class Meta:
         managed = True
         db_table = 'OE_EVIDENCE'
+
+def rf_evidence_folder(instance, filename):
+    control_id = instance.CONTROL_ID_id
+    app_id = instance.APP_NAME_id
+    return f'workpapers/{app_id}/{control_id}/rf/{filename}'
+
+class RF_EVIDENCE(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    CONTROL_ID =  models.ForeignKey(CONTROLLIST,on_delete=models.CASCADE,null=True,blank=True)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,null=True,blank=True)
+    APP_NAME = models.ForeignKey(APP_LIST,on_delete=models.CASCADE,blank=True,null=True)
+    file_name = models.FileField(upload_to=oe_evidence_folder, max_length=256)
+
+    class Meta:
+        managed = True
+        db_table = 'RF_EVIDENCE'
 
 
 class RISKLIST(models.Model):

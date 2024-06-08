@@ -437,22 +437,46 @@
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%;">
                                     <p style="font-size:14px;"><b>Period Covered:</b></p>
-                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                        <div class="col-auto">
-                                            <label style="font-size:12px; " class="col-form-label">Start Date:</label>
+                                  
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; " class="col-form-label">Start Date:</label>
+                                            </div>
+                                         
+                                                <div class="col">
+                                                    <form id="interim_period" method="post" enctype="multipart/form-data">
+                                                        <input type="hidden" name="form_id" value="interim_period">
+                                                        {% csrf_token %}
+                                                    {% if oe.PERIOD_START_DATE %}
+                                                    <input class="form-control sm" id="interim_start_date" name="interim_start_date" type="date"
+                                                        style="font-size:12px;" value="{{ oe.PERIOD_START_DATE|date:'Y-m-d' }}">
+                                                    {% else %}
+                                                    <input class="form-control sm" id="interim_start_date" name="interim_start_date" type="date"
+                                                        style="font-size:12px;" value="">
+                                                    {% endif %}
+                                                </form>
+                                                </div>
+                                          
+                                            <div class="col-auto">
+                                                <label style="font-size:12px;" class="col-form-label">End Date:</label>
+                                            </div>
+                                         
+                                                <div class="col">
+                                                    <form id="interim_period_end" method="post" enctype="multipart/form-data">
+                                                        <input type="hidden" name="form_id" value="interim_period_end">
+                                                        {% csrf_token %}
+                                                    {% if oe.PERIOD_END_DATE %}
+                                                    <input class="form-control sm" id="interim_end_date" name="interim_end_date" type="date" style="font-size:12px;"
+                                                        value="{{ oe.PERIOD_END_DATE|date:'Y-m-d' }}">
+                                                    {% else %}
+                                                    <input class="form-control sm" id="interim_end_date" name="interim_end_date" type="date" style="font-size:12px;"
+                                                        value="">
+                                                    {% endif %}
+                                                </form>
+                                                </div>
+                                           
                                         </div>
-                                        <div class="col">
-                                            <input class="form-control sm" id="interim_start_date" name="interim_start_date" type="date" style="font-size:12px;"
-                                                value="">
-                                        </div>
-                                        <div class="col-auto">
-                                            <label style="font-size:12px;" class="col-form-label">End Date:</label>
-                                        </div>
-                                        <div class="col">
-                                            <input class="form-control sm" id="interim_end_date" name="interim_end_date" type="date" style="font-size:12px;"
-                                                value="">
-                                        </div>
-                                    </div>
+                                  
                                     <div class="row g-3 align-items-center" style="margin-top:3px;">
                                        
                                     </div>
@@ -466,38 +490,146 @@
                                         <div class="col-auto">
                                             <label style="font-size:12px; width: 150px;" class="col-form-label">Population:</label>
                                         </div>
-                                        <div class="col">
-                                            <input class="form-control sm" id="interim_population" name="interim_population" type="text" style="font-size:12px;"
-                                                value="" required>
-                                        </div>
+                                       
+                                            <div class="col">
+                                                <form id="interim_population_form" method="post" enctype="multipart/form-data">
+                                                    <input type="hidden" name="form_id" value="interim_population_form">
+                                                    {% csrf_token %}
+                                                {% if oe.CONTROL_POPULATION %}
+                                                    <input class="form-control sm" id="interim_population" name="interim_population" type="text"
+                                                        style="font-size:12px;" value="{{oe.CONTROL_POPULATION}}" required>
+                                                    {% else %}
+                                                    <input class="form-control sm" id="interim_population" name="interim_population" type="text"
+                                                    style="font-size:12px;" value="" required>
+                                                {% endif  %}
+                                            </form>
+                                            </div>
+                                      
                                     </div>
 
-                                    <div class="row g-3 align-items-center" style="margin-top:3px;">
-                                        <div class="col-auto">
-                                            <label style="font-size:12px; width: 150px;" class="col-form-label">Control Frequency:</label>
+                                    <form id="interim_frequency_form" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="form_id" value="interim_frequency_form">
+                                        {% csrf_token %}
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 150px;" class="col-form-label">Control Frequency:</label>
+                                            </div>
+                                            <div class="col">
+                                                <select id="interim_frequency" name="interim_frequency" style="font-size:12px;"
+                                                    class="form-select" aria-label="Default select example">
+                                                    {% if oe.CONTROL_FREQUENCY == 'Multiple' %}
+                                                    <option disabled ></option>
+                                                    <option selected value="Multiple">Many times per day</option>
+                                                    <option value="Daily">Daily</option>
+                                                    <option value="Weekly">Weekly</option>
+                                                    <option value="Monthly">Monthly</option>
+                                                    <option value="Quarterly">Quarterly</option>
+                                                    <option value="Semi-Annual">Semi-Annually</option>
+                                                    <option value="Annually">Annually</option>
+                                                    <option value="Continuous">Continuous</option>
+                                                    {% elif oe.CONTROL_FREQUENCY == 'Daily' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Multiple">Many times per day</option>
+                                                    <option selected value="Daily">Daily</option>
+                                                    <option value="Weekly">Weekly</option>
+                                                    <option value="Monthly">Monthly</option>
+                                                    <option value="Quarterly">Quarterly</option>
+                                                    <option value="Semi-Annual">Semi-Annually</option>
+                                                    <option value="Annually">Annually</option>
+                                                    <option value="Continuous">Continuous</option>
+                                                    {% elif oe.CONTROL_FREQUENCY == 'Weekly' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Multiple">Many times per day</option>
+                                                    <option  value="Daily">Daily</option>
+                                                    <option selected value="Weekly">Weekly</option>
+                                                    <option value="Monthly">Monthly</option>
+                                                    <option value="Quarterly">Quarterly</option>
+                                                    <option value="Semi-Annual">Semi-Annually</option>
+                                                    <option value="Annually">Annually</option>
+                                                    <option value="Continuous">Continuous</option>
+                                                    {% elif oe.CONTROL_FREQUENCY == 'Monthly' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Multiple">Many times per day</option>
+                                                    <option  value="Daily">Daily</option>
+                                                    <option  value="Weekly">Weekly</option>
+                                                    <option selected value="Monthly">Monthly</option>
+                                                    <option value="Quarterly">Quarterly</option>
+                                                    <option value="Semi-Annual">Semi-Annually</option>
+                                                    <option value="Annually">Annually</option>
+                                                    <option value="Continuous">Continuous</option>
+                                                    {% elif oe.CONTROL_FREQUENCY == 'Quarterly' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Multiple">Many times per day</option>
+                                                    <option  value="Daily">Daily</option>
+                                                    <option  value="Weekly">Weekly</option>
+                                                    <option  value="Monthly">Monthly</option>
+                                                    <option selected value="Quarterly">Quarterly</option>
+                                                    <option value="Semi-Annual">Semi-Annually</option>
+                                                    <option value="Annually">Annually</option>
+                                                    <option value="Continuous">Continuous</option>
+                                                    {% elif oe.CONTROL_FREQUENCY == 'Semi-Annual' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Multiple">Many times per day</option>
+                                                    <option  value="Daily">Daily</option>
+                                                    <option  value="Weekly">Weekly</option>
+                                                    <option  value="Monthly">Monthly</option>
+                                                    <option  value="Quarterly">Quarterly</option>
+                                                    <option selected value="Semi-Annual">Semi-Annually</option>
+                                                    <option value="Annually">Annually</option>
+                                                    <option value="Continuous">Continuous</option>
+                                                    {% elif oe.CONTROL_FREQUENCY == 'Annually' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Multiple">Many times per day</option>
+                                                    <option  value="Daily">Daily</option>
+                                                    <option  value="Weekly">Weekly</option>
+                                                    <option  value="Monthly">Monthly</option>
+                                                    <option  value="Quarterly">Quarterly</option>
+                                                    <option  value="Semi-Annual">Semi-Annually</option>
+                                                    <option selected value="Annually">Annually</option>
+                                                    <option value="Continuous">Continuous</option>
+                                                    {% elif oe.CONTROL_FREQUENCY == 'Continuous' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Multiple">Many times per day</option>
+                                                    <option  value="Daily">Daily</option>
+                                                    <option  value="Weekly">Weekly</option>
+                                                    <option  value="Monthly">Monthly</option>
+                                                    <option  value="Quarterly">Quarterly</option>
+                                                    <option  value="Semi-Annual">Semi-Annually</option>
+                                                    <option  value="Annually">Annually</option>
+                                                    <option selected value="Continuous">Continuous</option>
+                                                    {% else %}
+                                                    <option disabled selected></option>
+                                                    <option value="Multiple">Many times per day</option>
+                                                    <option value="Daily">Daily</option>
+                                                    <option value="Weekly">Weekly</option>
+                                                    <option value="Monthly">Monthly</option>
+                                                    <option value="Quarterly">Quarterly</option>
+                                                    <option value="Semi-Annual">Semi-Annually</option>
+                                                    <option value="Annually">Annually</option>
+                                                    <option value="Continuous">Continuous</option>
+                                                    {% endif %}
+                                                </select>
+                                            </div>
                                         </div>
-                                        <div class="col">
-                                            <select id="design_conclusion_select" name="design_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
-                                                <option disabled selected></option>
-                                                <option value="Multiple">Many times per day</option>
-                                                <option value="Daily">Daily</option>
-                                                <option value="Weekly">Weekly</option>
-                                                <option value="Monthly">Monthly</option>
-                                                <option value="Quarterly">Quarterly</option>
-                                                <option value="Semi-Annual">Semi-Anually</option>
-                                                <option value="Anually">Anually</option>
-                                                <option value="Continuous">Continuous</option>
-                                            </select>
-                                        </div>
-                                    </div>
+                                    </form>
                                     
                                     <div class="row g-3 align-items-center" style="margin-top:3px;">
                                         <div class="col-auto">
                                             <label style="font-size:12px; width: 150px;" class="col-form-label">Samples:</label>
                                         </div>
                                         <div class="col">
-                                            <input class="form-control sm" id="interim_samples" name="interim_samples" type="text" style="font-size:12px;"
+                                            <form id="interim_sample_form" method="post" enctype="multipart/form-data">
+                                                    <input type="hidden" name="form_id" value="interim_sample_form">
+                                                    {% csrf_token %}
+
+                                                {% if oe.CONTROL_SAMPLES %}
+                                                <input class="form-control sm" id="interim_samples" name="interim_samples" type="text" style="font-size:12px;"
+                                                    value="{{oe.CONTROL_SAMPLES}}" required>
+                                                {% else %}
+                                                <input class="form-control sm" id="interim_samples" name="interim_samples" type="text" style="font-size:12px;"
                                                 value="" required>
+                                                {% endif %}
+                                            </form>
                                         </div>
                                     </div>
 
@@ -507,8 +639,6 @@
                     </div>
                 </div>
 
-
-                
                 <div class="accordion-item rounded-3 border-0 shadow mb-2">
                     <h2 class="accordion-header">
                         <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
@@ -715,7 +845,224 @@
             </div>
         </div>
         <div class="tab-pane fade show" id="pills-rollforward" role="tabpanel" aria-labelledby="pills-rollforward-tab">
-            Roll-forward
+            <div class="accordion accordion-flush" id="test_of_design">
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                        <h2 class="accordion-header">
+                            <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                                type="button" data-bs-toggle="collapse" data-bs-target="#rf_population_sample"
+                                aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                            Timing and Sampling
+                            </button>
+                        </h2>
+                        <div id="rf_population_sample" class="accordion-collapse collapse">
+                            <div class="accordion-body">
+                                <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                    <div class="container bg-light" style="padding:10px;max-width: 100%;">
+                                        <div style="font-size:12px;" class="alert alert-info" role="alert">
+                                            <i style="margin-right:5px;" class="fa-solid fa-circle-info"></i>Note: Interim period covers {{ oe.PERIOD_START_DATE}} up to {{ oe.PERIOD_END_DATE }}
+                                        </div>
+                                        <p style="font-size:14px;"><b>Period Covered:</b></p>
+                                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                                <div class="col-auto">
+                                                    <label style="font-size:12px; " class="col-form-label">Start Date:</label>
+                                                </div>
+                                                    <div class="col">
+                                                        <form id="rf_period" method="post" enctype="multipart/form-data">
+                                                            <input type="hidden" name="form_id" value="rf_period">
+                                                            {% csrf_token %}
+                                                        {% if rf.PERIOD_START_DATE %}
+                                                        <input class="form-control sm" id="rf_start_date" name="rf_start_date" type="date"
+                                                            style="font-size:12px;" value="{{ rf.PERIOD_START_DATE|date:'Y-m-d' }}">
+                                                        {% else %}
+                                                        <input class="form-control sm" id="rf_start_date" name="rf_start_date" type="date"
+                                                            style="font-size:12px;" value="">
+                                                        {% endif %}
+                                                    </form>
+                                                    </div>
+                                              
+                                                <div class="col-auto">
+                                                    <label style="font-size:12px;" class="col-form-label">End Date:</label>
+                                                </div>
+                                             
+                                                    <div class="col">
+                                                        <form id="rf_period_end" method="post" enctype="multipart/form-data">
+                                                            <input type="hidden" name="form_id" value="rf_period_end">
+                                                            {% csrf_token %}
+                                                        {% if oe.PERIOD_END_DATE %}
+                                                        <input class="form-control sm" id="rf_end_date" name="rf_end_date" type="date" style="font-size:12px;"
+                                                            value="{{ rf.PERIOD_END_DATE|date:'Y-m-d' }}">
+                                                        {% else %}
+                                                        <input class="form-control sm" id="rf_end_date" name="rf_end_date" type="date" style="font-size:12px;"
+                                                            value="">
+                                                        {% endif %}
+                                                    </form>
+                                                    </div>
+                                               
+                                            </div>
+                                      
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                           
+                                        </div>
+                                    </div>
+                                </div>
+    
+                                <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
+                                    <div class="container bg-light" style="padding:10px;max-width: 100%;">
+                                        <p style="font-size:14px;"><b>Population and Samples:</b></p>
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 150px;" class="col-form-label">Population:</label>
+                                            </div>
+                                                <div class="col">
+                                                    <form id="rf_population_form" method="post" enctype="multipart/form-data">
+                                                        <input type="hidden" name="form_id" value="rf_population_form">
+                                                        {% csrf_token %}
+                                                        {% if rf.CONTROL_POPULATION %}
+                                                        <input class="form-control sm" id="rf_population" name="rf_population" type="text" style="font-size:12px;"
+                                                            value="{{rf.CONTROL_POPULATION}}" autocomplete="off"  required>
+                                                        {% else %}
+                                                        <input class="form-control sm" id="rf_population" name="rf_population" type="text" style="font-size:12px;"
+                                                            value=""  autocomplete="off"  required>
+                                                        {% endif %}
+                                                    </form>
+                                                </div>
+                                        </div>
+    
+                                        <form id="rf_frequency_form" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="form_id" value="rf_frequency_form">
+                                            {% csrf_token %}
+                                            <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                                <div class="col-auto">
+                                                    <label style="font-size:12px; width: 150px;" class="col-form-label">Control Frequency:</label>
+                                                </div>
+                                                <div class="col">
+                                                    <select id="rf_frequency" name="rf_frequency" style="font-size:12px;"
+                                                        class="form-select" aria-label="Default select example">
+                                                        {% if rf.CONTROL_FREQUENCY == 'Multiple' %}
+                                                        <option disabled ></option>
+                                                        <option selected value="Multiple">Many times per day</option>
+                                                        <option value="Daily">Daily</option>
+                                                        <option value="Weekly">Weekly</option>
+                                                        <option value="Monthly">Monthly</option>
+                                                        <option value="Quarterly">Quarterly</option>
+                                                        <option value="Semi-Annual">Semi-Annually</option>
+                                                        <option value="Annually">Annually</option>
+                                                        <option value="Continuous">Continuous</option>
+                                                        {% elif rf.CONTROL_FREQUENCY == 'Daily' %}
+                                                        <option disabled ></option>
+                                                        <option  value="Multiple">Many times per day</option>
+                                                        <option selected value="Daily">Daily</option>
+                                                        <option value="Weekly">Weekly</option>
+                                                        <option value="Monthly">Monthly</option>
+                                                        <option value="Quarterly">Quarterly</option>
+                                                        <option value="Semi-Annual">Semi-Annually</option>
+                                                        <option value="Annually">Annually</option>
+                                                        <option value="Continuous">Continuous</option>
+                                                        {% elif rf.CONTROL_FREQUENCY == 'Weekly' %}
+                                                        <option disabled ></option>
+                                                        <option  value="Multiple">Many times per day</option>
+                                                        <option  value="Daily">Daily</option>
+                                                        <option selected value="Weekly">Weekly</option>
+                                                        <option value="Monthly">Monthly</option>
+                                                        <option value="Quarterly">Quarterly</option>
+                                                        <option value="Semi-Annual">Semi-Annually</option>
+                                                        <option value="Annually">Annually</option>
+                                                        <option value="Continuous">Continuous</option>
+                                                        {% elif rf.CONTROL_FREQUENCY == 'Monthly' %}
+                                                        <option disabled ></option>
+                                                        <option  value="Multiple">Many times per day</option>
+                                                        <option  value="Daily">Daily</option>
+                                                        <option  value="Weekly">Weekly</option>
+                                                        <option selected value="Monthly">Monthly</option>
+                                                        <option value="Quarterly">Quarterly</option>
+                                                        <option value="Semi-Annual">Semi-Annually</option>
+                                                        <option value="Annually">Annually</option>
+                                                        <option value="Continuous">Continuous</option>
+                                                        {% elif rf.CONTROL_FREQUENCY == 'Quarterly' %}
+                                                        <option disabled ></option>
+                                                        <option  value="Multiple">Many times per day</option>
+                                                        <option  value="Daily">Daily</option>
+                                                        <option  value="Weekly">Weekly</option>
+                                                        <option  value="Monthly">Monthly</option>
+                                                        <option selected value="Quarterly">Quarterly</option>
+                                                        <option value="Semi-Annual">Semi-Annually</option>
+                                                        <option value="Annually">Annually</option>
+                                                        <option value="Continuous">Continuous</option>
+                                                        {% elif rf.CONTROL_FREQUENCY == 'Semi-Annual' %}
+                                                        <option disabled ></option>
+                                                        <option  value="Multiple">Many times per day</option>
+                                                        <option  value="Daily">Daily</option>
+                                                        <option  value="Weekly">Weekly</option>
+                                                        <option  value="Monthly">Monthly</option>
+                                                        <option  value="Quarterly">Quarterly</option>
+                                                        <option selected value="Semi-Annual">Semi-Annually</option>
+                                                        <option value="Annually">Annually</option>
+                                                        <option value="Continuous">Continuous</option>
+                                                        {% elif rf.CONTROL_FREQUENCY == 'Annually' %}
+                                                        <option disabled ></option>
+                                                        <option  value="Multiple">Many times per day</option>
+                                                        <option  value="Daily">Daily</option>
+                                                        <option  value="Weekly">Weekly</option>
+                                                        <option  value="Monthly">Monthly</option>
+                                                        <option  value="Quarterly">Quarterly</option>
+                                                        <option  value="Semi-Annual">Semi-Annually</option>
+                                                        <option selected value="Annually">Annually</option>
+                                                        <option value="Continuous">Continuous</option>
+                                                        {% elif rf.CONTROL_FREQUENCY == 'Continuous' %}
+                                                        <option disabled ></option>
+                                                        <option  value="Multiple">Many times per day</option>
+                                                        <option  value="Daily">Daily</option>
+                                                        <option  value="Weekly">Weekly</option>
+                                                        <option  value="Monthly">Monthly</option>
+                                                        <option  value="Quarterly">Quarterly</option>
+                                                        <option  value="Semi-Annual">Semi-Annually</option>
+                                                        <option  value="Annually">Annually</option>
+                                                        <option selected value="Continuous">Continuous</option>
+                                                        {% else %}
+                                                        <option disabled selected></option>
+                                                        <option value="Multiple">Many times per day</option>
+                                                        <option value="Daily">Daily</option>
+                                                        <option value="Weekly">Weekly</option>
+                                                        <option value="Monthly">Monthly</option>
+                                                        <option value="Quarterly">Quarterly</option>
+                                                        <option value="Semi-Annual">Semi-Annually</option>
+                                                        <option value="Annually">Annually</option>
+                                                        <option value="Continuous">Continuous</option>
+                                                        {% endif %}
+                                                    </select>
+                                                </div>
+                                            </div>
+                                        </form>
+                                        
+                                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                                            <div class="col-auto">
+                                                <label style="font-size:12px; width: 150px;" class="col-form-label">Samples:</label>
+                                            </div>
+                                            <div class="col">
+                                                <form id="rf_sample_form" method="post" enctype="multipart/form-data">
+                                                        <input type="hidden" name="form_id" value="rf_sample_form">
+                                                        {% csrf_token %}
+    
+                                                    {% if rf.CONTROL_SAMPLES %}
+                                                    <input class="form-control sm" id="rf_samples" name="rf_samples" type="text" style="font-size:12px;"
+                                                        value="{{rf.CONTROL_SAMPLES}}" autocomplete="off" required>
+                                                    {% else %}
+                                                    <input class="form-control sm" id="rf_samples" name="rf_samples" type="text" style="font-size:12px;"
+                                                    value="" autocomplete="off"  required>
+                                                    {% endif %}
+                                                </form>
+                                            </div>
+                                        </div>
+    
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+    
+                </div>
+            </div>
         </div>
     </div>
 
@@ -1148,6 +1495,15 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 
 <script>
     $(document).ready(function () {
+  
+        var lastTab = localStorage.getItem('lastTab');
+        if(lastTab){
+        $('#pills-tab a[href="' + lastTab + '"]').tab('show');
+        }
+        $('#pills-tab a[data-toggle="pill"]').on('shown.bs.tab', function (e) {
+        var target = $(e.target).attr('href');
+        localStorage.setItem('lastTab', target);
+        });
 
         var initialFieldValues = {};
         var initialContent_design_procedure = quillDesignProcedures.root.innerHTML;
@@ -1163,13 +1519,326 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         var ajax_app_id = $('#ajax_app_id').val();
         var ajax_control_id = $('#ajax_control_id').val();
 
-        //PERIOD
+        
+         //SAMPLES
+         $('#rf_samples').on('input', function() {
+            var inputValue = $(this).val();
+            var numericValue = inputValue.replace(/[^0-9]/g, '');
+            $(this).val(numericValue);
+        });
 
-        $('#interim_start_date').on('change', function() {
-                var selectedDate = $(this).val();
-                
+        $('#rf_samples').on('blur', function() {
+            var rf_samples = $(this).val();
+
+            formId = $('#rf_sample_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    rf_samples: rf_samples, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
+
+        //RF FREQUENCY
+        $('#rf_frequency').on('change', function() {
+            var rf_frequency = $(this).val();
+            formId = $('#rf_frequency_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    rf_frequency: rf_frequency, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+
+        });
+
+
+         //RF POPULATION
+         $('#rf_population').on('input', function() {
+            var inputValue = $(this).val();
+            var numericValue = inputValue.replace(/[^0-9]/g, '');
+            $(this).val(numericValue);
+        });
+
+        $('#rf_population').on('blur', function() {
+            var rf_population = $(this).val();
+
+            formId = $('#rf_population_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    rf_population: rf_population, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
+         //RF END
+         $('#rf_end_date').on('change', function() {
+                var rf_end = $(this).val();
+                formId = $('#rf_period_end').find('input[name="form_id"]').val();
+                csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    rf_end: rf_end, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+
          });
 
+
+        //INTERIM START
+        $('#rf_start_date').on('change', function() {
+                var rf_start = $(this).val();
+                formId = $('#rf_period').find('input[name="form_id"]').val();
+                csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    rf_start: rf_start, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+
+         });
+
+
+         //SAMPLES
+         $('#interim_samples').on('input', function() {
+            var inputValue = $(this).val();
+            var numericValue = inputValue.replace(/[^0-9]/g, '');
+            $(this).val(numericValue);
+        });
+
+        $('#interim_samples').on('blur', function() {
+            var samples = $(this).val();
+
+            formId = $('#interim_sample_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    samples: samples, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
+
+        //FREQUENCY
+        $('#interim_frequency').on('change', function() {
+            var frequency = $(this).val();
+            formId = $('#interim_frequency_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    frequency: frequency, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+
+        });
+
+        //POPULATION
+        $('#interim_population').on('input', function() {
+            var inputValue = $(this).val();
+            var numericValue = inputValue.replace(/[^0-9]/g, '');
+            $(this).val(numericValue);
+        });
+
+        $('#interim_population').on('blur', function() {
+            var population = $(this).val();
+
+            formId = $('#interim_population_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    population: population, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
+         //INTERIM END
+         $('#interim_end_date').on('change', function() {
+                var interim_end = $(this).val();
+                formId = $('#interim_period_end').find('input[name="form_id"]').val();
+                csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    interim_end: interim_end, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+
+         });
+
+
+        //INTERIM START
+        $('#interim_start_date').on('change', function() {
+                var interim_start = $(this).val();
+                formId = $('#interim_period').find('input[name="form_id"]').val();
+                csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    interim_start: interim_start, 
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+
+         });
 
         //OE CONCLUSION
         $('#oe_conclusion_select').on('change', function () {
@@ -1680,7 +2349,10 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                         } else {
                             quillOEResultGenerator.root.innerHTML += 'Based on this, ' + designation + ' ascertained that the password configurations are in line with the policy. As such, No Exception is noted.<br>';
                         }
-                
+
+
+                       $('#generate_oe_result').modal('hide');
+
                     } else {
                         quillOEResultGenerator.root.innerHTML += '<li>Policy or Config data is missing</li>';
                     }
@@ -1747,13 +2419,15 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                         quillDesignResult.root.innerHTML += '<li>Lockout Duration: ' + response.lockout_duration + '</li>';
 
                         if (response.mfa_enabled === true) {
-                            quillDesignResult.root.innerHTML += '<li>Require Multi-Factor Authentication?: Yes</li>';
+                            quillDesignResult.root.innerHTML += '<li>Require Multi-Factor Authentication?: Yes</li><br>';
                         } else {
                             quillDesignResult.root.innerHTML += '<li>Require  Multi-Factor Authentication?: No</li><br>';
                         }
 
                         quillDesignResult.root.innerHTML += designation + ' corroborated the design of the control by inspecting the password configuration as part of the operating effectiveness test (refer to OE section within the Interim/Rollforward section for the test results. <br>'
 
+                        
+                       $('#design_result_modal').modal('hide');
                     }
                 });
             

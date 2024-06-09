@@ -151,8 +151,13 @@
                                             class="col-form-label">Auth Method:</label>
                                     </div>
                                     <div class="col-auto">
+                                        {% if selected_app.AUTHENTICATION_TYPE %}
                                         <input class="form-control sm" id="auth_method" name="auth_method" type="text"
                                             style="font-size:12px;width:300px;" value="{{selected_app.AUTHENTICATION_TYPE}}" readonly>
+                                        {% else %}
+                                        <input class="form-control sm" id="auth_method" name="auth_method" type="text"
+                                        style="font-size:12px;width:300px;" value="" readonly>
+                                        {% endif %}
                                     </div>
                                 </div>
 

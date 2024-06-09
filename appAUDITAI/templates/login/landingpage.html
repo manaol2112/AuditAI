@@ -1,0 +1,636 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit-AI</title>
+  <link rel="icon" href="{% static 'images/logo.ico' %}" type="image/x-icon">
+  <!-- Add Google Fonts link -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!--Font Awesome-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary" style="position:fixed;top:0;width:100%;z-index:9999;">
+    <a class="navbar-brand" href="/" style="margin-left:10px">
+        <img src="{% static 'images/logo.jpeg' %}" width="35" height="35" class="d-inline-block align-top" alt="" />
+        <span class="menu-collapsed" style="font-size:1.5rem;font-family:'Open Sans', sans-serif;font-weight:300">Audit-AI</span>
+    </a>
+    <div class="ms-auto">
+        <button type="button" class="btn btn-primary" style="font-size:.9rem" id="loginButton">Login</button>
+        <button type="button" class="btn btn-primary" style="font-size:.9rem" id="sign-up"> Sign-Up</button>
+    </div>
+</nav>
+
+  <div class="intro" id="home">
+    <div class="header">
+        <h1><span id="staticText">AUDIT MADE</span> <span id="typewriter"></span></h1>
+        <p id="description">Enhance compliance, optimize risk management, and streamline audit with Audit-AI's seamless automation. </p>
+        <button type="button" id="learn_more" style="margin-top:5vh;height:3.5rem;width:10rem" class="btn btn-outline-primary btn-large">Learn More</button>
+    </div>
+    <div>
+        <div class="bubbles">
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>
+            <div class="bubble"></div>    
+        </div>
+    </div>
+</div>
+ 
+<div class="about" id="about-container">
+  <div class="container" style="max-height:100%">
+    <div class="row">
+      <div class="col-auto">
+        <h1>Real Time IT Compliance Reporting</h1>
+        <h2>allowing management to address issues proactively </h2>
+
+        <div class="row" style="margin-top:7vh;">
+          <div class="col-auto">
+            
+            <p><span class="wave-container"><i class="fa-solid fa-circle-check" style="margin-right:20px;color:lightgreen"></i></span> Non-compliant password settings </p>
+            <p><span class="wave-container"><i class="fa-solid fa-circle-check" style="margin-right:20px;color:lightgreen"></i></span> Missing and incomplete access approvals</p>
+            <p><span class="wave-container"><i class="fa-solid fa-circle-check" style="margin-right:20px;color:lightgreen"></i></span> Untimely access removal</p>
+            <p><span class="wave-container"><i class="fa-solid fa-circle-check" style="margin-right:20px;color:lightgreen"></i></span> Inappropriate privileged accounts</p>
+
+            <button type="button" class="btn btn-primary btn-large" style="margin-top:8vh;height:3.5rem;width:10rem" id="sign-up1">Sign-up Now</button>
+          </div>
+
+          <div class="col">
+            <div class="container" style="margin-left:3vh;min-width:100%">
+              <div id="carousel_compliance" class="carousel slide">
+                <div class="carousel-inner">
+                  <div class="carousel-item active">
+                    <img src="/static/images/Password Compliance.png" style="max-height: 100%;max-width: 100%;" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="/static/images/Password Compliance.png" class="d-block w-100" alt="...">
+                  </div>
+                  <div class="carousel-item">
+                    <img src="/static/images/Password Compliance.png" class="d-block w-100" alt="...">
+                  </div>
+                </div>
+                <button class="carousel-control-prev" type="button" data-bs-target="#carousel_compliance" data-bs-slide="prev">
+                  <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Previous</span>
+                </button>
+                <button class="carousel-control-next" type="button" data-bs-target="#carousel_compliance" data-bs-slide="next">
+                  <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                  <span class="visually-hidden">Next</span>
+                </button>
+              </div>
+            </div>
+          </div>
+  
+        </div>
+
+      </div>
+    </div>
+
+   
+  </div>
+</div>
+ 
+<div class="audit" id="audit-container">
+    <div class="container">
+
+          <h1>Automated procedures and audit result</h1>
+          <h2>providing more accurate and timely report in a few clicks </h2>
+          <div class="container-fluid">
+            <div class="video-container">
+              <video class="responsive-video" controls>
+                <source src="/static/images/PasswordSample.webm" type="video/webm">
+                <source src="/static/images/PasswordSample.mp4" type="video/mp4">
+                Your browser does not support the video.
+              </video>
+            </div>
+          </div>
+      
+    </div>
+</div>
+
+  <div class="lastpage" id="last-page-container">
+   
+    <div class="row">
+      <div class="col-auto">
+          <h1>All in one Integrated Platform</h1>
+          <h2>streamlining processes for seamless efficiency</h2>
+  
+          <div class="row" style="margin-top: 10vh;">
+              <div class="col-3">
+
+                <div class="card" style="height:10rem;width: 10rem;">
+                  <div class="card-body">
+                    <div class="text-center">
+                      <i style="font-size:4rem" class="fa-solid fa-cloud-arrow-down"></i>
+                    </div>
+                    <div class="text-center" style="margin-top:1vh;">
+                      <p style="font-size:1rem;text-wrap:wrap;">Automated Data Gathering</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="card" style="height:10rem;width: 10rem;">
+                  <div class="card-body">
+                    <div class="text-center">
+                      <i style="font-size:4rem" class="fa-solid fa-ticket"></i>
+                    </div>
+                    <div class="text-center" style="margin-top:1vh;">
+                      <p style="font-size:1rem;text-wrap:wrap;">Built-in Ticketing System</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="card" style="height:10rem;width: 10rem;">
+                  <div class="card-body">
+                    <div class="text-center">
+                      <i style="font-size:4rem" class="fa-solid fa-book"></i>
+                    </div>
+                    <div class="text-center" style="margin-top:1vh;" >
+                      <p style="font-size:1rem;text-wrap:wrap;">Workpaper Documentation</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="card" style="height:10rem;width: 10rem;">
+                  <div class="card-body">
+                    <div class="text-center">
+                      <i style="font-size:4rem" class="fa-solid fa-arrow-right-arrow-left"></i>
+                    </div>
+                    <div class="text-center" style="margin-top:1vh;">
+                      <p style="font-size:1rem;text-wrap:wrap;color:white;">Audit Evidence Management</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          </div>
+      </div>
+  </div>
+  
+  <button type="button" class="btn btn-primary btn-large" style="margin-top: 8vh; height: 3.5rem; width: 10rem;" id="sign-up2">Sign-up Now</button>
+
+</div>
+
+<div class="aboutus">
+  <div class="container">
+    <div class="row">
+      <div class="col-auto">
+        <p style="margin-top:2vh">About Audit-AI</p>
+        <p style="font-weight:100;font-size:.8rem">Audit-AI is a startup company that revolutionize how audits are executed through automation, significantly reduce compliance violocation through proactive alerting and monitoring, and streamline data and evidence gathering through built-in workflows.</p>
+        <p style="margin-top:2vh">Contact us:
+        <p><i class="fa-solid fa-envelope"></i><a href="mailto:sales@audit-ai.net" style="font-weight:100;font-size:.7rem">
+          sales@audit-ai.net</p>
+           
+        </a></p>
+        <p style="font-weight:100;font-size:.9rem;margin-top:3vh;">Copyright @2024 Audit-AI, All rights reserved</p>
+        
+    </div>
+  </div>
+</div>
+  
+</body>
+</html>
+
+<style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Open Sans', sans-serif; 
+      font-weight: 800; 
+      scroll-behavior: smooth;
+    }
+
+
+    .aboutus {
+        height: 25vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        scroll-snap-align: start;
+        background-image: url('{% static "images/iStock-1060912842.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+
+    }
+
+    .aboutus p {
+      font-size: .9rem;
+      font-family: 'Open Sans', sans-serif; 
+      font-weight: 500; 
+    }
+
+    .card {
+    background-color: rgba(255, 255, 255, 0.5);
+    transition: all 0.3s ease;
+  }
+  .card:hover {
+    transform: scale(1.1);
+}
+  
+    .intro {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+        scroll-snap-align: start;
+        background-image: url('{% static "images/iStock-1060912842.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    .intro-content {
+  margin-top: 50px; 
+}
+  
+    .intro h1, .intro h2 {
+      color: black;
+      text-align: center;
+      font-size: 3rem;
+      overflow: hidden;
+      white-space: nowrap; 
+      margin-top:25vh;
+    }
+    
+    .header {
+      text-align: center; 
+    }
+
+    .header h1 {
+      font-size: 4rem;
+      overflow: hidden;
+      white-space: nowrap;
+    }
+
+    .header p {
+      font-size: 1.5rem;
+      margin-top: 6vh; 
+      font-family: 'Open Sans', sans-serif; 
+      font-weight: 300; 
+    }
+
+    .about {
+        color:white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content:flex-start;
+        align-items: center;
+        scroll-snap-align: start;
+        background-image: url('{% static "images/iStock-1329715338.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+    }
+
+    .about h1 {
+      font-size: 3.5rem;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-top:10vh;
+      text-align: center;
+    }
+
+    .about h2 {
+      font-size: 2rem;
+      overflow: hidden;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .about p {
+      font-size: 1.5rem;
+      overflow: hidden;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      white-space: nowrap;
+    }
+
+    .audit {
+        color:black;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content:flex-start;
+        align-items: center;
+        scroll-snap-align: start;
+        background-image: url('{% static "images/iStock-1500575680.jpg" %}'); 
+        background-size: cover;
+        background-position: center;
+        position: relative; 
+    }
+
+    .audit h1 {
+      font-size: 3.5rem;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-top:10vh;
+      text-align: center;
+    }
+
+    .audit h2 {
+      font-size: 2rem;
+      overflow: hidden;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .audit p {
+      font-size: 1.5rem;
+      overflow: hidden;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .lastpage {
+        color:white;
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content:flex-start;
+        align-items: center;
+        scroll-snap-align: start;
+        background-image: url('{% static "images/iStock-1830814493.jpg" %}'); 
+        background-size: cover;
+        background-position: center;
+        position: relative; /* Make the section relative for absolute positioning */
+    }
+
+    .lastpage h1 {
+      font-size: 3.5rem;
+      overflow: hidden;
+      white-space: nowrap;
+      margin-top:10vh;
+      text-align: center;
+    }
+
+    .lastpage h2 {
+      font-size: 2rem;
+      overflow: hidden;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    .lastpage p {
+      font-size: 1.5rem;
+      overflow: hidden;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+
+    @keyframes textGrowth {
+      from {
+        font-size: 0px;
+        opacity: 0;
+        transform: scale(0.5);
+      }
+      to {
+        font-size: 4rem;
+        opacity: 1;
+        transform: scale(1); 
+      }
+    }
+
+  
+    #staticText {
+      animation: textGrowth .5s ease-out forwards; 
+    }
+
+  .bubble{
+    position: absolute;
+    bottom:-100px;
+    width:70px;
+    height: 70px;
+    left:9%;
+    background:#f9f8f8;
+    border-radius:50%;
+    opacity:0.5;
+    animation: rise 30s infinite ease-in;
+  }
+
+  .bubble:nth-child(3){
+    width:50px;
+    height:50px;
+    left:5%;
+    animation-duration:10s;
+    animation-delay:2s;
+  }
+  .bubble:nth-child(4){
+    width:80px;
+    height:80px;
+    left:3%;
+    animation-duration:15s;
+    animation-delay:0s;
+  }
+
+  .bubble:nth-child(6){
+    width:60px;
+    height:60px;
+    left:85%;
+    animation-duration:12s;
+    animation-delay:3s;
+  }
+  .bubble:nth-child(7){
+    width:90px;
+    height:90px;
+    left:70%;
+    animation-duration:16s;
+    animation-delay:2s;
+  }
+
+
+  .bubble:nth-child(10){
+    width:90px;
+    height:90px;
+    left:90%;
+    animation-duration:13s;
+    animation-delay:4s;
+  }
+  @keyframes rise{
+    0%{
+      bottom:-100px;
+      transform:translateX(0);
+    }
+    50%{
+      transform:translate(100px);
+    }
+    100%{
+      bottom:1080px;
+      transform:translateX(-200px);
+    }
+  }
+
+  .wave-container {
+    position: relative;
+    display: inline-block;
+}
+
+.wave-container::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 30%;
+    width: 10px;
+    height: 10px;
+    background-color: lightgreen;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    animation: circle-wave 3s infinite;
+}
+
+@keyframes circle-wave {
+    0% {
+        width: 10px;
+        height: 10px;
+        opacity: 0.6;
+    }
+    50% {
+        width: 30px;
+        height: 30px;
+        opacity: 0.3;
+    }
+    100% {
+        width: 10px;
+        height: 10px;
+        opacity: 0.6;
+    }
+}
+
+.check-icon {
+    position: relative;
+    z-index: 1;
+}
+
+.video-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: calc(56.25%); /* 16:9 aspect ratio plus 7vh padding */
+    height: 90%;
+    overflow: hiddenvi;
+}
+
+/* Make the video responsive */
+.responsive-video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 75%;
+    margin-top:3vh;
+}
+
+    
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<script>
+
+function smoothScroll(target, duration) {
+  var targetElement = document.querySelector(target);
+  var targetPosition = targetElement.getBoundingClientRect().top - 70; // Adjust for navbar height
+  var startPosition = window.pageYOffset;
+  var startTime = null;
+  var distance = targetPosition - startPosition;
+  var increment = 20; // Adjust as needed, smaller values may result in smoother but slower scrolling
+
+  function animation(currentTime) {
+    if (startTime === null) startTime = currentTime;
+    var timeElapsed = currentTime - startTime;
+    var run = ease(timeElapsed, startPosition, distance, duration);
+    window.scrollTo(0, run);
+    if (timeElapsed < duration) requestAnimationFrame(animation);
+  }
+
+  function ease(t, b, c, d) {
+  t /= d;
+  return c * t * t + b;
+}
+
+
+  requestAnimationFrame(animation);
+}
+
+document.getElementById('learn_more').addEventListener('click', function() {
+  smoothScroll('#about-container', 400); // Reduce duration to 1000ms
+});
+
+document.getElementById("loginButton").addEventListener("click", function() {
+        window.location.href = "{% url 'appAUDITAI:authenticate-user' %}";
+    });
+
+document.getElementById("sign-up").addEventListener("click", function() {
+        window.location.href = "{% url 'appAUDITAI:alpha-sign-up' %}";
+    });
+
+document.getElementById("sign-up1").addEventListener("click", function() {
+        window.location.href = "{% url 'appAUDITAI:alpha-sign-up' %}";
+    });
+document.getElementById("sign-up2").addEventListener("click", function() {
+        window.location.href = "{% url 'appAUDITAI:alpha-sign-up' %}";
+    });
+  // Typewriter effect
+  const words = [" SIMPLE.", " SMARTER.", " EFFICIENT."];
+  let currentWordIndex = 0;
+  let currentCharIndex = 0;
+  let textGrowthAnimationDuration = 1000; // Adjust duration to match text growth animation duration
+  const delay = 90; // Delay in milliseconds
+
+  // Initiate typewriter effect after text growth animation completes
+  setTimeout(() => {
+    typeNextWord(); // Start the typewriter effect
+  }, textGrowthAnimationDuration + 200); // Adjust delay to ensure the typewriter starts after text growth animation
+
+  function typeNextWord() {
+    const word = words[currentWordIndex];
+    const typingInterval = setInterval(() => {
+      document.getElementById("typewriter").innerHTML += word.charAt(currentCharIndex);
+      document.getElementById("staticText").innerText = "AUDIT MADE";
+      currentCharIndex++;
+      if (currentCharIndex === word.length) {
+        clearInterval(typingInterval);
+        setTimeout(eraseWord, 1000); 
+      }
+    }, delay);
+  }
+
+  function eraseWord() {
+    const word = words[currentWordIndex];
+    const erasingInterval = setInterval(() => {
+      const currentText = document.getElementById("typewriter").innerHTML;
+      const newText = currentText.slice(0, -1);
+      document.getElementById("typewriter").innerHTML = newText;
+      if (newText === "") {
+        clearInterval(erasingInterval);
+        currentCharIndex = 0;
+        currentWordIndex = (currentWordIndex + 1) % words.length; 
+        setTimeout(typeNextWord, 100); 
+      }
+    }, delay);
+  }
+
+</script>

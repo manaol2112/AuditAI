@@ -66,7 +66,7 @@
                     <input type="checkbox" id="user_checkbox"
                         name="user_checkbox" value="{{ user.id }}">
                 </td>
-                <td style="width:30%;font-size:12px;" ><a href="{% url 'appAUDITAI:audit-per-app-workpapers-details' comp_id audit_id app_id doc.id %}">{{ doc.control.all.0.CONTROL_ID.CONTROL_ID }}: {{ doc.control.all.0.CONTROL_ID.CONTROL_TITLE }}</a></td>
+                <td style="width:30%;font-size:12px;" ><a href="{% url 'appAUDITAI:audit-per-app-workpapers-details' comp_id audit_id app_id doc.id %}">{{ doc.control.all.0.CONTROL_ID.CONTROL_ID }}:{{ doc.control.all.0.CONTROL_ID.CONTROL_TITLE }}</a></td>
                 <td style="width:10%;font-size:12px;">{{ doc.STATUS }}</td>
                 <td style="width:10%;font-size:12px;">{{ doc.initials }}</td>
                 <td style="width:10%;font-size:12px;">

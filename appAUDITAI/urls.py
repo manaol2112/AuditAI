@@ -109,8 +109,9 @@ path('get_approver1_job_title/<int:id>/', applications_view.AppNewUserGetJobAppr
 path('get_approver2_job_title/<int:id>/', applications_view.AppNewUserGetJobApprovalView.as_view(),name="get_approver1_name"),
 
 #LOG-IN
-path("landing/",authenticate.loginpage,name="authenticate-user"),
-path("",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
+path("",authenticate.loginpage,name="landing-page"),
+path("version-alpha/sign-up/",authenticate.Registration.as_view(),name="alpha-sign-up"),
+path("login",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
 path("login/",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
 path("logout/",authenticate.LogoutUser.as_view(),name="logout-user"),
 path("multi-factor-authentication/<uuid:token>", authenticate.MultiFactorAuth.as_view(),name="require-mfa"),

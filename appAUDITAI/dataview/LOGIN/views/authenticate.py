@@ -19,6 +19,8 @@ from django.utils.html import strip_tags
 from django.core.mail import send_mail
 from django.utils.timezone import make_aware
 
+from appAUDITAI.models import ALPHAREGISTRATION
+
 class UserRoleView(LoginRequiredMixin, View):
 
     def get_user_role(self):
@@ -243,4 +245,39 @@ class LogoutUser(View):
     
 
 def loginpage(request):
-    return render(request, 'pages/landingpage.html')
+    return render(request, 'login/landingpage.html')
+
+
+def alphasignup(request):
+    return render(request, 'login/demo.html')
+
+
+class Registration(View):
+    template_name = 'login/demo.html'
+    def get(self,request):
+        return render(request,self.template_name )
+
+    def post(self,request):
+            first_name =  request.POST.get('first_name')
+            last_name =  request.POST.get('first_name')
+            company =  request.POST.get('company_name')
+            email_address =  request.POST.get('email_address')
+            message =  request.POST.get('message')
+
+            user,created = ALPHAREGISTRATION.objects.update_or_create(EMAIL = email_address)
+            user.FIRST_NAME = first_name
+            user.LAST_NAME = last_name
+            user.COMPANY = company
+            user.EMAIL = email_address
+            user.MESSAGE = message
+            user.DATE_REGISTERED = timezone.now()
+            user.save()
+
+            messages.error(request, 'We have received your request to get an access to our alpha phase. Someone from our team will contact you when our alpha testing begins. Thank you for your interest in Audit-AI! ')
+            context = {
+                messages: messages.get_messages,
+            }
+            return render(request, self.template_name,  context)
+        
+
+    

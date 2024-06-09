@@ -263,17 +263,23 @@ class AuditPerApp(AuditorPermissionMixin,View):
                 doc.closed_notes_count = closed_notes_count
 
                 try:
-                    user = User.objects.get(email=doc.CURRENTLY_WITH)
+                    user = User.objects.filter(
+                        Q(email=doc.CURRENTLY_WITH) & ~Q(first_name__isnull=True)
+                    ).first()
                 except MultipleObjectsReturned:
-                    # If multiple users are returned, get the first one
-                    user = User.objects.filter(email=doc.CURRENTLY_WITH).first()
-
-                if user:
-                    intials = user.first_name[0] + user.last_name[0]
-                    doc.initials = intials
-                else:
+                    user = User.objects.filter(
+                        Q(email=doc.CURRENTLY_WITH) & ~Q(first_name__isnull=True)
+                    ).first()
+                except Exception:
+                    user = None
                     pass
 
+                if user and user.first_name and user.last_name:  # Check if user exists and has non-empty first_name and last_name
+                    initials = user.first_name[0] + user.last_name[0]
+                    doc.initials = initials
+                else:
+                    pass
+                
                 workpaper_upload = doc.workpaper_upload
                 if workpaper_upload:
                     doc.workpaper_upload_id = workpaper_upload.id
@@ -440,32 +446,40 @@ class AuditPlanningDocs(AuditPerApp):
         return response
 
     def post(self, request, comp_id, audit_id, app_id):
-        form = WORKPAPER_UPLOAD_FORM(request.POST, request.FILES)
         user = request.user
+        form = WORKPAPER_UPLOAD_FORM(request.POST, request.FILES)
+
+        print(request.POST)
+        print(request.FILES)
+       
         if form.is_valid():
             workpaper_upload = form.save(commit=False)
             workpaper_upload.audit_id = audit_id
             workpaper_upload.save()
 
-        uploaded_file = form.cleaned_data['file_name'].name
-        if uploaded_file:
-            file_name = uploaded_file
+            uploaded_file = form.cleaned_data['file_name'].name
+            print(uploaded_file)
+            if uploaded_file:
+                file_name = uploaded_file
 
-            planning_doc, created = AUDITFILE.objects.get_or_create(AUDIT_ID=audit_id, file_name=file_name)
-            planning_doc.STATUS = 'In Preparation'
-            planning_doc.CURRENTLY_WITH = user.email
-            planning_doc.FOLDER_NAME = 'Planning'
-            planning_doc.DATE_SENT = timezone.now()
-            planning_doc.workpaper_upload = workpaper_upload
+                planning_doc, created = AUDITFILE.objects.get_or_create(AUDIT_ID=audit_id, file_name=file_name)
+                planning_doc.STATUS = 'In Preparation'
+                planning_doc.CURRENTLY_WITH = user.email
+                planning_doc.FOLDER_NAME = 'Planning'
+                planning_doc.DATE_SENT = timezone.now()
+                planning_doc.workpaper_upload = workpaper_upload
 
-            if created:
-                planning_doc.CREATED_BY = user.email
-                planning_doc.CREATED_ON = timezone.now()
-            else:
-                planning_doc.MODIFIED_BY = user.email
-                planning_doc.LAST_MODIFIED = timezone.now()
-            
-            planning_doc.save()
+                if created:
+                    planning_doc.CREATED_BY = user.email
+                    planning_doc.CREATED_ON = timezone.now()
+                else:
+                    planning_doc.MODIFIED_BY = user.email
+                    planning_doc.LAST_MODIFIED = timezone.now()
+                
+                planning_doc.save()
+
+        else:
+            print('form is not valid')
 
             
         response = super().get(request, comp_id, audit_id, app_id)

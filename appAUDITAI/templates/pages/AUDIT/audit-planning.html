@@ -193,27 +193,21 @@
             <div class="modal-body">
                 <div class="card-body">
                     <!-- THIS IS THE DRAG AND DROP SECTION -->
-                    <div class="file-drop-area"
-                        style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:250px;">
-                        <div class="card-body" style=" text-align: center;">
-                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
-                            <a style="font-size:16px;color:grey">Drag and
-                                drop the Planning Document
-                                here</a>
+                    <div class="planning_file-drop-area"
+                        style="border-style: dashed; border-color: lightblue; border-width: medium; width: 100%;">
+                        <div class="card-body" style="text-align: center;">
+                            <i class="fa-solid fa-cloud-arrow-up" style="font-size: 50px; display: block; color: lightblue;"></i>
+                            <a style="font-size: 16px; color: grey;">Drag and drop the Planning Document here</a>
                         </div>
                     </div>
                     
                     <!-- THIS IS THE MANUAL UPLOAD SECTION -->
-                    <div class="row" style="padding-top:20px; ">
-                        <a style="font-size:15px;color:#000000">Or browse
-                            and
-                            select the file here</a>
-                        <div class="card" style="border:none">
+                    <div class="row" style="padding-top: 20px;">
+                        <a style="font-size: 15px; color: #000000;">Or browse and select the file here</a>
+                        <div class="card" style="border: none;">
                             <div class="card-body"
-                                style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
-                                <input type="file" id="fileInput" name="file_name" multiple>
-                                <input type="hidden" id="manual_user_upload" name="manual_user_upload"
-                                    value="{{ selected_app.APP_NAME }}">
+                                style="font-size: 13px; border-style: dashed; border-color: lightgray; margin-top: 10px;">
+                                <input type="file" id="planning_fileInput" name="file_name" multiple>
                             </div>
                         </div>
                     </div>
@@ -231,8 +225,7 @@
 </form>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
-<script src="{% static 'js/dragndrop.js' %}"></script>
-<script src="{% static 'js/workpaper_upload.js' %}"></script>
+<script src="{% static 'js/planning_upload.js' %}"></script>
 
 
 {% endblock auditcontent %}

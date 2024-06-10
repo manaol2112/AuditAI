@@ -209,6 +209,15 @@
       scroll-behavior: smooth;
     }
 
+    /* CSS for small screens (phones) */
+    @media (max-width: 767px) {
+      .carousel-item img {
+        max-width: 100%;
+        height: auto;
+      }
+    }
+
+
 
     .aboutus {
         height: 25vh;
@@ -338,9 +347,11 @@
       font-size: 3.5rem;
       overflow: hidden;
       white-space: nowrap;
-      margin-top:10vh;
+      margin-top: 5vh; /* Adjusted margin-top for better visibility on smaller screens */
       text-align: center;
+      width: 100%; /* Ensure the text occupies the full width of its container */
     }
+
 
     .audit h2 {
       font-size: 2rem;
@@ -378,8 +389,9 @@
       font-size: 3.5rem;
       overflow: hidden;
       white-space: nowrap;
-      margin-top:10vh;
+      margin-top: 5vh; /* Adjusted margin-top for better visibility on smaller screens */
       text-align: center;
+      width: 100%; /* Ensure the text occupies the full width of its container */
     }
 
     .lastpage h2 {

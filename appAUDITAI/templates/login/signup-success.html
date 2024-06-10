@@ -1,0 +1,110 @@
+{% load static %}
+
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Audit-AI</title>
+  <link rel="icon" href="{% static 'images/logo.ico' %}" type="image/x-icon">
+  <!-- Add Google Fonts link -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <!--Font Awesome-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" rel="stylesheet">
+
+    
+</head>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary" style="position:fixed;top:0;width:100%;z-index:9999;">
+    <a class="navbar-brand" href="/" style="margin-left:10px">
+        <img src="{% static 'images/logo.jpeg' %}" width="35" height="35" class="d-inline-block align-top" alt="" />
+        <span class="menu-collapsed" style="font-size:1.5rem;font-family:'Open Sans', sans-serif;font-weight:300">Audit-AI</span>
+    </a>
+    <div class="ms-auto">
+        <button type="button" class="btn btn-primary" style="font-size:.9rem" id="loginButton">Login</button>
+        <button type="button" class="btn btn-primary" style="font-size:.9rem" > Sign-Up</button>
+    </div>
+
+</nav>
+
+<div class="join">
+    <div class="container">
+        <p style="text-wrap:nowrap"> Thank you for joining our waitlist for Audit-AI's alpha phase testing! Our team will reach out to you soon for the next steps and updates.  We are looking forward to transform how we do our audit with you as our future partner.</p>
+    </div>
+    
+</div>
+
+</body>
+</html>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+<style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      font-family: 'Open Sans', sans-serif; 
+      scroll-behavior: smooth;
+    }
+
+    .card {
+    background-color: rgba(255, 255, 255, 0.7);
+    transition: all 0.3s ease;
+  }
+
+    .join {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        scroll-snap-align: start;
+        background-image: url('{% static "images/iStock-1077748572.jpg" %}');
+        background-size: cover;
+        background-position: center;
+        position: relative;
+        text-wrap:nowrap
+
+    }
+
+    .join h1 {
+      color: black;
+      text-align: center;
+      font-size: 1.5rem;
+      overflow: hidden;
+      white-space: nowrap; 
+      margin-top:10vh;
+      text-wrap:nowrap
+    }
+
+    .join h2 {
+      color: black;
+      text-align: center;
+      font-size: 1rem;
+      overflow: hidden;
+      white-space: nowrap; 
+      margin-top:5vh;
+    }
+
+    .join p {
+    color: black;
+      font-size: 1.5rem;
+      overflow: hidden;
+      font-family: 'Open Sans', sans-serif;
+      font-weight: 300;
+      white-space: nowrap;
+      text-align: center;
+      text-wrap:nowrap
+    }
+
+</style>
+
+<script>
+    // Redirect after 3 seconds
+    setTimeout(function() {
+      window.location.href = "{% url 'appAUDITAI:landing-page' %}";
+    }, 3000); // 3000 milliseconds = 3 seconds
+  </script>

@@ -111,6 +111,7 @@ path('get_approver2_job_title/<int:id>/', applications_view.AppNewUserGetJobAppr
 #LOG-IN
 path("",authenticate.loginpage,name="landing-page"),
 path("version-alpha/sign-up/",authenticate.Registration.as_view(),name="alpha-sign-up"),
+path("version-alpha/sign-up/success",authenticate.signupsuccess,name="alpha-sign-up-success"),
 path("login",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
 path("login/",authenticate.AuthenticateUsers.as_view(),name="authenticate-user"),
 path("logout/",authenticate.LogoutUser.as_view(),name="logout-user"),

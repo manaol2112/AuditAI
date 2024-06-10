@@ -251,6 +251,9 @@ def loginpage(request):
 def alphasignup(request):
     return render(request, 'login/demo.html')
 
+def signupsuccess(request):
+    return render(request, 'login/signup-success.html')
+
 
 class Registration(View):
     template_name = 'login/demo.html'
@@ -272,12 +275,8 @@ class Registration(View):
             user.MESSAGE = message
             user.DATE_REGISTERED = timezone.now()
             user.save()
-
-            messages.error(request, 'We have received your request to get an access to our alpha phase. Someone from our team will contact you when our alpha testing begins. Thank you for your interest in Audit-AI! ')
-            context = {
-                messages: messages.get_messages,
-            }
-            return render(request, self.template_name,  context)
+            
+            return redirect('appAUDITAI:alpha-sign-up-success')
         
 
     

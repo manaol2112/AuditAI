@@ -30,88 +30,70 @@
 
 </nav>
 
-<form id="registration_form" method="post" enctype="multipart/form-data">
-    {% csrf_token %}
 
 <div class="join">
- <h2>
 
-
-    <h1>Schedule a Demo</h1>
-
-    <h2>Secure your spot today to get an exclusive access to Audit-AI's alpha phase</h2>
- 
-
-    <div class="card" style="width:35rem;margin-top:5vh;">
-        <div class="card-body">
-
-
-            {% if messages %}
-            {% for message in messages %}
-            <div class="alert alert-info alert-dismissible fade show" role="alert">
-                <small>{{ message }}</small>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-            {% endfor %}
-            {% endif %}
-      
-            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                <div class="col-auto">
-                    <label style="font-size:16px; width:150px;color:black" class="col-form-label">First Name:</label>
+    <div class="container">
+        <h1>Schedule a Demo</h1>
+        <h2>Secure your spot today to get exclusive access to Audit-AI's alpha phase</h2>
+        <div class="card mx-auto" style="max-width: 35rem; margin-top: 3vh;">
+            <div class="card-body">
+    
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-info alert-dismissible fade show" role="alert">
+                    <small>{{ message }}</small>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
-                <div class="col" style="max-width:100%">
-                    <input class="form-control sm" id="first_name" name="first_name" type="text"
-                        style="font-size:12px;" autocomplete="off" required >
-                </div>
-            </div>
-
-            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                <div class="col-auto">
-                    <label style="font-size:16px; width:150px;color:black" class="col-form-label">Last Name:</label>
-                </div>
-                <div class="col" style="max-width:100%">
-                    <input class="form-control sm" id="last_name" name="last_name" type="text"
-                        style="font-size:12px;" autocomplete="off" required >
-                </div>
-            </div>
-
-            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                <div class="col-auto">
-                    <label style="font-size:16px; width:150px;color:black" class="col-form-label">Company:</label>
-                </div>
-                <div class="col" style="max-width:100%">
-                    <input class="form-control sm" id="company_name" name="company_name" type="text"
-                        style="font-size:12px;" autocomplete="off" required >
-                </div>
-            </div>
-
-            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                <div class="col-auto">
-                    <label style="font-size:16px; width:150px;color:black" class="col-form-label">Email Address:</label>
-                </div>
-                <div class="col" style="max-width:100%">
-                    <input class="form-control sm" id="email_address" name="email_address" type="text"
-                        style="font-size:12px;" autocomplete="off" required >
-                </div>
-            </div>
-
-            <div class="row g-3 align-items-center" style="margin-top:3px;">
-                <div class="col-auto">
-                    <label style="font-size:16px; width:150px;color:black" class="col-form-label">Message:</label>
-                </div>
-                <div class="col" style="max-width:100%">
-                    <textarea class="form-control" style="font-size:12px;" id="message"  name="message"
-                    rows="3" required></textarea>
-                </div>
+                {% endfor %}
+                {% endif %}
+          
+                <form id="registration_form" method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="row mb-3">
+                        <label for="first_name" class="col-sm-4 col-form-label" style="font-size: 16px; ">First Name:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="first_name" name="first_name" style="font-size: 12px;" autocomplete="off" required>
+                        </div>
+                    </div>
+    
+                    <div class="row mb-3">
+                        <label for="last_name" class="col-sm-4 col-form-label" style="font-size: 16px; ">Last Name:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="last_name" name="last_name" style="font-size: 12px;" autocomplete="off" required>
+                        </div>
+                    </div>
+    
+                    <div class="row mb-3">
+                        <label for="company_name" class="col-sm-4 col-form-label" style="font-size: 16px; ">Company:</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="company_name" name="company_name" style="font-size: 12px;" autocomplete="off" required>
+                        </div>
+                    </div>
+    
+                    <div class="row mb-3">
+                        <label for="email_address" class="col-sm-4 col-form-label" style="font-size: 16px; ">Email Address:</label>
+                        <div class="col-sm-8">
+                            <input type="email" class="form-control" id="email_address" name="email_address" style="font-size: 12px;" autocomplete="off" required>
+                        </div>
+                    </div>
+    
+                    <div class="row mb-3">
+                        <label for="message" class="col-sm-4 col-form-label" style="font-size: 16px;  ">Message:</label>
+                        <div class="col-sm-8">
+                            <textarea class="form-control" id="message" name="message" rows="3" style="font-size: 12px;" required></textarea>
+                        </div>
+                    </div>
+    
+                    <div class="d-grid">
+                        <button  id="sign-up_now"  type="submit" class="btn btn-primary">Send Request</button>
+                    </div>
+                </form>
             </div>
         </div>
-        
     </div>
-
-    <button type="submit" id="sign-up_now" style="margin-top:3vh;height:3.5rem;width:10rem" class="btn btn-primary btn-large">Send Request</button>
-
 </div>
-</form>
+
 
 </body>
 </html>
@@ -126,51 +108,74 @@
       scroll-behavior: smooth;
     }
 
-    .card {
-    background-color: rgba(255, 255, 255, 0.7);
-    transition: all 0.3s ease;
-  }
 
-    .join {
+     /* THIS IS THE CSS FOR THE WEB */
+     .wrapper {
+      width:auto;
+    }
+
+    /* THIS IS THE CSS FOR THE TABLET */
+    @media (max-width: 768px) {
+        .wrapper {
+          width:auto;
+        }
+      }
+
+    /* THIS IS THE CSS FOR THE PHONE */
+    @media (max-width: 480px) {
+        .wrapper {
+           width:100%;
+           text-wrap: wrap;
+        }
+
+
+        .container{
+			margin-top:10vh;
+			width: 400px;
+			border: ridge 1.5px white;
+            color:white;
+            padding-bottom:20px;
+		}
+
+        .join {
         height: 100vh;
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
         align-items: center;
         scroll-snap-align: start;
-        background-image: url('{% static "images/iStock-1077748572.jpg" %}');
+        background-image: url('{% static "images/iStock-1830814493.jpg" %}');
         background-size: cover;
         background-position: center;
         position: relative;
+        }
 
-    }
+        .join h1 {
+        text-align: center;
+        font-size: 2.5em;
+        overflow: hidden;
+        white-space: nowrap; 
+        margin-top:10vh;
+        }
 
-    .join h1 {
-      color: black;
-      text-align: center;
-      font-size: 2rem;
-      overflow: hidden;
-      white-space: nowrap; 
-      margin-top:10vh;
-    }
+        .container-fluid {
+            width: 100%;
+        }
 
-    .join h2 {
-      color: black;
-      text-align: center;
-      font-size: 1rem;
-      overflow: hidden;
-      white-space: nowrap; 
-      margin-top:5vh;
-    }
+        .join h2 {
+            text-align: center;
+            font-size: 1em;
+            margin-top: 2vh;
+        }
 
-    .join p {
-    color: black;
-      font-size: 1.5rem;
-      overflow: hidden;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 300;
-      white-space: nowrap;
-      text-align: center;
-    }
+        .card {
+            background-color: rgba(255, 255, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+
+
+}
+
+   
 
 </style>

@@ -36,7 +36,7 @@
     <div class="first">
       <h1><span id="staticText">AUDIT MADE</span> <span id="typewriter"></span></h1>
       <p id="description">Enhance compliance, optimize risk management, and streamline audit with Audit-AI's seamless automation.</p>
-      <button type="button" id="learn_more" style="margin-top:5vh;height:6vh;width:18vh" class="btn btn-outline-primary btn-large">Learn More</button>
+      <button type="button" id="learn_more" style="margin-top:5vh;height:5vh;width:15vh" class="btn btn-primary btn-large">Learn More</button>
       <div>
         <div class="bubbles">
             <div class="bubble"></div>
@@ -71,23 +71,20 @@
         <h1>Automated Procedures and Audit Result</h1>
         <h2>providing more accurate and timely report in a few clicks </h2>
 
+        <div class="onb-video-container">
           <div class="onb-embed-responsive onb-embed-responsive__16by9">
-    
-            <video class="onb-embed-responsive-item"
-                  width="640" 
-                  height="360" 
-                  controls 
-                  autoplay 
-                  loop>
+              <video class="onb-embed-responsive-item" width="640" height="360" controls autoplay loop>
                   <source src="/static/images/PasswordSample.webm" type="video/webm">
                   <source src="/static/images/PasswordSample.mp4" type="video/mp4">
-           </video>
-          
-       </div>
-       <button type="button" class="btn btn-primary btn-large sign-up" style="height:6vh;width:18vh;" id="sign-up2">Sign-up Now</button>
+              </video>
+          </div>
+      </div>
+      
+      
+     
       </div>
      
-    
+      <button type="button" class="btn btn-primary btn-large sign-up" style="height:6vh;width:18vh;" id="sign-up2">Sign-up Now</button>
 
     </div>
     <div class="fourth">
@@ -160,7 +157,7 @@
           <div class="row">
             <div class="col-sm-12 col">
               <h6>About Us</h6>
-              <p class="text-justify">Audit-AI is a startup company that revolutionize how audits are executed through automation, significantly reduce compliance violation through proactive alerting and monitoring, and streamline data and evidence gathering through built-in workflows.</p>
+              <p class="text-justify">Audit-AI is a startup company that revolutionizes how audits are executed through automation, significantly reduces compliance violations through proactive alerting and monitoring, and streamline data and evidence gathering through built-in workflows.</p>
             </div>
           </div>
           <hr>
@@ -215,6 +212,13 @@
     .wrapper {
       width:auto;
     } 
+    
+      .onb-video-container {
+      max-width: 100vh; /* Adjust this value as needed */
+      margin: 0 auto; /* Center the container horizontally */
+      overflow: hidden; /* Add this line */
+      }
+
         .onb-embed-responsive {
             position: relative;
             display: block;
@@ -224,15 +228,15 @@
             margin-bottom: 1em;
         }
 
-            .onb-embed-responsive-item {
-                position: absolute;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                height: 100%;
-                width: 100%;
-                border: 0;
-            }
+        .onb-embed-responsive-item {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            height: 100%;
+            width: 100%;
+            border: 0;
+        }
         
 
         .onb-embed-responsive__16by9 {
@@ -273,7 +277,7 @@
         }
 
         .first p{
-          font-size: 1vw;
+          font-size: 2.5vw;
           margin-top: 3vh; 
           font-weight: 300; 
         }
@@ -285,7 +289,7 @@
             transform: scale(0.5);
           }
           to {
-            font-size: 1em;
+            font-size: 6.5vw;
             opacity: 1;
             transform: scale(1); 
           }
@@ -375,11 +379,11 @@
           white-space: nowrap;
           margin-top:10vh;
           text-align: center;
-          font-size: 1.5em
+          font-size: 6vw;
         }
 
         .second h2{
-          font-size: 1em;
+          font-size: 3.5vw;
           overflow: hidden;
           white-space: nowrap;
           text-align: center;
@@ -389,11 +393,11 @@
           overflow: hidden;
           white-space: nowrap;
           text-align: center;
-          font-size:.9em;
+          font-size:3vw;
         }
 
         .features {
-          margin-top:3vh;
+          margin-top:3vw;
           text-align: left; 
         }
 
@@ -417,14 +421,14 @@
           white-space: nowrap;
           margin-top:10vh;
           text-align: center;
-          font-size: 1.3em;
+          font-size: 5vw;
         }
 
         .third h2{
           overflow: hidden;
           white-space: nowrap;
           text-align: center;
-          font-size: .9em;
+          font-size: 3vw;
         }
 
 
@@ -448,14 +452,14 @@
           white-space: nowrap;
           margin-top:10vh;
           text-align: center;
-          font-size: 1.45em;
+          font-size:6vw;
         }
 
         .fourth h2{
           overflow: hidden;
           white-space: nowrap;
           text-align: center;
-          font-size: 1em;
+          font-size: 3vw;
         }
 
         .card {

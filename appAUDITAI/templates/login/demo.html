@@ -18,17 +18,23 @@
     
 </head>
 <body>
-  <nav class="navbar navbar-expand-md navbar-dark bg-primary" style="position:fixed;top:0;width:100%;z-index:9999;">
-    <a class="navbar-brand" href="/" style="margin-left:10px">
-        <img src="{% static 'images/logo.jpeg' %}" width="35" height="35" class="d-inline-block align-top" alt="" />
-        <span class="menu-collapsed" style="font-size:1.5rem;font-family:'Open Sans', sans-serif;font-weight:300">Audit-AI</span>
-    </a>
-    <div class="ms-auto">
-        <button type="button" class="btn btn-primary" style="font-size:.9rem" id="loginButton">Login</button>
-        <button type="button" class="btn btn-primary" style="font-size:.9rem" > Sign-Up</button>
-    </div>
+  <nav class="navbar navbar-expand-md navbar-dark bg-primary fixed-top">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="/">
+          <img src="{% static 'images/logo.jpeg' %}" width="35" height="35" class="d-inline-block align-top" alt="" />
+          <span class="menu-collapsed" style="font-size:1.5rem;font-family:'Open Sans', sans-serif;font-weight:300">Audit-AI</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
 
-</nav>
+        <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+          <button type="button" class="btn btn-primary mx-2" style="font-size:.9rem" id="loginButton">Login</button>
+          <button type="button" class="btn btn-primary mx-2" style="font-size:.9rem" id="sign-up"> Sign-Up</button>
+        </div>
+      </div>
+    </nav>
+
 
 
 <div class="join">
@@ -130,8 +136,8 @@
 
 
         .container{
-			margin-top:10vh;
-			width: 400px;
+			margin-top:9vh;
+			width: 380px;
 			border: ridge 1.5px white;
             color:white;
             padding-bottom:20px;
@@ -155,7 +161,7 @@
         font-size: 2.5em;
         overflow: hidden;
         white-space: nowrap; 
-        margin-top:10vh;
+        margin-top:3vh;
         }
 
         .container-fluid {

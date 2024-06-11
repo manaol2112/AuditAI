@@ -36,7 +36,7 @@
     <div class="first">
       <h1><span id="staticText">AUDIT MADE</span> <span id="typewriter"></span></h1>
       <p id="description">Enhance compliance, optimize risk management, and streamline audit with Audit-AI's seamless automation.</p>
-      <button type="button" id="learn_more" style="margin-top:5vh;" class="btn btn-outline-primary btn-large">Learn More</button>
+      <button type="button" id="learn_more" style="margin-top:5vh;height:6vh;width:18vh" class="btn btn-outline-primary btn-large">Learn More</button>
       <div>
         <div class="bubbles">
             <div class="bubble"></div>
@@ -61,24 +61,33 @@
           
         </div>
         
-        <button type="button" class="btn btn-primary btn-large" style="margin-top:3vh;height:6vh;width:18vh;" id="sign-up1">Sign-up Now</button>
+        <button type="button" class="btn btn-primary btn-large sign-up" style="margin-top:3vh;height:6vh;width:18vh;" id="sign-up1">Sign-up Now</button>
     </div>
 
     <div class="third">
-      <h1>Automated Procedures and Audit Result</h1>
-      <h2>providing more accurate and timely report in a few clicks </h2>
+   
 
       <div class="container-fluid">
-          <div class="video-container">
-            <video class="responsive-video" controls>
-              <source src="/static/images/PasswordSample.webm" type="video/webm">
-              <source src="/static/images/PasswordSample.mp4" type="video/mp4">
-              Your browser does not support the video.
-            </video>
-          </div>
-      </div>
+        <h1>Automated Procedures and Audit Result</h1>
+        <h2>providing more accurate and timely report in a few clicks </h2>
 
-      <button type="button" class="btn btn-primary btn-large" style="margin-top:3vh;height:6vh;width:18vh;" id="sign-up2">Sign-up Now</button>
+          <div class="onb-embed-responsive onb-embed-responsive__16by9">
+    
+            <video class="onb-embed-responsive-item"
+                  width="640" 
+                  height="360" 
+                  controls 
+                  autoplay 
+                  loop>
+                  <source src="/static/images/PasswordSample.webm" type="video/webm">
+                  <source src="/static/images/PasswordSample.mp4" type="video/mp4">
+           </video>
+          
+       </div>
+       <button type="button" class="btn btn-primary btn-large sign-up" style="height:6vh;width:18vh;" id="sign-up2">Sign-up Now</button>
+      </div>
+     
+    
 
     </div>
     <div class="fourth">
@@ -140,7 +149,7 @@
       </div> 
         </div>
       </div>
-      <button type="button" class="btn btn-primary btn-large" style="margin-top:3vh;height:6vh;width:18vh;" id="sign-up3">Sign-up Now</button>
+      <button type="button" class="btn btn-primary btn-large sign-up" style="margin-top:5vh;height:6vh;width:18vh;" id="sign-up3">Sign-up Now</button>
     </div>
 
     <div class="fifth">
@@ -149,7 +158,7 @@
       <footer class="site-footer">
         <div class="container">
           <div class="row">
-            <div class="col-sm-12 col-md-6">
+            <div class="col-sm-12 col">
               <h6>About Us</h6>
               <p class="text-justify">Audit-AI is a startup company that revolutionize how audits are executed through automation, significantly reduce compliance violation through proactive alerting and monitoring, and streamline data and evidence gathering through built-in workflows.</p>
             </div>
@@ -158,15 +167,15 @@
         </div>
         <div class="container">
           <div class="row">
-            <div class="col-md-8 col-sm-6 col-xs-12">
+            <div class="col-md-8 col-xs-12">
               <p class="copyright-text">Copyright &copy; 2024 All Rights Reserved by 
           <a href="#">Audit-AI</a>.
               </p>
             </div>
 
-            <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="col-md-4  col-xs-12">
               <ul class="social-icons">
-                <li><a class="linkedin" href="#"><i class="fa-brands fa-linkedin"></i></a></li>   
+                <li><a class="linkedin" href="https://www.linkedin.com/company/103056061/"><i class="fa-brands fa-linkedin"></i></a></li>   
               </ul>
             </div>
           </div>
@@ -205,17 +214,36 @@
     /* THIS IS THE CSS FOR THE WEB */
     .wrapper {
       width:auto;
-    }
-
-    /* THIS IS THE CSS FOR THE TABLET */
-    @media (max-width: 768px) {
-        .wrapper {
-          width:auto;
+    } 
+        .onb-embed-responsive {
+            position: relative;
+            display: block;
+            height: 0;
+            padding: 0;
+            overflow: hidden;
+            margin-bottom: 1em;
         }
-      }
 
-    /* THIS IS THE CSS FOR THE PHONE */
-    @media (max-width: 480px) {
+            .onb-embed-responsive-item {
+                position: absolute;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                height: 100%;
+                width: 100%;
+                border: 0;
+            }
+        
+
+        .onb-embed-responsive__16by9 {
+            padding-bottom: 56.25%;
+        }
+
+        .onb-embed-responsive__4by3 {
+            padding-bottom: 75%;
+        }
+
+
         .wrapper {
            width:auto;
         }
@@ -241,11 +269,11 @@
           overflow: hidden;
           white-space: nowrap; 
           margin-top:20vh;
-          font-size: 2em;
+          font-size: 6.5vw;
         }
 
         .first p{
-          font-size: .9em;
+          font-size: 1vw;
           margin-top: 3vh; 
           font-weight: 300; 
         }
@@ -399,22 +427,6 @@
           font-size: .9em;
         }
 
-      .video-container {
-          position: relative;
-          padding-bottom: calc(56.25%); 
-          overflow: hidden;
-          text-align: center;
-          margin-top: 2vh; 
-      }
-
-      .responsive-video {
-          position: absolute;
-          top: 50%;
-          left: 50%;
-          transform: translate(-50%, -50%); 
-          width: 90%;
-          height: 75%;
-      }
 
 
         /* FOURTH SECTION  */
@@ -621,20 +633,22 @@
           font-weight:600
         }
       }
-          }
+   
 </style>
 
 <script>
 
-  const words = [" SIMPLE.", " SMARTER.", " EFFICIENT."];
+ // Typewriter effect
+ const words = [" SIMPLE.", " SMARTER.", " EFFICIENT."];
   let currentWordIndex = 0;
   let currentCharIndex = 0;
-  let textGrowthAnimationDuration = 1000; 
-  const delay = 90; 
+  let textGrowthAnimationDuration = 1000; // Adjust duration to match text growth animation duration
+  const delay = 90; // Delay in milliseconds
 
+  // Initiate typewriter effect after text growth animation completes
   setTimeout(() => {
-    typeNextWord(); 
-  }, textGrowthAnimationDuration + 200); 
+    typeNextWord(); // Start the typewriter effect
+  }, textGrowthAnimationDuration + 200); // Adjust delay to ensure the typewriter starts after text growth animation
 
   function typeNextWord() {
     const word = words[currentWordIndex];
@@ -644,25 +658,33 @@
       currentCharIndex++;
       if (currentCharIndex === word.length) {
         clearInterval(typingInterval);
-        setTimeout(() => {
-          currentCharIndex = 0;
-          document.getElementById("typewriter").innerHTML = "";
-          currentWordIndex = (currentWordIndex + 1) % words.length;
-          typeNextWord();
-        }, delay * 5);
+        setTimeout(eraseWord, 1000); 
       }
     }, delay);
   }
 
-
+  function eraseWord() {
+    const word = words[currentWordIndex];
+    const erasingInterval = setInterval(() => {
+      const currentText = document.getElementById("typewriter").innerHTML;
+      const newText = currentText.slice(0, -1);
+      document.getElementById("typewriter").innerHTML = newText;
+      if (newText === "") {
+        clearInterval(erasingInterval);
+        currentCharIndex = 0;
+        currentWordIndex = (currentWordIndex + 1) % words.length; 
+        setTimeout(typeNextWord, 100); 
+      }
+    }, delay);
+  }
 
   function smoothScroll(target, duration) {
   var targetElement = document.querySelector(target);
-  var targetPosition = targetElement.getBoundingClientRect().top - 100; 
+  var targetPosition = targetElement.getBoundingClientRect().top - 70; // Adjust for navbar height
   var startPosition = window.pageYOffset;
   var startTime = null;
   var distance = targetPosition - startPosition;
-  var increment = 20;
+  var increment = 20; // Adjust as needed, smaller values may result in smoother but slower scrolling
 
   function animation(currentTime) {
     if (startTime === null) startTime = currentTime;
@@ -677,10 +699,12 @@
   return c * t * t + b;
 }
 
+
   requestAnimationFrame(animation);
 }
 
-document.getElementById('learn_more').addEventListener('click', function() {
+
+document.getElementById("learn_more").addEventListener('click', function() {
   smoothScroll('#second', 400); 
 });
 
@@ -706,4 +730,6 @@ document.getElementById("sign-up3").addEventListener("click", function() {
 document.getElementById("sign-up4").addEventListener("click", function() {
         window.location.href = "{% url 'appAUDITAI:alpha-sign-up' %}";
     });
+
+
 </script>

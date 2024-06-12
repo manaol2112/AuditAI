@@ -262,7 +262,7 @@ class Registration(View):
 
     def post(self,request):
             first_name =  request.POST.get('first_name')
-            last_name =  request.POST.get('first_name')
+            last_name =  request.POST.get('last_name')
             company =  request.POST.get('company_name')
             email_address =  request.POST.get('email_address')
             message =  request.POST.get('message')

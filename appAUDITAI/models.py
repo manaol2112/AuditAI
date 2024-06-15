@@ -203,6 +203,12 @@ class RequestIDCounter(models.Model):
             counter_obj.counter += 1
             counter_obj.save()
         return counter_obj.counter
+    
+class AUDITUSERS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    COMPANY_ID = models.ForeignKey(COMPANY, on_delete=models.DO_NOTHING, null=True)
+    ROLE = models.CharField(max_length=100, null=True, blank=False)
+    
 
 class ACCESSREQUEST(models.Model):
   

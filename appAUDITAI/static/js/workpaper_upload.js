@@ -319,7 +319,7 @@ document.addEventListener("DOMContentLoaded", function() {
             headers: {
                 'X-CSRFToken': csrfToken  
             },
-            data: formData, 
+            data: formData,
             processData: false,  
             contentType: false,  
         
@@ -332,3 +332,5 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
+

@@ -4,6 +4,10 @@
 {% block auditcontent %}
 <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
 
+<!-- Bootstrap Select CSS -->
+<link rel="stylesheet" href="{% static 'css/bootstrap-select.css' %}" />
+
+
 <input type="hidden" id="ajax_comp_id" name="ajax_comp_id" value="{{comp_id}}">
 <input type="hidden" id="ajax_app_id" name="ajax_app_id" value="{{app_id}}">
 <input type="hidden" id="ajax_control_id" name="ajax_control_id" value="{{control_details.id}}">
@@ -16,7 +20,8 @@
     <div class="container-fluid">
       <a class="navbar-brand" style="font-size:16px;"><b>{{control_details.CONTROL_ID }}: {{control_details.CONTROL_TITLE }}</b></a>
     <form class="d-flex">
-        <button id="submit_button" type="button" class="btn btn-primary btn-sm"><i style="margin-right:5px;" class="far fa-save"></i>Save Changes</button>
+        <button id="submit_button" type="button" class="btn btn-primary btn-sm" style="margin-right:5px;"><i style="margin-right:5px;" class="far fa-save"></i>Sign-off</button>
+        <button id="button" type="button" class="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target="#send_modal"><i style="margin-right:5px;" class="fa-regular fa-paper-plane"></i>Send</button>
     </form>
     </div>
 </nav>
@@ -423,7 +428,7 @@
             </div>
         </div>
         <div class="tab-pane fade show" id="pills-interim" role="tabpanel" aria-labelledby="pills-interim-tab">
-            <div class="accordion accordion-flush" id="test_of_design">
+            <div class="accordion accordion-flush" id="interim">
                 <div class="accordion-item rounded-3 border-0 shadow mb-2">
                     <h2 class="accordion-header">
                         <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
@@ -792,13 +797,13 @@
                         <div class="accordion-body">
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
                                 <div class="container bg-light" style="padding:10px;max-width: 100%">
-                                    <p style="font-size:14px;"><b>Operating Effectiveness Conclusion:</b></p>
+                                    <p style="font-size:14px;"><b>Interim Conclusion:</b></p>
                                     <form id="oe_conclusion_form" method="post" enctype="multipart/form-data">
                                         <input type="hidden" name="form_id" value="oe_conclusion_form">
                                         {% csrf_token %}
                                         <div class="row g-3 align-items-center">
                                             <div class="col">
-                                                <select id="oe_conclusion_select" name="design_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                                                <select id="oe_conclusion_select" name="oe_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
                                                     {% if oe.CONTROL_CONCLUSION == 'Effective' %}
                                                     <option disabled ></option>
                                                     <option selected value="Effective">Effective</option>
@@ -844,8 +849,9 @@
                 </div>
             </div>
         </div>
+
         <div class="tab-pane fade show" id="pills-rollforward" role="tabpanel" aria-labelledby="pills-rollforward-tab">
-            <div class="accordion accordion-flush" id="test_of_design">
+            <div class="accordion accordion-flush" id="rollfoward">
                 <div class="accordion-item rounded-3 border-0 shadow mb-2">
                     <div class="accordion-item rounded-3 border-0 shadow mb-2">
                         <h2 class="accordion-header">
@@ -857,11 +863,12 @@
                         </h2>
                         <div id="rf_population_sample" class="accordion-collapse collapse">
                             <div class="accordion-body">
+                                <div style="font-size:12px;" class="alert alert-light" role="alert">
+                                    <i style="margin-right:5px;" class="fa-solid fa-circle-info"></i>Note: Interim period covers {{ oe.PERIOD_START_DATE}} up to {{ oe.PERIOD_END_DATE }}
+                                </div>
                                 <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
                                     <div class="container bg-light" style="padding:10px;max-width: 100%;">
-                                        <div style="font-size:12px;" class="alert alert-info" role="alert">
-                                            <i style="margin-right:5px;" class="fa-solid fa-circle-info"></i>Note: Interim period covers {{ oe.PERIOD_START_DATE}} up to {{ oe.PERIOD_END_DATE }}
-                                        </div>
+                                       
                                         <p style="font-size:14px;"><b>Period Covered:</b></p>
                                             <div class="row g-3 align-items-center" style="margin-top:3px;">
                                                 <div class="col-auto">
@@ -1062,6 +1069,212 @@
                     </div>
     
                 </div>
+
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 class="accordion-header">
+                        <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#rf_procedures_container"
+                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                        Operating Effectiveness Evaluation
+                        </button>
+                    </h2>
+
+                    <div id="rf_procedures_container" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+
+                            <!-- RF TEST PROCEDURES -->
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <p style="font-size:14px;"><b>Test Procedures:</b></p>
+
+                                <svg xmlns="http://www.w3.org/2000/svg" style="display: none;">
+                                    <symbol id="check-circle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                      <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                                    </symbol>
+                                    <symbol id="info-fill" fill="currentColor" viewBox="0 0 16 16">
+                                      <path d="M8 16A8 8 0 1 0 8 0a8 8 0 0 0 0 16zm.93-9.412-1 4.705c-.07.34.029.533.304.533.194 0 .487-.07.686-.246l-.088.416c-.287.346-.92.598-1.465.598-.703 0-1.002-.422-.808-1.319l.738-3.468c.064-.293.006-.399-.287-.47l-.451-.081.082-.381 2.29-.287zM8 5.5a1 1 0 1 1 0-2 1 1 0 0 1 0 2z"/>
+                                    </symbol>
+                                    <symbol id="exclamation-triangle-fill" fill="currentColor" viewBox="0 0 16 16">
+                                      <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                                    </symbol>
+                                </svg>
+                               
+                                {% if procedure_list %}
+                                <div style="font-size:12px;" class="alert alert-light" role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+                                   </i>Great! Test procedures template for this control is available. Click <a href="#" data-bs-toggle="modal" data-bs-target="#test_procedure_modal">here</a> to choose from existing templates.
+                                </div>
+                                {% endif %}
+
+                                <div class="row g-3 align-items-center">
+                                    <div class="col">
+                                        <form id="rf_procedure_form" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="form_id" value="rf_procedure_form">
+                                            {% csrf_token %}
+                                            {% if rf.CONTROL_TEST_PROCEDURE %}
+                                            <div style="background-color:white !important" id="rf_procedures">{{rf.CONTROL_TEST_PROCEDURE|safe}}</div>
+                                            {% else %}
+                                            <div style="background-color:white !important" id="rf_procedures"></div>
+                                            {% endif  %}
+                                        </form>
+                                    </div>
+                                </div>
+
+                            </div>
+
+                            <!-- RF TEST RESULT -->
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <p style="font-size:14px;"><b>Test Result:</b></p>
+
+                                <div style="font-size:12px;" class="alert alert-light" role="alert">
+                                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:"><use xlink:href="#info-fill"/></svg>
+                                   </i>Good news! Automated test result for <b>{{control_details.CONTROL_ID }}: {{control_details.CONTROL_TITLE }}</b> is available. Click <a href="#" data-bs-toggle="modal" data-bs-target="#rf_result_modal">here</a> to review the details.
+                                </div>
+
+                                <div class="row g-3 align-items-center">
+                                    <div class="col">
+                                        <form id="rf_result_form" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="form_id" value="rf_result_form">
+                                            {% csrf_token %}
+                                            {% if rf.CONTROL_TEST_RESULT %}
+                                            <div style="background-color:white !important" id="rf_result">{{rf.CONTROL_TEST_RESULT|safe}}</div>
+                                            {% else %}
+                                            <div style="background-color:white !important" id="rf_result"></div>
+                                            {% endif  %}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- RF TEST EVIDENCE -->
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;margin-top:20px;">
+                                <p style="font-size:14px;"><b>Supporting Evidence:</b></p>
+                                <p style="font-size:12px;">Add supporting evidence to support the operating effectiveness test result, if applicable:</p>
+                                <div class="row g-3 align-items-center">
+                                    <div class="col">
+                                      
+                                    <div class="rf_file-drop-area" onclick="rf_triggerFileInputChange()"
+                                        style="border-style:dashed;border-color:lightblue;border-width:medium;width:100%;height:100px;">
+                                        <div class="card-body" style=" text-align: center;">
+                                            <i class="fa-solid fa-cloud-arrow-up" style="font-size:50px;display: block;color:lightblue"></i>
+                                            <a style="font-size:14px;color:grey">Drag and
+                                                drop the roll forward supporting evidence
+                                                here</a>
+                                        </div>
+                                    </div>
+                        
+                                    <div class="row" style="padding-top:20px;" hidden="true">
+                                        <a style="font-size:12px;color:#000000">Or browse
+                                            and
+                                            select the file here</a>
+                                        <div class="card" style="border:none;">
+                                            <div class="card-body"
+                                                style="font-size:13px;border-style:dashed;border-color:lightgray;margin-top:10px;">
+                                                <input type="file" id="rf_fileInput" name="file_name" multiple>
+                                                <input type="hidden" id="rf_evidence_upload" name="rf_evidence_upload">
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div id="rf_selectedFilesContainer" style="margin-top:20px;font-size:13px;">
+                                        <form id="rf_delete_attacchment" method="post" enctype="multipart/form-data">
+                                            <input type="hidden" name="form_id" value="rf_delete_attacchment">
+                                            {% csrf_token %}
+                                            {% if rf_attachment %}
+                                                {% for attachment in rf_attachment %}
+                                                    <div class="selected-file-item">
+                                                        <i class="fas fa-file" style="margin-right: 5px; font-size: 16px;"></i>
+                                                        <input id="rf_attachment_id" hidden="true" value="{{attachment.id}}">
+                                                        <span id="{{attachment.id}}" style="margin-right: 5px; font-size: 14px;">{{ attachment.file_names }}</span>
+                                                        <i id="download_attachment_icon" class="fas fa-download rf-download-icon"
+                                                            style="cursor: pointer; color: lightblue; font-size: 14px; margin-right: 5px;"></i>
+                                                        <i id="delete_attachment_icon" class="far fa-trash-alt rf-delete-icon"
+                                                            style="cursor: pointer; color: orange; font-size: 14px;"></i>
+                                                    </div>
+                                                {% endfor %}
+                                            {% else %}
+                                           
+                                            {% endif %}
+                                        </form>
+                                    </div>
+
+                                    </div>
+                                </div>
+
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+
+                <div class="accordion-item rounded-3 border-0 shadow mb-2">
+                    <h2 class="accordion-header">
+                        <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#rf_conclusion_container"
+                            aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
+                        Conclusion
+                        </button>
+                    </h2>
+
+                    <div id="rf_conclusion_container" class="accordion-collapse collapse">
+                        <div class="accordion-body">
+                            <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
+                                <div class="container bg-light" style="padding:10px;max-width: 100%">
+                                    <p style="font-size:14px;"><b>Roll Forward Conclusion:</b></p>
+                                    <form id="rf_conclusion_form" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="form_id" value="rf_conclusion_form">
+                                        {% csrf_token %}
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col">
+                                                <select id="rf_conclusion_select" name="rf_conclusion_select" style="font-size:12px;" class="form-select" aria-label="Default select example">
+                                                    {% if rf.CONTROL_CONCLUSION == 'Effective' %}
+                                                    <option disabled ></option>
+                                                    <option selected value="Effective">Effective</option>
+                                                    <option value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% elif rf.CONTROL_CONCLUSION == 'Not Effective' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Effective">Effective</option>
+                                                    <option selected value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% elif rf.CONTROL_CONCLUSION == 'Inconclusive' %}
+                                                    <option disabled ></option>
+                                                    <option  value="Effective">Effective</option>
+                                                    <option  value="Not Effective">Not Effective</option>
+                                                    <option selected value="Inconclusive">Inconclusive</option>
+                                                    {% else %}
+                                                    <option disabled selected></option>
+                                                    <option value="Effective">Effective</option>
+                                                    <option value="Not Effective">Not Effective</option>
+                                                    <option value="Inconclusive">Inconclusive</option>
+                                                    {% endif %}
+                                                   
+                                                </select>
+                                            </div>
+                                        </div>
+                                    </form>
+
+                                    <form id="rf_conclusion_rationale_form" method="post" enctype="multipart/form-data">
+                                        <input type="hidden" name="form_id" value="rf_conclusion_rationale_form">
+                                        {% csrf_token %}
+                                        <p style="font-size:12px;margin-top:20px;">Document the rationale on how you came up with the conclusion</p>
+                                        <div class="row g-3 align-items-center">
+                                            <div class="col">
+                                                {% if rf.CONTROL_CONCLUSION_RATIONALE %}
+                                                <div style="background-color:white !important" id="rf_conclusion">{{rf.CONTROL_CONCLUSION_RATIONALE|safe}}</div>
+                                                {% else %}
+                                                <div style="background-color:white !important" id="rf_conclusion"></div>
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </form>
+                                   
+                                </div> 
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -1162,16 +1375,16 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                 <div class="accordion-item rounded-3 border-0 shadow mb-2">
                     <h2 class="accordion-header">
                         <button style="font-size:12px;" class="accordion-button border-bottom collapsed fw-semibold"
-                            type="button" data-bs-toggle="collapse" data-bs-target="#rf_procedures"
+                            type="button" data-bs-toggle="collapse" data-bs-target="#rf_procedures_modal"
                             aria-expanded="false" aria-controls="flush-collapse{{ forloop.counter }}">
                             RollForward
                         </button>
                     </h2>
-                    <div id="rf_procedures" class="accordion-collapse collapse" data-bs-parent="#risk_mapped">
+                    <div id="rf_procedures_modal" class="accordion-collapse collapse" data-bs-parent="#risk_mapped">
                         <div class="accordion-body">
                             {% if procedure_list %}
                             <div class="d-grid gap-2 d-md-flex justify-content-md-end">
-                                <button id="rollforward_copy" class="btn btn-light me-md-2 btn-sm" type="button"><i class="far fa-copy"></i> Copy</button>
+                                <button id="rf_copy" class="btn btn-light me-md-2 btn-sm" type="button"><i class="far fa-copy"></i> Copy</button>
                             </div>
                             {% endif %}
                             <div class="container bg-light" style="max-width: 100%;overflow-x:auto;padding:20px;">
@@ -1194,7 +1407,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
        
         <div class="modal-footer">
             <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-            <button type="button" name="test_procedure_submit" id="test_procedure_submit"
+            <button type="button" name="test_procedure_submit" id="copy_all"
                 class="btn btn-primary btn-sm">Copy All</button>
         </div>
     </div>
@@ -1341,6 +1554,62 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
     </div>
 </div>
 
+<div class="modal fade" id="send_modal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p><i class="fa-regular fa-paper-plane" style="margin-right:5px;font-size:14px;"></i>Send to</p>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+
+             <div class="modal-body" style="height:200px;" > 
+
+  
+
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width:70px;"
+                                    class="col-form-label">Name:</label>
+                            </div>
+                            <div class="col">
+                                <select class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
+                                    <option selected disabled data-tokens="">Select User</option>
+                                    <option data-tokens="ketchup mustard">Hot Dog, Fries and a Soda</option>
+                                    <option data-tokens="mustard">Burger, Shake and a Smile</option>
+                                    <option data-tokens="frosting">Sugar, Spice and all things nice</option>
+                                </select>
+                            </div>
+                        </div>
+        
+        
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width:70px;"
+                                    class="col-form-label">Role:</label>
+                            </div>
+                            <div class="col">
+                                <select class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
+                                    <option selected disabled data-tokens="">Assign as</option>
+                                    <option data-tokens="Preparer">Preparer</option>
+                                    <option data-tokens="Reviewer">Reviewer</option>
+                                </select>
+                            </div>
+                        </div>
+
+              
+             </div>
+
+             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" name="generate_oe_result" id="generate_oe_result"
+                    class="btn btn-primary btn-sm">Send Now</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 <div style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 11; padding: 1rem;margin-top:50px !important">
     <div id="design_attachment_delete_toast" class="toast hide" role="alert" aria-live="assertive" aria-atomic="true">
       <div class="toast-header">
@@ -1357,10 +1626,24 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 <script src="https://cdn.quilljs.com/1.3.6/quill.js"></script>
 
 <script src="{% static 'js/workpaper_upload.js' %}"></script>
-
 <script src="{% static 'js/audit.js' %}"></script>
+<script src="{% static 'js/popper.js' %}"></script>
+<script src="{% static 'js/bootstrap4.js' %}"></script>
+<script src="{% static 'js/bootstrap-select.js' %}"></script>
+
+<style>
+
+    .bootstrap-select .dropdown-toggle .filter-option-inner-inner {
+      font-size: 12px !important; 
+    }
+    
+    .bootstrap-select .dropdown-menu li a {
+      font-size: 12px !important; 
+    }
+  </style>
 
 <script>
+    $('#my-select').selectpicker();
     var quillDesignProcedures = new Quill('#design_procedures', {
             theme: 'snow',
             modules: {
@@ -1377,6 +1660,21 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         });
 
     var quillOEProcedures = new Quill('#oe_procedures', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }
+        });
+
+    var quillRFProcedures = new Quill('#rf_procedures', {
             theme: 'snow',
             modules: {
                 toolbar: [
@@ -1421,6 +1719,21 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             }  
     });
 
+    var quillRFConclusion = new Quill('#rf_conclusion', {
+        theme: 'snow',
+        modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }  
+    });
+
     var quillDesignResult = new Quill('#design_result', {
             theme: 'snow',
             modules: {
@@ -1451,6 +1764,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             }
         });
 
+
     var quillOEResult = new Quill('#oe_result', {
             theme: 'snow',
             modules: {
@@ -1465,31 +1779,56 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                 ]
             }
         });
+
+    var quillRFResult = new Quill('#rf_result', {
+            theme: 'snow',
+            modules: {
+                toolbar: [
+                    [{ 'font': [] }],
+                    [{ 'size': ['small', false, 'large', 'huge'] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'color': [] }, { 'background': [] }],
+                    [{ 'list': 'ordered' },  { 'indent': '-1' }, { 'indent': '+1' }],
+                    ['link'],
+                    ['clean'],
+                ]
+            }
+        });
+   
    
     document.querySelector('#design_procedures .ql-editor').style.minHeight = '300px';
     document.querySelector('#oe_procedures .ql-editor').style.minHeight = '300px';
+    document.querySelector('#rf_procedures .ql-editor').style.minHeight = '300px';
     document.querySelector('#design_result .ql-editor').style.minHeight = '300px';
     document.querySelector('#oe_result .ql-editor').style.minHeight = '300px';
+    document.querySelector('#rf_result .ql-editor').style.minHeight = '300px';
     document.querySelector('#oe_result_generation .ql-editor').style.minHeight = '300px';
     document.querySelector('#design_conclusion .ql-editor').style.minHeight = '200px';
     document.querySelector('#oe_conclusion .ql-editor').style.minHeight = '200px';
+    document.querySelector('#rf_conclusion .ql-editor').style.minHeight = '200px';
   
     var maxEditorHeight = '300px';
     document.querySelector('#design_procedures .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#oe_procedures .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#rf_procedures .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#design_result .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#oe_result .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#rf_result .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#oe_result_generation .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#design_conclusion .ql-editor').style.maxHeight = maxEditorHeight;
     document.querySelector('#oe_conclusion .ql-editor').style.maxHeight = maxEditorHeight;
+    document.querySelector('#rf_conclusion .ql-editor').style.maxHeight = maxEditorHeight;
 
     document.querySelector('#design_procedures .ql-editor').style.overflowY = 'auto';
     document.querySelector('#oe_procedures .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#rf_procedures .ql-editor').style.overflowY = 'auto';
     document.querySelector('#design_result .ql-editor').style.overflowY = 'auto';
     document.querySelector('#oe_result .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#rf_result .ql-editor').style.overflowY = 'auto';
     document.querySelector('#oe_result_generation .ql-editor').style.overflowY = 'auto';
     document.querySelector('#design_conclusion .ql-editor').style.overflowY = 'auto';
     document.querySelector('#oe_conclusion .ql-editor').style.overflowY = 'auto';
+    document.querySelector('#rf_conclusion .ql-editor').style.overflowY = 'auto';
 
 </script>
 
@@ -1505,6 +1844,9 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         localStorage.setItem('lastTab', target);
         });
 
+
+        var debounceTimer;
+
         var initialFieldValues = {};
         var initialContent_design_procedure = quillDesignProcedures.root.innerHTML;
         var initialContent_design_result = quillDesignResult.root.innerHTML;
@@ -1514,6 +1856,12 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         var initialContent_oe_procedure = quillOEProcedures.root.innerHTML;
         var initialContent_oe_result = quillOEResult.root.innerHTML;
         var initialContent_oe_conclusion = quillOEConclusion.root.innerHTML;
+
+
+        var initialContent_rf_procedure = quillRFProcedures.root.innerHTML;
+        var initialContent_rf_result = quillRFResult.root.innerHTML;
+        var initialContent_rf_conclusion = quillRFConclusion.root.innerHTML;
+
 
         var ajax_comp_id = $('#ajax_comp_id').val();
         var ajax_app_id = $('#ajax_app_id').val();
@@ -1872,6 +2220,37 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
         });
 
 
+         //OE CONCLUSION
+         $('#rf_conclusion_select').on('change', function () {
+            rf_conclusion = $(this).val();
+            var oe_conclusion_rationale = quillOEConclusion.root.innerHTML;
+
+            formId = $('#rf_conclusion_form').find('input[name="form_id"]').val();
+            csrfToken = $('[name=csrfmiddlewaretoken]').val();
+
+            $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    rf_conclusion: rf_conclusion,      
+
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+        });
+
+
         $('#design_conclusion_select').on('change', function () {
             design_conclusion = $(this).val();
             var design_conclusion_rationale = quillDesignConclusion.root.innerHTML;
@@ -1903,7 +2282,16 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 
 
          //DESIGN CONCLUSION FORM
+        $(quillDesignConclusion.root).on('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(func_design_conclusion, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
+        });
+
         $(quillDesignConclusion.root).on('blur', function() {
+            func_design_conclusion()
+        });
+
+        function func_design_conclusion() {
             var design_conclusion_rationale = quillDesignConclusion.root.innerHTML;
             var design_conclusion = $('#design_conclusion_select').val();
             var csrfToken = $('[name=csrfmiddlewaretoken]').val();
@@ -1932,10 +2320,60 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             });
             
             }
+        }
+
+        $(quillRFConclusion.root).on('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(func_rf_conclusion, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
         });
 
-         //DESIGN CONCLUSION FORM
+         $(quillRFConclusion.root).on('blur', function() {
+            func_rf_conclusion() 
+        });
+
+        function func_rf_conclusion() {
+            var rf_conclusion_rationale = quillRFConclusion.root.innerHTML;
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#rf_conclusion_rationale_form').find('input[name="form_id"]').val();
+
+            if (initialContent_oe_conclusion !== oe_conclusion) {
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    rf_conclusion_rationale: rf_conclusion_rationale,
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            
+            }
+        }
+
+
+         //INTERIM CONCLUSION FORM
+
+        $(quillOEConclusion.root).on('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(func_oe_conclusion, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
+        });
+
          $(quillOEConclusion.root).on('blur', function() {
+            func_oe_conclusion() 
+        });
+
+        function func_oe_conclusion() {
             var oe_conclusion_rationale = quillOEConclusion.root.innerHTML;
             var oe_conclusion = $('#oe_conclusion_select').val();
             var csrfToken = $('[name=csrfmiddlewaretoken]').val();
@@ -1965,11 +2403,20 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             });
             
             }
-        });
+        }
 
 
       //DESIGN RESULT FORM
+      $(quillDesignResult.root).on('input', function() {
+        clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(func_design_result, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
+        });
+
         $(quillDesignResult.root).on('blur', function() {
+            func_design_result()
+        });
+
+        function func_design_result() {
             var design_result = quillDesignResult.root.innerHTML;
             var csrfToken = $('[name=csrfmiddlewaretoken]').val();
             var formId = $('#design_result_form').find('input[name="form_id"]').val();
@@ -1997,10 +2444,19 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             });
             
             }
-        });
+        }
 
         //OE RESULT FORM
+        $(quillOEResult.root).on('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(func_oe_result, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
+        });
+
         $(quillOEResult.root).on('blur', function() {
+            func_oe_result()
+        });
+
+        function func_oe_result() {
             var oe_result = quillOEResult.root.innerHTML;
             var csrfToken = $('[name=csrfmiddlewaretoken]').val();
             var formId = $('#oe_result_form').find('input[name="form_id"]').val();
@@ -2028,16 +2484,24 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             });
             
             }
+        }
+
+        //RF RESULT FORM
+        $(quillRFResult.root).on('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(func_rf_result, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
         });
 
+        $(quillRFResult.root).on('blur', function() {
+            func_rf_result()
+        });
 
-        //DESIGN PROCEDURE FORM
-        $(quillDesignProcedures.root).on('blur', function() {
-            var design_procedures = quillDesignProcedures.root.innerHTML;
+        function func_rf_result() {
+            var rf_result = quillRFResult.root.innerHTML;
             var csrfToken = $('[name=csrfmiddlewaretoken]').val();
-            var formId = $('#design_procedure_form').find('input[name="form_id"]').val();
+            var formId = $('#rf_result_form').find('input[name="form_id"]').val();
 
-            if (initialContent_design_procedure !== design_procedures) {
+            if (initialContent_rf_result !== rf_result) {
                 $.ajax({
                 type: 'POST',
                 url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
@@ -2048,7 +2512,7 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     form_id: formId,
                     csrfmiddlewaretoken: csrfToken,
 
-                    design_procedures: design_procedures,
+                    rf_result: rf_result,
                
                 },
                 success: function (response) {
@@ -2060,11 +2524,59 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             });
             
             }
+        }
+
+
+        $(quillDesignProcedures.root).on('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(design_procedures, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
         });
+
+        $(quillDesignProcedures.root).on('blur', function() {
+            design_procedures() 
+        });
+
+        // Define the function to handle the update action
+        function design_procedures() {
+            var design_procedures = quillDesignProcedures.root.innerHTML;
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#design_procedure_form').find('input[name="form_id"]').val();
+
+            if (initialContent_design_procedure !== design_procedures) {
+                $.ajax({
+                    type: 'POST',
+                    url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                    data: {
+                        comp_id: ajax_comp_id,
+                        app_id: ajax_app_id,
+                        control_id: ajax_control_id,
+                        form_id: formId,
+                        csrfmiddlewaretoken: csrfToken,
+                        design_procedures: design_procedures,
+                    },
+                    success: function(response) {
+                        console.log(response);
+                    },
+                    error: function(xhr, status, error) {
+                        console.log(status, error);
+                    }
+                });
+            }
+        }
 
 
         //OE PROCEDURE FORM
+        $(quillOEProcedures.root).on('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(interim_procedures, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
+        });
+
+          //OE PROCEDURE FORM
         $(quillOEProcedures.root).on('blur', function() {
+            interim_procedures()
+        });
+
+        function interim_procedures() {
             var oe_procedures = quillOEProcedures.root.innerHTML;
             var csrfToken = $('[name=csrfmiddlewaretoken]').val();
             var formId = $('#oe_procedure_form').find('input[name="form_id"]').val();
@@ -2090,13 +2602,65 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     console.log(status, error)
                 }
             });
-            
             }
+        }
+
+
+         //OE PROCEDURE FORM
+        $(quillRFProcedures.root).on('input', function() {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(rollforward_procedures, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
         });
 
+        // Function to handle blur event
+        $(quillRFProcedures.root).on('blur', function() {
+            rollforward_procedures(); // Call the function immediately when the input element loses focus
+        });
+
+        function rollforward_procedures() {
+            var rf_procedures = quillRFProcedures.root.innerHTML;
+            var csrfToken = $('[name=csrfmiddlewaretoken]').val();
+            var formId = $('#rf_procedure_form').find('input[name="form_id"]').val();
+
+            if (initialContent_rf_procedure !== rf_procedures) {
+                $.ajax({
+                type: 'POST',
+                url: '/audit/risk-and-controls/auto_save/' + ajax_comp_id + '/' + ajax_app_id + '/' + ajax_control_id + '/',
+                data: {
+                    comp_id:ajax_comp_id,
+                    app_id: ajax_app_id,
+                    control_id: ajax_control_id,
+                    form_id: formId,
+                    csrfmiddlewaretoken: csrfToken,
+
+                    rf_procedures: rf_procedures,
+               
+                },
+                success: function (response) {
+                    console.log(response)
+                },
+                error: function (xhr, status, error) {
+                    console.log(status, error)
+                }
+            });
+            }
+        }
+
+
         //CONTROL ASSESSMENT FORM
+        $('#control_rating_rationale').on('input', function () {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(control_rating_comment, 1500); // Set a new timeout for 2 seconds (2000 milliseconds)
+        });
+
+              //CONTROL ASSESSMENT FORM
         $('#control_rating_rationale').on('blur', function () {
-            control_rating_rationale = $(this).val();
+            control_rating_comment()
+        });
+
+
+        function control_rating_comment() {
+            control_rating_rationale = $('#control_rating_rationale').val();
             control_rating = $('#control_rating').val();
             formId = $('#control_risk_rating_form').find('input[name="form_id"]').val();
             csrfToken = $('[name=csrfmiddlewaretoken]').val();
@@ -2122,7 +2686,8 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
                     console.log(status, error)
                 }
             });
-        });
+        }
+
 
         $('#control_rating').on('change', function () {
             control_rating = $(this).val();
@@ -2209,10 +2774,11 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
             });
         });
 
-
         $("#design_copy").click(function () {
             if (responseData && responseData.design_procedures) {
-                quillDesignProcedures.root.innerHTML = responseData.design_procedures
+                // quillDesignProcedures.root.innerHTML = responseData.design_procedures
+                quillDesignProcedures.root.innerHTML = $('#test_procedure_design').html()
+                design_procedures()
                 $('#test_procedure_modal').modal('hide');
             } else {
                 console.error("Response data is not available or doesn't have design_procedures.");
@@ -2221,12 +2787,39 @@ aria-labelledby="test_procedure_modal" aria-hidden="true">
 
         $("#interim_copy").click(function () {
             if (responseData && responseData.design_procedures) {
-                quillOEProcedures.root.innerHTML = responseData.interim_procedures
+                // quillOEProcedures.root.innerHTML = responseData.interim_procedures
+                quillOEProcedures.root.innerHTML = $('#test_procedure_interim').html()
+                interim_procedures()
                 $('#test_procedure_modal').modal('hide');
             } else {
                 console.error("Response data is not available or doesn't have design_procedures.");
             }
         });  
+
+        $("#rf_copy").click(function () {
+            if (responseData && responseData.design_procedures) {
+                // quillRFProcedures.root.innerHTML = responseData.rollforward_procedures
+                quillRFProcedures.root.innerHTML = $('#test_procedure_rollforward').html()
+                rollforward_procedures()
+                $('#test_procedure_modal').modal('hide');
+            } else {
+                console.error("Response data is not available or doesn't have design_procedures.");
+            }
+        });  
+
+        $("#copy_all").click(function () {
+            if (responseData && responseData.design_procedures) {
+                quillDesignProcedures.root.innerHTML = $('#test_procedure_design').html()
+                design_procedures()
+                quillOEProcedures.root.innerHTML = $('#test_procedure_interim').html()
+                interim_procedures()
+                quillRFProcedures.root.innerHTML = $('#test_procedure_rollforward').html()
+                rollforward_procedures()
+                $('#test_procedure_modal').modal('hide');
+            } else {
+                console.error("Response data is not available or doesn't have design_procedures.");
+            }
+        }); 
 
         $("#oe_copy").click(function () {
             var isEmpty = quillOEResultGenerator.root.innerHTML.trim() === '<p><br></p>';

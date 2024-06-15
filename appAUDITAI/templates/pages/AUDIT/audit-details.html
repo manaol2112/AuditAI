@@ -31,15 +31,16 @@
                             style="margin-right: 10px;color:#474b4d"></span>{{audit_name.COMPANY_ID}} - {{audit_name.FILE_NAME }}
                          </a>
                 </div>
-                <form class="d-flex" role="search">
+                <form id="searchOpenAI" class="d-flex" role="search">
+                    <input type="hidden" name="form_id" value="open_ai">
+                    {% csrf_token %}
                     <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
                         placeholder="Search {{selected_app.APP_NAME}}..." autocomplete="off" aria-label="Search"
                         style="height:35px;font-size:13px;">
-                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                    <button type="submit" class="btn btn-outline-secondary" aria-expanded="false"
                         style="height:35px;margin-right:3px;">
                         <i class="fas fa-search"></i>
                     </button>
-                    
                 </form>
             </div>
         </nav>

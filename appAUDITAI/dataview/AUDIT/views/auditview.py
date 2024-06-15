@@ -21,6 +21,9 @@ from django.utils.html import escape
 import html
 from django.core.cache import cache
 import os
+import openai
+from django.db import connection
+from django.conf import settings
 
 
 class RiskAndControls(AuditorPermissionMixin,View):
@@ -714,10 +717,12 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
         #TEST PROCEDURES
         design_procedures = request.POST.get('design_procedures')
         oe_procedures = request.POST.get('oe_procedures')
+        rf_procedures = request.POST.get('rf_procedures')
 
         #TEST_RESULTS
         design_result = request.POST.get('design_result')
         oe_result = request.POST.get('oe_result')
+        rf_result = request.POST.get('rf_result')
         
         #DESIGN_TEST_CONCLUSION'
         design_conclusion = request.POST.get('design_conclusion')
@@ -726,6 +731,10 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
         #OE_TEST_CONCLUSION'
         oe_conclusion = request.POST.get('oe_conclusion')
         oe_conclusion_rationale = request.POST.get('oe_conclusion_rationale')
+
+        #OE_TEST_CONCLUSION'
+        rf_conclusion = request.POST.get('rf_conclusion')
+        rf_conclusion_rationale = request.POST.get('rf_conclusion_rationale')
 
         #OE_PERIOD:
 
@@ -1078,6 +1087,68 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
                 rf.save()
             except RF_TESTING.DoesNotExist:
                 rf = None
+
+        elif form_id == 'rf_procedure_form':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.CONTROL_TEST_PROCEDURE = rf_procedures
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
+
+        elif form_id == 'rf_result_form':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.CONTROL_TEST_RESULT = rf_result
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
+
+        elif form_id == 'rf_conclusion_form':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.CONTROL_CONCLUSION = rf_conclusion
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
+
+        elif form_id == 'rf_conclusion_rationale_form':
+            try:
+                rf,created = RF_TESTING.objects.update_or_create(COMPANY_ID = company, APP_NAME = app, CONTROL_ID = control)
+                rf.CONTROL_CONCLUSION_RATIONALE = rf_conclusion_rationale
+
+                if created:
+                    rf.CREATED_BY = user.email
+                    rf.CREATED_ON = timezone.now()
+                else:
+                    rf.MODIFIED_BY = user.email
+                    rf.LAST_MODIFIED = timezone.now()
+                rf.save()
+            except RF_TESTING.DoesNotExist:
+                rf = None
+
+
         else:
             print('Nothing is triggered')
 
@@ -1086,9 +1157,10 @@ class AutoSave_Workpapers(AuditorPermissionMixin,View):
 class AuditWorkpapersDetails(AuditPerApp):
     template_name = 'pages/AUDIT/audit-workpaper-details.html'
 
+    
     def get(self, request, comp_id, audit_id, app_id, control_id):
+        from django.core.serializers import serialize
 
-        user = request.user
         try:
             apps = APP_LIST.objects.filter(COMPANY_ID = comp_id)
         except APP_LIST.DoesNotExist:
@@ -1160,7 +1232,7 @@ class AuditWorkpapersDetails(AuditPerApp):
             if rf.CONTROL_CONCLUSION_RATIONALE:
                 rf.CONTROL_CONCLUSION_RATIONALE = html.unescape(rf.CONTROL_CONCLUSION_RATIONALE)
 
-        except OE_TESTING.DoesNotExist:
+        except RF_TESTING.DoesNotExist:
                 rf = None
 
         # Decode HTML entities in DESIGN_PROCEDURES field

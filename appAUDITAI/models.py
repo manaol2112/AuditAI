@@ -193,6 +193,17 @@ class AUDITLIST(models.Model):
         managed = True
         db_table = 'AUDIT_LIST'
 
+class AUDIT_ACCESS(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    COMPANY_ID = models.ForeignKey(COMPANY,on_delete=models.CASCADE,blank=True,null=True)
+    FILE_NAME = models.ForeignKey(AUDITLIST, on_delete=models.CASCADE,blank=True,null=True)
+    email  = models.ForeignKey(User, on_delete=models.CASCADE, blank=True,null=True)
+    ROLE = models.CharField(max_length=50,blank=True,null=True)
+
+    class Meta:
+        managed = True
+        db_table = 'AUDIT_ACCESS'
+
 class RequestIDCounter(models.Model):
     counter = models.IntegerField(default=0)
 

@@ -44,10 +44,10 @@ path('test_sftp_connection/', applications_view.test_sftp_connection, name='test
 #CLIENTS
 path("myclients/actions/<int:id>",clientactions.ClientActions.as_view(),name="client-actions"),
 
-
 #AUDIT
 path("myclients/actions/audit/risk-assessment/<uuid:comp_id>/<uuid:audit_id>",auditview.RiskAssessment.as_view(),name="audit-risk-assessment"),
 path("myclients/actions/audit/manage-period",auditview.ManageAuditPeriod.as_view(),name="audit-manage-period"),
+path("myclients/actions/audit/manage-audit/<uuid:aud_id>",auditview.ManageAudit.as_view(),name="audit-manage-audit"),
 path("myclients/actions/audit/select-audit/<uuid:comp_id>",auditview.SelectAuditPeriod.as_view(),name="audit-select-period"),
 path("myclients/actions/audit/selected_app/<uuid:comp_id>/<uuid:audit_id>/<uuid:app_id>",auditview.AuditPerApp.as_view(),name="audit-per-app"),
 path("myclients/actions/audit/selected_app/planning-docs/<uuid:comp_id>/<uuid:audit_id>/<uuid:app_id>",auditview.AuditPlanningDocs.as_view(),name="audit-per-app-planning-docs"),

@@ -1,0 +1,304 @@
+{% extends 'base/base-auditor.html' %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/tables.css' %}" />
+<!-- Bootstrap Select CSS -->
+<link rel="stylesheet" href="{% static 'css/bootstrap-select.css' %}" />
+
+<div class="card">
+    <div class="card-body">
+        <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
+            <ol class="breadcrumb" style="font-size:14px;">
+              <li class="breadcrumb-item"><i class="fa-solid fa-house"></i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:mydashboard'%}" style="text-decoration:none;color:#474b4d">Dashboard</i></a></li>
+              <li class="breadcrumb-item"><a href="{% url 'appAUDITAI:audit-manage-period' %}" style="text-decoration:none;color:#474b4d">Manage Audit</i></a></li>
+              <li class="breadcrumb-item active" style="text-decoration:underline;color:#474b4d"></a>{{audit_list.COMPANY_ID.COMPANY_NAME}}</li>
+            </ol>
+        </nav>
+
+        <nav class="navbar bg-body-tertiary" data-bs-theme="light" style="margin-bottom: 15px;margin-top:30px;;">
+            <div class="container-fluid">
+                <div class="row">
+                    <a style="font-size:25px;"><span class="fa-solid fa-business-time"
+                            style="margin-right: 10px;color:#474b4d"></span>{{audit_list.COMPANY_ID.COMPANY_NAME}} : {{audit_list.FILE_NAME}}</a>
+                </div>
+                <form class="d-flex" role="search">
+                    <input id="searchAPP" class="form-control me-2" type="search" onkeyup="filterApps()"
+                        placeholder="Search {{selected_company.COMPANY_NAME}}..." autocomplete="off" aria-label="Search"
+                        style="height:35px;font-size:13px;">
+                    <button type="button" class="btn btn-outline-secondary" aria-expanded="false"
+                        style="height:35px;margin-right:3px;">
+                        <i class="fas fa-search"></i>
+                    </button>
+    
+                </form>
+            </div>
+        </nav>
+
+        <div style="border-bottom:solid;border-color:white" style="font-size:13px">
+            <p style="font-size:13px">Manage audit access, period, and status </p>
+        </div>
+
+       <div class="card">
+        <div class="card-body">
+            <div class="container audit-label" style="max-width: 100%;overflow-x:auto;padding:20px;margin-bottom:20px;">
+                <input type="hidden" id="audit_id" value="{{audit_list.id}}"></input>
+                <form id="audit_status_form" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="form_id" value="audit_status_form">
+                    {% csrf_token %}
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;;" class="col-form-label">Status:</label>
+                    </div>
+                        <div class="col">
+                            <select id="audit_status" class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
+                                {% if audit_list.STATUS == 'Active'%}
+                                <option disabled >Select Status</option>
+                                <option selected value="Active">Active</option>
+                                <option value="Archived">Archived</option>
+
+                                {% elif audit_list.STATUS == 'Archived'%}
+                                <option disabled >Select Status</option>
+                                <option value="Active">Active</option>
+                                <option selected value="Archived">Archived</option>
+
+                                {% else %}
+                                 <option selected disabled >Select Status</option>
+                                <option value="Active">Active</option>
+                                <option value="Archived">Archived</option>
+                                {%endif%}
+                            </select>
+                        </div>
+                    
+                </div>
+            </form>
+                <form id="audit_period_form" method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="form_id" value="audit_period_form">
+                    {% csrf_token %}
+                <div class="row g-3 align-items-center" style="margin-top:3px;">
+                    <div class="col-auto">
+                        <label style="font-size:12px; width: 100px;;" class="col-form-label">Period End Date:</label>
+                    </div>
+                    <div class="col">
+                        <input class="form-control sm" id="audit_period" name="audit_period" type="date" style="font-size:12px;"
+                        value="{{ audit_list.PERIOD_END_DATE|date:'Y-m-d' }}" >
+                    </div>
+                </div>
+            </form>
+            </div>
+            <div class="container audit-label" style="max-width: 100%;overflow-x:auto;padding:20px;margin-bottom:20px;">
+                <p style="font-size:14px;"><b>Manage Access:</b></p>
+                <p class ="audit-label" >Table below shows the current status of users who has access to the audit:</p>
+
+                <button type="button" data-bs-toggle="modal" data-bs-target="#new_access_modal" class="btn btn-primary btn-sm" style="margin-bottom:20px;">+ New Access</button>
+                <table id="app_user_list" name="app_user_list" class="table table-hover table-sm nowrap"
+                    style="margin-top:50px;width: 100%;word-wrap:break-word;font-family:sans-serif;margin-top:20px;">
+                    <thead style="padding-top:12px;text-align:center">
+                        <tr style="font-size:12px; background-color:whitesmoke;max-width: 150px;overflow:hidden;white-space: nowrap;text-overflow: ellipsis;">
+                            <th style="text-align:left;">First Name</th>
+                            <th style="text-align:left;">Last Name</th>
+                            <th style="text-align:left;">Email Address</th>
+                            <th style="text-align:left;">Role</th>
+                            <th style="text-align:left;">Status</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody style="font-size:13px">
+                        {% for user in audit_access %}
+                        <tr style="vertical-align: middle;">
+                            <td style="width:20%">{{ user.email.first_name }}</td>
+                            <td style="width:20%">{{ user.email.last_name }}</td>
+                            <td style="width:20%">{{ user.email.email }}</td>
+                            <td style="width:20%">{{ user.ROLE }}</td>
+                            {% if user.email.is_active %}
+                            <td style="width:15%"> <i class="fa-solid fa-circle-check" style="color:green;margin-rightt:5px;"></i> Active</td>
+                            {% else %}
+                            <td style="width:15%"> <i class="fa-solid fa-circle-minus" style="color:red;margin-right:5px;"></i>Disabled</td>
+                            {% endif %}
+                            <td class="text-end">
+                                <a href="" data-process-id="{{user.USER_ID}}" class="btn btn-outline-secondary btn-sm"
+                                    data-toggle="tooltip" data-placement="top" title="View Record">
+                                    <i class="fa-solid fa-gear"></i>
+                                </a>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+       </div>
+    </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="new_access_modal" data-bs-backdrop="static" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <p><i class="fa-regular fa-plus" style="margin-right:5px;font-size:14px;"></i>Setup Audit Access</p>
+                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+             </div>
+
+             <div class="modal-body" style="height:200px;" > 
+      
+                    <div class="container">
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width: 100px;;" class="col-form-label">Name:</label>
+                            </div>
+                                <div class="col">
+                                    <select id="employee_name" class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
+                                        {% if audit_list.STATUS == 'Active'%}
+                                        <option disabled >Select Status</option>
+                                        <option selected value="Active">Active</option>
+                                        <option value="Archived">Archived</option>
+        
+                                        {% elif audit_list.STATUS == 'Archived'%}
+                                        <option disabled >Select Status</option>
+                                        <option value="Active">Active</option>
+                                        <option selected value="Archived">Archived</option>
+        
+                                        {% else %}
+                                         <option selected disabled >Select Status</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Archived">Archived</option>
+                                        {%endif%}
+                                    </select>
+                                </div>
+                            
+                        </div>
+        
+                        <div class="row g-3 align-items-center" style="margin-top:3px;">
+                            <div class="col-auto">
+                                <label style="font-size:12px; width: 100px;;" class="col-form-label">Role:</label>
+                            </div>
+                                <div class="col">
+                                    <select id="employee_name" class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
+                                        {% if audit_list.STATUS == 'audit_admin'%}
+                                        <option disabled >Select Role</option>
+                                        <option selected value="audit_admin">Audit Administrator</option>
+                                        <option value="internal_audit">Internal Auditor</option>
+                                        <option value="external_audit">External Auditor</option>
+        
+                                        {% elif audit_list.STATUS == 'internal_audit'%}
+                                        <option disabled >Select Role</option>
+                                        <option  value="audit_admin">Audit Administrator</option>
+                                        <option selected value="internal_audit">Internal Auditor</option>
+                                        <option value="external_audit">External Auditor</option>
+        
+                                        {% elif audit_list.STATUS == 'external_audit'%}
+                                        <option disabled >Select Role</option>
+                                        <option  value="audit_admin">Audit Administrator</option>
+                                        <option  value="internal_audit">Internal Auditor</option>
+                                        <option selected value="external_audit">External Auditor</option>
+        
+                                        {% else %}
+                                        <option selected disabled >Select Role</option>
+                                        <option  value="audit_admin">Audit Administrator</option>
+                                        <option value="internal_audit">Internal Auditor</option>
+                                        <option value="external_audit">External Auditor</option>
+                                        {%endif%}
+                                    </select>
+                                </div>
+                            
+                        </div>
+                    </div>
+         
+               
+             </div>
+
+             <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="create_user" name="create_user""
+                    class="btn btn-primary btn-sm">Create</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script src="{% static 'js/workpaper_upload.js' %}"></script>
+<script src="{% static 'js/popper.js' %}"></script>
+<script src="{% static 'js/bootstrap4.js' %}"></script>
+<script src="{% static 'js/bootstrap-select.js' %}"></script>
+
+<style>
+    .audit-label {
+        font-size:12px;
+      }
+  
+      .bootstrap-select .dropdown-toggle .filter-option-inner-inner {
+        font-size: 12px !important; 
+      }
+      
+      .bootstrap-select .dropdown-menu li a {
+        font-size: 12px !important; 
+      }
+  </style>
+
+
+<script>
+     //AUDIT_STATUS
+     $('#audit_status').on('change', function() {
+        var audit_status = $(this).val();
+        formId = $('#audit_status_form').find('input[name="form_id"]').val();
+        csrfToken = $('[name=csrfmiddlewaretoken]').val();
+        var audit_id = $('#audit_id').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/myclients/actions/audit/manage-audit/' + audit_id ,
+            data: {
+                audit_id:audit_id,
+                form_id: formId,
+                csrfmiddlewaretoken: csrfToken,
+
+                audit_status: audit_status, 
+
+            },
+            success: function (response) {
+                console.log(response)
+            },
+            error: function (xhr, status, error) {
+                console.log(status, error)
+            }
+        });
+
+    });
+
+    //AUDIT_PERIOD
+    $('#audit_period').on('change', function() {
+        var audit_period = $(this).val();
+
+        formId = $('#audit_period_form').find('input[name="form_id"]').val();
+        csrfToken = $('[name=csrfmiddlewaretoken]').val();
+        var audit_id = $('#audit_id').val();
+
+        $.ajax({
+            type: 'POST',
+            url: '/myclients/actions/audit/manage-audit/' + audit_id ,
+            data: {
+                audit_id:audit_id,
+                form_id: formId,
+                csrfmiddlewaretoken: csrfToken,
+
+                audit_period: audit_period, 
+
+            },
+            success: function (response) {
+                console.log(response)
+            },
+            error: function (xhr, status, error) {
+                console.log(status, error)
+            }
+        });
+
+    });
+
+</script>
+{% endblock content %}

@@ -1,6 +1,7 @@
 from appAUDITAI.dataview.MISC.imports import *
 from django.shortcuts import render, redirect
 from django.views import View
+from appAUDITAI.dataview.BASEVIEW.allview import ALLMODELS
 from appAUDITAI.dataview.LOGIN.views.authenticate import UserRoleView
 from appAUDITAI.dataview.LOGIN.views.decorators import UserAccessMixin
 from appAUDITAI.models import APP_LIST, COMPANY, PASSWORD,PASSWORDPOLICY, HR_RECORD, APP_RECORD, TERMINATIONPOLICY,USERROLES, AUDITLIST
@@ -451,9 +452,6 @@ class AuditPlanningDocs(AuditPerApp):
     def post(self, request, comp_id, audit_id, app_id):
         user = request.user
         form = WORKPAPER_UPLOAD_FORM(request.POST, request.FILES)
-
-        print(request.POST)
-        print(request.FILES)
        
         if form.is_valid():
             workpaper_upload = form.save(commit=False)
@@ -461,7 +459,6 @@ class AuditPlanningDocs(AuditPerApp):
             workpaper_upload.save()
 
             uploaded_file = form.cleaned_data['file_name'].name
-            print(uploaded_file)
             if uploaded_file:
                 file_name = uploaded_file
 
@@ -1209,7 +1206,7 @@ class AuditWorkpapersDetails(AuditPerApp):
             if design.CONTROL_CONCLUSION_RATIONALE:
                 design.CONTROL_CONCLUSION_RATIONALE = html.unescape(design.CONTROL_CONCLUSION_RATIONALE)
         except DESIGN_TESTING.DoesNotExist:
-                    design = None
+            design = None
 
         try:
             oe = OE_TESTING.objects.get(COMPANY_ID = company, APP_NAME = selected_app, CONTROL_ID = control_details)
@@ -1332,6 +1329,61 @@ class SelectAuditPeriod(AuditorPermissionMixin,View):
         
         return render(request, self.template_name, context)
     
+
+class ManageAudit(AuditorPermissionMixin,View):
+    template_name = 'pages/AUDIT/audit-manage-audit.html'
+
+    def get(self,request,aud_id):
+
+        try:
+            audit_list = AUDITLIST.objects.get(id = aud_id)
+        except AUDITLIST.DoesNotExist:
+            audit_list = None
+
+        try:
+            audit_access = AUDIT_ACCESS.objects.filter(FILE_NAME = audit_list)
+        except AUDIT_ACCESS.DoesNotExist:
+            audit_access = None
+
+        context = {
+            'audit_list':audit_list,
+            'audit_access':audit_access
+        }
+
+        return render(request, self.template_name, context)
+    
+    def post(self,request,aud_id):
+
+        form_id = request.POST.get('form_id')
+
+        aud_status = request.POST.get('audit_status')
+        audit_period_input = request.POST.get('audit_period')
+
+        if form_id == 'audit_status_form':
+            try:
+                audit = AUDITLIST.objects.get(id = aud_id)
+                if audit:
+                    audit_status, created = AUDITLIST.objects.update_or_create(id = aud_id)
+                    audit_status.STATUS = aud_status
+                    audit_status.save()
+
+            except AUDITLIST.DoesNotExist:
+                audit = None
+
+        elif form_id == 'audit_period_form':
+            try:
+                audit = AUDITLIST.objects.get(id = aud_id)
+                if audit:
+                    audit_period, created = AUDITLIST.objects.update_or_create(id = aud_id)
+                    audit_period.PERIOD_END_DATE = datetime.strptime(audit_period_input, '%Y-%m-%d').date()
+                    audit_period.save()
+
+            except AUDITLIST.DoesNotExist:
+                audit = None
+
+        return JsonResponse({'success': 'Success'}, status=200)
+        
+        
 class ManageAuditPeriod(AuditorPermissionMixin,View):
     template_name = 'pages/AUDIT/audit-manage-period.html'
     

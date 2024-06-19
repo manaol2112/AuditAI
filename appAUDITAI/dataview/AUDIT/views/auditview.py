@@ -1304,28 +1304,17 @@ class SelectAuditPeriod(AuditorPermissionMixin,View):
     
     def get(self, request, comp_id):
         active_user = request.user
+
         user_roles = USERROLES.objects.filter(USERNAME=active_user)
 
         try:
-            audit_list = AUDITLIST.objects.filter(COMPANY_ID = comp_id, STATUS = 'Active').order_by('CREATED_ON')
+            audit_list = AUDIT_ACCESS.objects.filter(COMPANY_ID = comp_id, email = active_user.email).order_by('CREATED_ON')
         except AUDITLIST.DoesNotExist:
             audit_list = None
             pass
-
-        try:
-            archived_audit_list = AUDITLIST.objects.filter(COMPANY_ID = comp_id, STATUS = 'Archived').order_by('CREATED_ON')
-        except AUDITLIST.DoesNotExist:
-            archived_audit_list = None
-            pass
-
-        companies = []
-        for user_role in user_roles:
-            companies.extend(user_role.COMPANY_ID.all())
         
-        context = {'companies': companies,
-                   'audit_list':audit_list,
-                   'comp_id':comp_id,
-                   'archived_audit_list':archived_audit_list}
+        context = {'audit_list':audit_list,
+                   'comp_id':comp_id}
         
         return render(request, self.template_name, context)
     
@@ -1336,18 +1325,28 @@ class ManageAudit(AuditorPermissionMixin,View):
     def get(self,request,aud_id):
 
         try:
-            audit_list = AUDITLIST.objects.get(id = aud_id)
+            audit_list = AUDITLIST.objects.get(id=aud_id)
         except AUDITLIST.DoesNotExist:
             audit_list = None
 
-        try:
-            audit_access = AUDIT_ACCESS.objects.filter(FILE_NAME = audit_list)
-        except AUDIT_ACCESS.DoesNotExist:
+        if audit_list is not None:
+            try:
+                audit_access = AUDIT_ACCESS.objects.filter(FILE_NAME=audit_list)
+            except AUDIT_ACCESS.DoesNotExist:
+                audit_access = None
+
+            try:
+                users = USERROLES.objects.filter(COMPANY_ID=audit_list.COMPANY_ID)
+            except USERROLES.DoesNotExist:
+                users = None
+        else:
             audit_access = None
+            users = None
 
         context = {
             'audit_list':audit_list,
-            'audit_access':audit_access
+            'audit_access':audit_access,
+            'users':users
         }
 
         return render(request, self.template_name, context)
@@ -1358,6 +1357,10 @@ class ManageAudit(AuditorPermissionMixin,View):
 
         aud_status = request.POST.get('audit_status')
         audit_period_input = request.POST.get('audit_period')
+        
+        user_id = request.POST.get('selected_user')
+        company_id = request.POST.get('company_id')
+        user_role = request.POST.get('user_role')
 
         if form_id == 'audit_status_form':
             try:
@@ -1380,6 +1383,31 @@ class ManageAudit(AuditorPermissionMixin,View):
 
             except AUDITLIST.DoesNotExist:
                 audit = None
+
+        elif form_id == 'new_user_form':
+
+            try:
+                selected_user = User.objects.get(email=user_id)
+            except User.DoesNotExist:
+                selected_user = None
+
+            try:
+                company = COMPANY.objects.get(id = company_id)
+                filename = AUDITLIST.objects.get(id = aud_id)
+
+                print(filename)
+ 
+                new_access, created = AUDIT_ACCESS.objects.update_or_create(
+                    COMPANY_ID=company,
+                    FILE_NAME=filename,
+                    email = selected_user,
+                )
+                new_access.ROLE = user_role
+                new_access.save()
+            except AUDITLIST.DoesNotExist:
+                audit_list = None
+
+            return redirect('appAUDITAI:audit-manage-audit', aud_id=aud_id)
 
         return JsonResponse({'success': 'Success'}, status=200)
         

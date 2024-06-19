@@ -19,7 +19,7 @@ class AuditorPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         user = self.request.user
-        return user.groups.filter(name='Auditor').exists()
+        return user.is_active and user.groups.filter(name='Auditor').exists()
 
     def handle_no_permission(self):
         if self.request.user.is_authenticated:
@@ -34,7 +34,7 @@ class ProcessOwnerPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         user = self.request.user
-        return user.groups.filter(name='Process Owner').exists()
+        return user.is_active and user.groups.filter(name='Process Owner').exists()
 
     def handle_no_permission(self):
         if self.request.user.is_authenticated:
@@ -48,7 +48,7 @@ class AdminPermissionMixin(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         user = self.request.user
-        return user.groups.filter(name='Administrator').exists() or user.is_superuser
+        return user.is_active and user.groups.filter(name='Administrator').exists() or user.is_superuser
 
     def handle_no_permission(self):
         if self.request.user.is_authenticated:
@@ -64,7 +64,7 @@ class AccessRequestor(LoginRequiredMixin, UserPassesTestMixin):
 
     def test_func(self):
         user = self.request.user
-        return user.groups.filter(name='Access Requestor').exists()
+        return user.is_active and user.groups.filter(name='Access Requestor').exists()
 
     def handle_no_permission(self):
         if self.request.user.is_authenticated:

@@ -89,7 +89,7 @@
             </form>
             </div>
             <div class="container audit-label" style="max-width: 100%;overflow-x:auto;padding:20px;margin-bottom:20px;">
-                <p style="font-size:14px;"><b>Manage Access:</b></p>
+                <p style="font-size:16px;"><b>Manage Access:</b></p>
                 <p class ="audit-label" >Table below shows the current status of users who has access to the audit:</p>
 
                 <button type="button" data-bs-toggle="modal" data-bs-target="#new_access_modal" class="btn btn-primary btn-sm" style="margin-bottom:20px;">+ New Access</button>
@@ -111,9 +111,18 @@
                             <td style="width:20%">{{ user.email.first_name }}</td>
                             <td style="width:20%">{{ user.email.last_name }}</td>
                             <td style="width:20%">{{ user.email.email }}</td>
-                            <td style="width:20%">{{ user.ROLE }}</td>
+
+                            {% if user.ROLE == 'audit_admin'%}
+                                <td style="width:20%">Audit Administrator</td>
+                            {% elif user.ROLE == 'internal_audit'%}
+                                <td style="width:20%">Internal Audit</td>
+                            {% elif user.ROLE == 'external_audit' %}
+                                <td style="width:20%">External Audit</td>
+                            {% else %}
+                                <td style="width:20%">-</td>
+                            {% endif %}
                             {% if user.email.is_active %}
-                            <td style="width:15%"> <i class="fa-solid fa-circle-check" style="color:green;margin-rightt:5px;"></i> Active</td>
+                            <td style="width:15%"> <i class="fa-solid fa-circle-check" style="color:green;margin-right:5px;"></i> Active</td>
                             {% else %}
                             <td style="width:15%"> <i class="fa-solid fa-circle-minus" style="color:red;margin-right:5px;"></i>Disabled</td>
                             {% endif %}
@@ -134,6 +143,10 @@
     </div>
 </div>
 
+
+<form id="new_user_form" method="post" enctype="multipart/form-data">
+    <input type="hidden" name="form_id" value="new_user_form">
+    {% csrf_token %}
 <div class="modal fade" id="new_access_modal" data-bs-backdrop="static" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
@@ -141,31 +154,22 @@
                 <p><i class="fa-regular fa-plus" style="margin-right:5px;font-size:14px;"></i>Setup Audit Access</p>
                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
              </div>
-
+             <input type="hidden" id="company_id" name="company_id" value="{{audit_list.COMPANY_ID.id}}"></input>
+             <input type="hidden" id="file_name" name="file_name" value=" {{audit_list.FILE_NAME}}"></input>
+    
              <div class="modal-body" style="height:200px;" > 
       
                     <div class="container">
                         <div class="row g-3 align-items-center" style="margin-top:3px;">
                             <div class="col-auto">
-                                <label style="font-size:12px; width: 100px;;" class="col-form-label">Name:</label>
+                                <label style="font-size:12px; width: 70px;;" class="col-form-label">Name:</label>
                             </div>
                                 <div class="col">
-                                    <select id="employee_name" class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
-                                        {% if audit_list.STATUS == 'Active'%}
-                                        <option disabled >Select Status</option>
-                                        <option selected value="Active">Active</option>
-                                        <option value="Archived">Archived</option>
-        
-                                        {% elif audit_list.STATUS == 'Archived'%}
-                                        <option disabled >Select Status</option>
-                                        <option value="Active">Active</option>
-                                        <option selected value="Archived">Archived</option>
-        
-                                        {% else %}
-                                         <option selected disabled >Select Status</option>
-                                        <option value="Active">Active</option>
-                                        <option value="Archived">Archived</option>
-                                        {%endif%}
+                                    <select id="selected_user" name="selected_user" class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
+                                        <option selected disabled >Select Employee</option>
+                                        {% for user in users %}
+                                        <option value="{{user.USERNAME.email}}" value="">{{user.USERNAME.first_name}} {{user.USERNAME.last_name}}</option>
+                                        {% endfor %}
                                     </select>
                                 </div>
                             
@@ -173,10 +177,10 @@
         
                         <div class="row g-3 align-items-center" style="margin-top:3px;">
                             <div class="col-auto">
-                                <label style="font-size:12px; width: 100px;;" class="col-form-label">Role:</label>
+                                <label style="font-size:12px; width: 70px;;" class="col-form-label">Role:</label>
                             </div>
                                 <div class="col">
-                                    <select id="employee_name" class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
+                                    <select id="user_role" name="user_role" class="selectpicker form-control" style="font-size:12px;" data-live-search="true">
                                         {% if audit_list.STATUS == 'audit_admin'%}
                                         <option disabled >Select Role</option>
                                         <option selected value="audit_admin">Audit Administrator</option>
@@ -206,19 +210,19 @@
                             
                         </div>
                     </div>
-         
-               
+        
              </div>
 
              <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancel</button>
-                <button type="button" id="create_user" name="create_user""
-                    class="btn btn-primary btn-sm"Create</button>
+                <button type="submit" id="create_user" name="create_user"
+                    class="btn btn-primary btn-sm">Create</button>
             </div>
 
         </div>
     </div>
 </div>
+</form>
 
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 
@@ -239,7 +243,7 @@
       .bootstrap-select .dropdown-menu li a {
         font-size: 12px !important; 
       }
-  </style>
+</style>
 
 
 <script>
